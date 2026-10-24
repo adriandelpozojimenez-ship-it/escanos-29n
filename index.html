@@ -92,6 +92,37 @@ tr.det td{background:var(--soft);font-size:.82rem}
 .prob td.p{font-weight:600}
 .method p{max-width:70ch}
 details summary{cursor:pointer;font-weight:600}
+nav.tabs .mas{display:none}
+.masmenu{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:30;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:6px;display:flex;flex-direction:column;min-width:210px}
+.masmenu[hidden]{display:none}
+.masmenu button{font:600 1rem var(--f-body);text-align:left;background:none;border:0;color:var(--ink);padding:12px 14px;border-radius:6px;cursor:pointer}
+.masmenu button[aria-current="true"]{background:var(--soft);color:var(--accent)}
+@media (max-width:700px){
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;background:var(--panel);border-top:1px solid var(--line);border-bottom:0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;overflow:visible;padding:0 0 env(safe-area-inset-bottom,0px)}
+  nav.tabs button{font:600 .82rem var(--f-body);letter-spacing:0;padding:12px 2px 14px;border-bottom:0;border-top:3px solid transparent;text-align:center;white-space:normal;line-height:1.15;min-height:56px}
+  nav.tabs button[aria-selected="true"],nav.tabs .mas.on{color:var(--accent);border-top-color:var(--accent)}
+  nav.tabs .mx{display:none}
+  nav.tabs .mas{display:block}
+  header.top{margin-bottom:14px}
+  /* encuestas como tarjetas */
+  #tpolls thead{display:none}
+  #tpolls,#tpolls tbody{display:block}
+  #tpolls tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:12px 0;border-bottom:1px solid var(--line)}
+  #tpolls td{border:0;padding:0;text-align:left!important}
+  #tpolls td.ti{flex-basis:100%;order:-2}
+  #tpolls td.mt{font-size:.8rem;color:var(--muted)}
+  #tpolls td.mt[data-l]::before{content:attr(data-l) " "}
+  #tpolls td.pv{font-size:.85rem}
+  #tpolls td.pv::before{content:attr(data-l) " ";color:var(--muted);font-size:.75rem}
+  #tpolls td.pv.na{display:none}
+  #tpolls td.ac{flex-basis:100%;display:flex;gap:6px;margin-top:4px}
+  #tpolls td.ck{order:-1;flex-basis:100%}
+  #talambre th:nth-child(1),#talambre td:nth-child(1),#talambre th:nth-child(3),#talambre td:nth-child(3),#talambre th:nth-child(7),#talambre td:nth-child(7){display:none}
+  #talambre th,#talambre td{padding:6px 4px;font-size:.84rem;white-space:normal}
+  #talambre .vw{display:none}
+  #talambre td:nth-child(4),#talambre td:nth-child(5){white-space:nowrap}
+}
 .chart{position:relative;width:100%}
 .chart svg{display:block;width:100%;height:auto;overflow:visible}
 .chart .ax{font:11px var(--f-body);fill:var(--muted)}
@@ -133,11 +164,14 @@ details summary{cursor:pointer;font-weight:600}
     <button role="tab" data-t="resumen" aria-selected="true">Resumen</button>
     <button role="tab" data-t="pacto">Pactómetro</button>
     <button role="tab" data-t="provincias">Provincias</button>
-    <button role="tab" data-t="division">Izquierda dividida</button>
+    <button role="tab" data-t="alambre" class="mx">En el alambre</button>
+    <button role="tab" data-t="division" class="mx">Izquierda dividida</button>
     <button role="tab" data-t="tendencias">Tendencias</button>
-    <button role="tab" data-t="encuestas">Encuestas</button>
-    <button role="tab" data-t="metodo">Método</button>
+    <button role="tab" data-t="encuestas" class="mx">Encuestas</button>
+    <button role="tab" data-t="metodo" class="mx">Método</button>
+    <button type="button" data-t="__mas" class="mas" aria-haspopup="true" aria-expanded="false">Más</button>
   </nav>
+  <div id="masmenu" class="masmenu" hidden></div>
 
   <section id="v-resumen">
     <div class="kpis" id="kpis"></div>
@@ -146,6 +180,12 @@ details summary{cursor:pointer;font-weight:600}
       <div class="parl" id="parl" aria-label="Reparto de 350 escaños"></div>
       <div class="maj"><i></i><b>176</b></div>
       <div class="legend" id="legend"></div>
+    </div>
+    <div class="panel" style="margin-bottom:20px">
+      <h2 style="margin-bottom:6px">Qué ha cambiado</h2>
+      <p id="cfrase" style="margin:0 0 10px;max-width:75ch"></p>
+      <div class="scroll"><table id="tcambios"></table></div>
+      <p class="note" style="margin-top:8px">Promedio de encuestas (no el escenario modificado a mano). «Antes de la última encuesta» es el promedio de hoy sin la encuesta más reciente; «hace 7 días», el promedio que había entonces.</p>
     </div>
     <div class="grid2">
       <div class="panel">
@@ -162,6 +202,10 @@ details summary{cursor:pointer;font-weight:600}
         <p class="note" style="margin-top:10px">Reparto con D'Hondt y barrera del 3% en cada provincia, con los escaños de 2026. «Otros y blanco» cuenta para la barrera pero no obtiene escaños. Los escaños de las listas conjuntas de Frente Amplio y Podemos (Canarias y Comunitat Valenciana) se suman a Frente Amplio.</p>
       </div>
     </div>
+    <div class="panel" style="margin-top:20px">
+      <div class="toolbar"><h2 style="margin-right:auto">Probabilidades</h2><span class="muted num mcstat"></span><button class="btn small mcgo" type="button">Calcular</button></div>
+      <div id="rprob"></div>
+    </div>
   </section>
 
   <section id="v-pacto" hidden>
@@ -171,6 +215,7 @@ details summary{cursor:pointer;font-weight:600}
       <div class="pbar" id="pbar" aria-label="Reparto de los 350 votos"></div>
       <div class="maj"><i></i><b>176</b></div>
       <p class="num" id="psum" style="margin:6px 0 0"></p>
+      <div class="toolbar" style="margin:10px 0 0"><span id="pprob" class="note" style="margin-right:auto"></span><span class="muted num mcstat"></span><button class="btn ghost small mcgo" type="button">Calcular probabilidades</button></div>
     </div>
     <div class="panel">
       <div class="toolbar"><h2 style="margin-right:auto">Elige qué vota cada partido</h2></div>
@@ -189,8 +234,18 @@ details summary{cursor:pointer;font-weight:600}
         <input type="text" id="fq" placeholder="Buscar provincia" aria-label="Buscar provincia">
         <button class="btn ghost small" id="csv">Descargar CSV</button>
       </div>
-      <p class="note">Pulsa una provincia para ver el voto estimado de cada partido.</p>
+      <p class="note">Pulsa una provincia para ver el voto estimado de cada partido. «vs 23J» compara con los escaños reales de 2023; «FA+Pod.» es Frente Amplio más Podemos frente a Sumar.</p>
       <div class="scroll"><table id="tprov"></table></div>
+    </div>
+  </section>
+
+  <section id="v-alambre" hidden>
+    <div class="panel">
+      <div class="toolbar"><h2 style="margin-right:auto">Escaños en el alambre</h2>
+        <label for="acaa" class="muted">Comunidad</label><select id="acaa"><option value="">Todas</option></select>
+        <button class="btn ghost small" id="amas" type="button">Ver todas</button></div>
+      <p class="note">Provincias ordenadas por los votos que le faltan al aspirante para quitarle el último escaño a quien lo tiene («Le faltan», en votos), suponiendo que el resto de partidos no cambia. Votos aproximados, calculados sobre los votos válidos de 2023. Con el escenario de la pestaña «Resumen».</p>
+      <div class="scroll"><table id="talambre"></table></div>
     </div>
   </section>
 
@@ -235,11 +290,18 @@ details summary{cursor:pointer;font-weight:600}
         <input type="date" id="desde">
         <label for="vida" class="muted">Peso por antigüedad</label>
         <select id="vida"><option value="14">Sí</option><option value="0">No</option></select>
+        <label for="casa" class="muted">Corregir sesgo de instituto</label>
+        <select id="casa"><option value="1">Sí</option><option value="0">No</option></select>
       </div>
-      <p class="note">El promedio usa la encuesta más reciente de cada instituto que esté activa. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 14 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
+      <p class="note">Cada instituto pesa según su nota, el tamaño de su muestra (de 0,7 a 1,5 veces) y la antigüedad de su última encuesta; con «Peso por antigüedad» se usan todas sus encuestas, no solo la última. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 14 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
       <div class="scroll"><table id="tpolls"></table></div>
     </div>
-    <div class="panel" id="fpanel">
+    <div class="panel" style="margin-bottom:20px">
+      <h2 style="margin-bottom:6px">Sesgo estimado de cada instituto</h2>
+      <p class="note" style="margin-bottom:10px">Puntos que cada instituto da de más (+) o de menos (−) a cada partido frente al resto de encuestas publicadas en las mismas fechas. Con pocas encuestas por instituto la estimación se encoge hacia cero: con una sola encuesta se corrige un tercio de la diferencia; con cuatro, dos tercios. Se usa para corregir el promedio si «Corregir sesgo de instituto» está en «Sí».</p>
+      <div class="scroll"><table id="thouse"></table></div>
+    </div>
+    <div class="panel" style="margin-bottom:20px" id="fpanel">
       <h2 id="fh">Añadir encuesta</h2>
       <p class="note">Porcentajes de voto sobre voto válido. Deja vacío lo que la encuesta no publique.</p>
       <form id="fpoll" class="formgrid" style="margin-top:10px">
@@ -253,16 +315,35 @@ details summary{cursor:pointer;font-weight:600}
         <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center"><button class="btn" type="submit" id="pi-save">Guardar encuesta</button><button class="btn ghost" type="button" id="pi-cancel" hidden>Cancelar edición</button><span id="pi-msg" class="muted"></span></div>
       </form>
     </div>
+    <div class="panel" id="apanel">
+      <h2 style="margin-bottom:6px">Encuestas autonómicas</h2>
+      <p class="note" style="margin-bottom:10px">Encuestas de una sola comunidad (CEO, Euskobarómetro, Centra…) con intención de voto en las generales. Porcentajes sobre voto válido en esa comunidad; el espacio FA–Podemos solo se ajusta si la encuesta da los dos. El modelo acerca el voto de la comunidad a su promedio a la mitad (menos cuanto más antigua sea la encuesta) sin dejar de cuadrar el total nacional.</p>
+      <div class="scroll"><table id="tauton"></table></div>
+      <h3 id="afh" style="margin:16px 0 8px">Añadir encuesta autonómica</h3>
+      <form id="fauton" class="formgrid">
+        <label>Comunidad<select id="ai-ccaa" required></select></label>
+        <label>Instituto<input type="text" id="ai-instituto" required></label>
+        <label>Medio<input type="text" id="ai-medio"></label>
+        <label>Campo (texto)<input type="text" id="ai-campo"></label>
+        <label>Fin del campo<input type="date" id="ai-fin" required></label>
+        <label>Muestra<input type="number" id="ai-n" min="0"></label>
+        <label>Nota<select id="ai-nota"><option>A</option><option selected>B</option><option>C</option><option value="propia">Propia</option></select></label>
+        <div id="ai-parties" style="display:contents"></div>
+        <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" type="submit" id="ai-save">Guardar encuesta autonómica</button><button class="btn ghost" type="button" id="ai-cancel" hidden>Cancelar edición</button><span id="ai-msg" class="muted"></span></div>
+      </form>
+    </div>
   </section>
 
   <section id="v-metodo" hidden>
     <div class="panel method">
       <h2>Cómo calcula</h2>
-      <p>1. <b>Promedio.</b> Media ponderada de la última encuesta activa de cada instituto, con pesos según su acierto histórico (clasificación de EL PAÍS). Opcionalmente, ese peso se multiplica por un factor de antigüedad, 0,5^(días desde el fin del campo / 14): una encuesta de hace dos semanas cuenta la mitad que una de hoy. El CIS entra reestimado con sus microdatos.</p>
+      <p>1. <b>Promedio.</b> Media ponderada de las encuestas activas. Cada instituto pesa según su acierto histórico (clasificación de EL PAÍS), el tamaño de la muestra (raíz de n/1.000, entre 0,7 y 1,5) y la antigüedad; dentro de cada instituto se promedian sus encuestas con más peso para las recientes. Opcionalmente se corrige el sesgo de cada instituto (cuánto se separa de las demás encuestas de las mismas fechas, encogido hacia cero cuando hay pocas encuestas). Opcionalmente, ese peso se multiplica por un factor de antigüedad, 0,5^(días desde el fin del campo / 14): una encuesta de hace dos semanas cuenta la mitad que una de hoy. El CIS entra reestimado con sus microdatos.</p>
       <p>2. <b>Voto provincial.</b> Parte del resultado del 23J en cada provincia; cada partido sube o baja en la misma proporción que en el promedio nacional. Se Acabó la Fiesta se reparte como en las europeas de 2024 y Adelante Andalucía como en las andaluzas de 2026, restando su voto sobre todo al espacio de Sumar (procedencia según el CIS). Un ajuste iterativo hace que cada provincia sume 100% y que los totales nacionales coincidan con el promedio.</p>
       <p>3. <b>Frente Amplio y Podemos.</b> El reparto del espacio en cada comunidad combina las europeas de 2024 con los microdatos del CIS y de 40dB, calibrado a la cuota nacional de Podemos del promedio. Juntos en Canarias y la Comunitat Valenciana; en Cataluña, la parte de Podemos va a ERC.</p>
+      <p>3 bis. <b>Encuestas autonómicas.</b> Si hay encuestas de una comunidad, su voto se acerca al promedio de esas encuestas: a la mitad del camino si son recientes y menos cuanto más antiguas (la mitad de peso cada 14 días), mientras los totales nacionales siguen cuadrando con el promedio nacional.</p>
       <p>4. <b>Escaños.</b> D'Hondt con barrera del 3% y escaños de 2026. La pestaña «Izquierda dividida» compara con una lista única que sumara los votos de Frente Amplio y Podemos.</p>
-      <p>5. <b>Probabilidades.</b> Simulaciones en las que varían a la vez el nivel del espacio y el reparto entre los dos (con la dispersión de las encuestas activas), el apoyo a Adelante, el resultado de cada partido en cada provincia (un 10% de media) y las decisiones de método discutibles. Son probabilidades dentro del modelo, no una predicción: suponen que las encuestas no fallan todas en la misma dirección.</p>
+      <p>5. <b>Probabilidades.</b> Simulaciones en las que varía el voto nacional de cada partido con el error histórico de los promedios de encuestas (desviación típica de 0,42 × √cuota, calibrada con la última semana de abril de 2019, noviembre de 2019 y julio de 2023), el reparto entre Frente Amplio y Podemos (con la dispersión de las encuestas activas), el apoyo a Adelante, el resultado de cada partido en cada provincia (un 12 % de media, la dispersión que dejó el reparto proporcional al comprobarlo con 2019 y 2023) y las decisiones de método discutibles. Son probabilidades dentro del modelo, no una predicción.</p>
+      <p>6. <b>Comprobación con elecciones pasadas.</b> Con el resultado nacional real, el reparto proporcional colocó mal 15 de 350 escaños de abril a noviembre de 2019 y 16 de noviembre de 2019 al 23J. Se probaron también un desplazamiento uniforme en puntos (17 y 27), uno logístico (14 y 17) y una mezcla (13 y 18): ninguno mejora de forma clara, así que se mantiene el proporcional.</p>
       <p class="note">Limitaciones conocidas: Vox no se presentó en Santa Cruz de Tenerife en 2023; su base allí se estima con su resultado de Las Palmas, corregido por la diferencia entre ambas provincias en las europeas de 2024; los votos absolutos se calculan con los votos válidos de 2023; el modelo no tiene en cuenta coaliciones territoriales nuevas que no estuvieran en Sumar en 2023.</p>
     </div>
   </section>
@@ -272,14 +353,17 @@ details summary{cursor:pointer;font-weight:600}
 #fpanel{display:none!important}
 #tpolls td:last-child button{display:none!important}
 #tpolls td:first-child input{display:none!important}
+#fauton,#afh{display:none!important}
+#tauton td:last-child button{display:none!important}
+#tauton td:first-child input{display:none!important}
 </style>
 <script>
 (function(){
-  const DOCS = [{"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.62, "BNG": 0.87, "CC": 0.22, "EHB": 1.31, "ERC": 2.32, "ESP": 7.3, "JUNTS": 1.15, "PNV": 0.66, "POD": 3.26, "PP": 27.97, "PSOE": 26.52, "SALF": 1.63, "UPN": 0.17, "VOX": 18}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}];
-  const STAMP = "24 oct, 23:35";
+  const DOCS = {"encuestas": [{"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.62, "BNG": 0.87, "CC": 0.22, "EHB": 1.31, "ERC": 2.32, "ESP": 7.3, "JUNTS": 1.15, "PNV": 0.66, "POD": 3.26, "PP": 27.97, "PSOE": 26.52, "SALF": 1.63, "UPN": 0.17, "VOX": 18}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}], "autonomicas": []};
+  const STAMP = "25 oct, 00:13";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
-  const db = { collection: ()=>({
-      onSnapshot: cb=>{ setTimeout(()=>cb({docs:DOCS.map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
+  const db = { collection: name=>({
+      onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
       add: ro, doc: ()=>({set:ro,update:ro,delete:ro})
   })};
   const downloads = { save: async ({filename,data})=>{
@@ -297,7 +381,7 @@ details summary{cursor:pointer;font-weight:600}
 })();
 </script>
 <script>
-const D = {"prov": [{"n": "A Coruña", "c": "GAL", "e": 8, "w": 673034, "s": "separados", "v": {"PP": 43.13, "PSOE": 28.17, "VOX": 5.08, "SUMAR": 12.19, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 9.98, "CC": 0.0, "UPN": 0.0, "OTROS": 1.45}, "salf": 2.02, "aa": 0.0}, {"n": "Albacete", "c": "CLM", "e": 4, "w": 222014, "s": "separados", "v": {"PP": 39.92, "PSOE": 34.51, "VOX": 16.61, "SUMAR": 7.16, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.8}, "salf": 5.67, "aa": 0.0}, {"n": "Alicante", "c": "CVA", "e": 12, "w": 865828, "s": "juntos", "v": {"PP": 36.73, "PSOE": 32.0, "VOX": 16.25, "SUMAR": 12.88, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.14}, "salf": 6.06, "aa": 0.0}, {"n": "Almería", "c": "AND", "e": 6, "w": 326186, "s": "separados", "v": {"PP": 40.94, "PSOE": 29.04, "VOX": 21.28, "SUMAR": 6.69, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.05}, "salf": 7.07, "aa": 3.091}, {"n": "Asturias", "c": "AST", "e": 7, "w": 597032, "s": "separados", "v": {"PP": 35.65, "PSOE": 34.34, "VOX": 12.49, "SUMAR": 14.85, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.67}, "salf": 3.28, "aa": 0.0}, {"n": "Badajoz", "c": "EXT", "e": 5, "w": 386631, "s": "separados", "v": {"PP": 37.82, "PSOE": 39.21, "VOX": 13.66, "SUMAR": 6.84, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.47}, "salf": 3.62, "aa": 0.0}, {"n": "Baleares", "c": "IBA", "e": 8, "w": 503280, "s": "separados", "v": {"PP": 35.63, "PSOE": 30.16, "VOX": 15.21, "SUMAR": 16.59, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.41}, "salf": 5.35, "aa": 0.0}, {"n": "Barcelona", "c": "CAT", "e": 32, "w": 2701248, "s": "Podemos en ERC", "v": {"PP": 13.78, "PSOE": 35.7, "VOX": 7.56, "SUMAR": 15.22, "ERC": 12.32, "JUNTS": 9.68, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 5.74}, "salf": 2.87, "aa": 0.0}, {"n": "Bizkaia", "c": "PVA", "e": 8, "w": 616222, "s": "separados", "v": {"PP": 11.57, "PSOE": 25.82, "VOX": 2.64, "SUMAR": 10.92, "ERC": 0.0, "JUNTS": 0.0, "EHB": 20.64, "PNV": 26.93, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.48}, "salf": 1.77, "aa": 0.0}, {"n": "Burgos", "c": "CYL", "e": 4, "w": 207172, "s": "separados", "v": {"PP": 40.64, "PSOE": 34.45, "VOX": 12.77, "SUMAR": 8.64, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.5}, "salf": 4.01, "aa": 0.0}, {"n": "Cantabria", "c": "CAN", "e": 5, "w": 350150, "s": "separados", "v": {"PP": 42.08, "PSOE": 33.3, "VOX": 14.06, "SUMAR": 8.49, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.07}, "salf": 5.68, "aa": 0.0}, {"n": "Castellón", "c": "CVA", "e": 5, "w": 307965, "s": "juntos", "v": {"PP": 35.17, "PSOE": 32.65, "VOX": 15.88, "SUMAR": 14.35, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.95}, "salf": 5.15, "aa": 0.0}, {"n": "Ceuta", "c": "CEU", "e": 1, "w": 33321, "s": "sin confirmar", "v": {"PP": 38.77, "PSOE": 34.01, "VOX": 23.26, "SUMAR": 2.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.5}, "salf": 4.63, "aa": 0.0}, {"n": "Ciudad Real", "c": "CLM", "e": 5, "w": 273467, "s": "separados", "v": {"PP": 40.54, "PSOE": 35.37, "VOX": 16.27, "SUMAR": 6.15, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.67}, "salf": 4.17, "aa": 0.0}, {"n": "Cuenca", "c": "CLM", "e": 3, "w": 118739, "s": "separados", "v": {"PP": 39.76, "PSOE": 37.37, "VOX": 15.55, "SUMAR": 5.56, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.76}, "salf": 3.92, "aa": 0.0}, {"n": "Cáceres", "c": "EXT", "e": 4, "w": 240681, "s": "separados", "v": {"PP": 38.0, "PSOE": 38.88, "VOX": 13.6, "SUMAR": 6.93, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.59}, "salf": 3.24, "aa": 0.0}, {"n": "Cádiz", "c": "AND", "e": 8, "w": 588674, "s": "separados", "v": {"PP": 34.8, "PSOE": 33.15, "VOX": 15.18, "SUMAR": 12.89, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.98}, "salf": 6.55, "aa": 14.348}, {"n": "Córdoba", "c": "AND", "e": 6, "w": 454404, "s": "separados", "v": {"PP": 37.89, "PSOE": 32.12, "VOX": 13.94, "SUMAR": 13.73, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.32}, "salf": 5.38, "aa": 8.344}, {"n": "Gipuzkoa", "c": "PVA", "e": 6, "w": 371617, "s": "separados", "v": {"PP": 8.69, "PSOE": 23.29, "VOX": 2.09, "SUMAR": 10.64, "ERC": 0.0, "JUNTS": 0.0, "EHB": 31.15, "PNV": 22.58, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.56}, "salf": 1.41, "aa": 0.0}, {"n": "Girona", "c": "CAT", "e": 6, "w": 314222, "s": "Podemos en ERC", "v": {"PP": 9.7, "PSOE": 28.93, "VOX": 7.03, "SUMAR": 10.94, "ERC": 14.72, "JUNTS": 19.58, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 9.1}, "salf": 2.2, "aa": 0.0}, {"n": "Granada", "c": "AND", "e": 7, "w": 520045, "s": "separados", "v": {"PP": 36.99, "PSOE": 32.98, "VOX": 16.12, "SUMAR": 11.65, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.26}, "salf": 6.06, "aa": 6.826}, {"n": "Guadalajara", "c": "CLM", "e": 3, "w": 148379, "s": "separados", "v": {"PP": 36.33, "PSOE": 32.98, "VOX": 19.25, "SUMAR": 9.16, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.28}, "salf": 6.58, "aa": 0.0}, {"n": "Huelva", "c": "AND", "e": 5, "w": 242317, "s": "separados", "v": {"PP": 36.43, "PSOE": 35.95, "VOX": 14.63, "SUMAR": 10.42, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.57}, "salf": 4.93, "aa": 8.016}, {"n": "Huesca", "c": "ARA", "e": 3, "w": 117735, "s": "separados", "v": {"PP": 38.19, "PSOE": 33.62, "VOX": 12.64, "SUMAR": 11.49, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.06}, "salf": 4.74, "aa": 0.0}, {"n": "Jaén", "c": "AND", "e": 5, "w": 372193, "s": "separados", "v": {"PP": 37.32, "PSOE": 36.29, "VOX": 14.75, "SUMAR": 7.99, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.65}, "salf": 4.48, "aa": 4.37}, {"n": "La Rioja", "c": "RIO", "e": 4, "w": 174663, "s": "separados", "v": {"PP": 45.64, "PSOE": 35.68, "VOX": 9.77, "SUMAR": 6.57, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.34}, "salf": 3.66, "aa": 0.0}, {"n": "Las Palmas", "c": "ICA", "e": 8, "w": 520219, "s": "juntos", "v": {"PP": 25.85, "PSOE": 33.19, "VOX": 14.61, "SUMAR": 10.27, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 6.34, "UPN": 0.0, "OTROS": 9.74}, "salf": 6.78, "aa": 0.0}, {"n": "León", "c": "CYL", "e": 4, "w": 260902, "s": "separados", "v": {"PP": 36.92, "PSOE": 33.64, "VOX": 12.88, "SUMAR": 6.75, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 9.81}, "salf": 4.06, "aa": 0.0}, {"n": "Lleida", "c": "CAT", "e": 4, "w": 175786, "s": "Podemos en ERC", "v": {"PP": 12.84, "PSOE": 29.49, "VOX": 6.81, "SUMAR": 7.89, "ERC": 18.6, "JUNTS": 18.01, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 6.36}, "salf": 2.34, "aa": 0.0}, {"n": "Lugo", "c": "GAL", "e": 4, "w": 196819, "s": "separados", "v": {"PP": 50.24, "PSOE": 30.3, "VOX": 4.35, "SUMAR": 5.18, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 8.66, "CC": 0.0, "UPN": 0.0, "OTROS": 1.27}, "salf": 1.67, "aa": 0.0}, {"n": "Madrid", "c": "MAD", "e": 38, "w": 3608673, "s": "separados", "v": {"PP": 40.55, "PSOE": 27.84, "VOX": 14.03, "SUMAR": 15.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.12}, "salf": 5.06, "aa": 0.0}, {"n": "Melilla", "c": "MEL", "e": 1, "w": 27349, "s": "sin confirmar", "v": {"PP": 49.16, "PSOE": 25.39, "VOX": 15.94, "SUMAR": 3.02, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 6.49}, "salf": 4.63, "aa": 0.0}, {"n": "Murcia", "c": "RMU", "e": 10, "w": 747797, "s": "separados", "v": {"PP": 41.18, "PSOE": 25.3, "VOX": 21.81, "SUMAR": 9.57, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.14}, "salf": 6.57, "aa": 0.0}, {"n": "Málaga", "c": "AND", "e": 11, "w": 788939, "s": "separados", "v": {"PP": 38.31, "PSOE": 30.34, "VOX": 16.46, "SUMAR": 12.26, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.63}, "salf": 7.5, "aa": 9.312}, {"n": "Navarra", "c": "NAV", "e": 5, "w": 341844, "s": "separados", "v": {"PP": 16.71, "PSOE": 27.37, "VOX": 5.7, "SUMAR": 12.85, "ERC": 0.0, "JUNTS": 0.0, "EHB": 17.25, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 15.27, "OTROS": 4.85}, "salf": 3.06, "aa": 0.0}, {"n": "Ourense", "c": "GAL", "e": 4, "w": 191240, "s": "separados", "v": {"PP": 50.02, "PSOE": 30.08, "VOX": 4.87, "SUMAR": 5.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 8.22, "CC": 0.0, "UPN": 0.0, "OTROS": 1.35}, "salf": 1.83, "aa": 0.0}, {"n": "Palencia", "c": "CYL", "e": 3, "w": 99511, "s": "separados", "v": {"PP": 41.98, "PSOE": 34.67, "VOX": 12.9, "SUMAR": 6.06, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.39}, "salf": 4.09, "aa": 0.0}, {"n": "Pontevedra", "c": "GAL", "e": 7, "w": 574570, "s": "separados", "v": {"PP": 39.72, "PSOE": 31.36, "VOX": 4.81, "SUMAR": 13.19, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 9.39, "CC": 0.0, "UPN": 0.0, "OTROS": 1.53}, "salf": 2.28, "aa": 0.0}, {"n": "Salamanca", "c": "CYL", "e": 4, "w": 195497, "s": "separados", "v": {"PP": 46.87, "PSOE": 30.49, "VOX": 14.67, "SUMAR": 5.53, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.44}, "salf": 3.71, "aa": 0.0}, {"n": "Santa Cruz de Tenerife", "c": "ICA", "e": 7, "w": 503491, "s": "juntos", "v": {"PP": 30.952, "PSOE": 29.324, "VOX": 12.44, "SUMAR": 9.5, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 14.666, "UPN": 0.0, "OTROS": 3.118}, "salf": 5.93, "aa": 0.0}, {"n": "Segovia", "c": "CYL", "e": 3, "w": 91381, "s": "separados", "v": {"PP": 45.02, "PSOE": 30.6, "VOX": 14.12, "SUMAR": 8.05, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.21}, "salf": 4.43, "aa": 0.0}, {"n": "Sevilla", "c": "AND", "e": 12, "w": 1090260, "s": "separados", "v": {"PP": 33.38, "PSOE": 36.6, "VOX": 13.32, "SUMAR": 14.04, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.66}, "salf": 6.36, "aa": 12.878}, {"n": "Soria", "c": "CYL", "e": 2, "w": 50294, "s": "separados", "v": {"PP": 37.22, "PSOE": 29.48, "VOX": 9.81, "SUMAR": 3.37, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 20.12}, "salf": 3.14, "aa": 0.0}, {"n": "Tarragona", "c": "CAT", "e": 6, "w": 351773, "s": "Podemos en ERC", "v": {"PP": 13.87, "PSOE": 32.91, "VOX": 10.34, "SUMAR": 11.34, "ERC": 15.07, "JUNTS": 11.08, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 5.39}, "salf": 3.39, "aa": 0.0}, {"n": "Teruel", "c": "ARA", "e": 3, "w": 74387, "s": "separados", "v": {"PP": 35.02, "PSOE": 29.28, "VOX": 13.08, "SUMAR": 5.44, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 17.18}, "salf": 4.69, "aa": 0.0}, {"n": "Toledo", "c": "CLM", "e": 6, "w": 383493, "s": "separados", "v": {"PP": 37.84, "PSOE": 32.56, "VOX": 19.64, "SUMAR": 8.23, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.73}, "salf": 4.89, "aa": 0.0}, {"n": "Valencia", "c": "CVA", "e": 16, "w": 1470490, "s": "juntos", "v": {"PP": 33.64, "PSOE": 32.1, "VOX": 15.21, "SUMAR": 16.9, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.15}, "salf": 5.81, "aa": 0.0}, {"n": "Valladolid", "c": "CYL", "e": 5, "w": 330841, "s": "separados", "v": {"PP": 40.84, "PSOE": 32.75, "VOX": 15.16, "SUMAR": 8.87, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.38}, "salf": 4.56, "aa": 0.0}, {"n": "Zamora", "c": "CYL", "e": 3, "w": 98253, "s": "separados", "v": {"PP": 44.67, "PSOE": 32.49, "VOX": 13.2, "SUMAR": 5.65, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.99}, "salf": 3.32, "aa": 0.0}, {"n": "Zaragoza", "c": "ARA", "e": 7, "w": 522391, "s": "separados", "v": {"PP": 36.01, "PSOE": 30.82, "VOX": 15.3, "SUMAR": 13.48, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.39}, "salf": 5.29, "aa": 0.0}, {"n": "Álava", "c": "PVA", "e": 4, "w": 167581, "s": "separados", "v": {"PP": 17.87, "PSOE": 27.66, "VOX": 3.89, "SUMAR": 12.75, "ERC": 0.0, "JUNTS": 0.0, "EHB": 19.51, "PNV": 16.6, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.72}, "salf": 2.3, "aa": 0.0}, {"n": "Ávila", "c": "CYL", "e": 3, "w": 97087, "s": "separados", "v": {"PP": 43.25, "PSOE": 27.39, "VOX": 15.38, "SUMAR": 5.13, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 8.85}, "salf": 4.23, "aa": 0.0}], "nat23": {"PP": 32.9695, "PSOE": 31.6065, "VOX": 12.629, "SUMAR": 12.3223, "ERC": 1.8825, "JUNTS": 1.5945, "EHB": 1.3554, "PNV": 1.1247, "BNG": 0.6233, "CC": 0.4327, "UPN": 0.2114, "OTROS": 3.2482}, "eu": {"AND": [2.82, 5.1], "ARA": [3.06, 5.1], "AST": [3.8, 5.94], "IBA": [3.15, 4.36], "PVA": [3.21, 3.3], "ICA": [3.43, 4.01], "CAN": [2.72, 3.15], "CYL": [2.38, 2.93], "CLM": [2.21, 3.04], "CAT": [4.61, 4.31], "EXT": [2.24, 2.5], "GAL": [1.97, 2.09], "RIO": [2.35, 3.26], "MAD": [4.48, 5.82], "RMU": [2.37, 3.29], "NAV": [3.24, 3.85], "CVA": [3.02, 7.66]}, "qeu": 0.4133891648903066, "mic": {"AND": [81, 0.3034], "ARA": [17, 0.1702], "AST": [17, 0.301], "CAN": [10, 0.0809], "CAT": [47, 0.2917], "CLM": [10, 0.4251], "CVA": [92, 0.238], "CYL": [28, 0.0705], "EXT": [7, 0.6096], "GAL": [13, 0.4937], "IBA": [14, 0.3043], "ICA": [19, 0.542], "MAD": [100, 0.2563], "NAV": [13, 0.772], "PVA": [18, 0.6161], "RIO": [14, 0.3659], "RMU": [10, 0.2775]}, "salfEU": 4.63};
+const D = {"prov": [{"n": "A Coruña", "c": "GAL", "e": 8, "w": 673034, "s": "separados", "v": {"PP": 43.13, "PSOE": 28.17, "VOX": 5.08, "SUMAR": 12.19, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 9.98, "CC": 0.0, "UPN": 0.0, "OTROS": 1.45}, "salf": 2.02, "aa": 0.0, "e23": 8, "s23": {"PP": 4, "PSOE": 2, "SUMAR": 1, "BNG": 1}}, {"n": "Albacete", "c": "CLM", "e": 4, "w": 222014, "s": "separados", "v": {"PP": 39.92, "PSOE": 34.51, "VOX": 16.61, "SUMAR": 7.16, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.8}, "salf": 5.67, "aa": 0.0, "e23": 4, "s23": {"PP": 2, "PSOE": 2}}, {"n": "Alicante", "c": "CVA", "e": 12, "w": 865828, "s": "juntos", "v": {"PP": 36.73, "PSOE": 32.0, "VOX": 16.25, "SUMAR": 12.88, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.14}, "salf": 6.06, "aa": 0.0, "e23": 12, "s23": {"PP": 5, "PSOE": 4, "VOX": 2, "SUMAR": 1}}, {"n": "Almería", "c": "AND", "e": 6, "w": 326186, "s": "separados", "v": {"PP": 40.94, "PSOE": 29.04, "VOX": 21.28, "SUMAR": 6.69, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.05}, "salf": 7.07, "aa": 3.091, "e23": 6, "s23": {"PP": 3, "PSOE": 2, "VOX": 1}}, {"n": "Asturias", "c": "AST", "e": 7, "w": 597032, "s": "separados", "v": {"PP": 35.65, "PSOE": 34.34, "VOX": 12.49, "SUMAR": 14.85, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.67}, "salf": 3.28, "aa": 0.0, "e23": 7, "s23": {"PP": 3, "PSOE": 2, "VOX": 1, "SUMAR": 1}}, {"n": "Badajoz", "c": "EXT", "e": 5, "w": 386631, "s": "separados", "v": {"PP": 37.82, "PSOE": 39.21, "VOX": 13.66, "SUMAR": 6.84, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.47}, "salf": 3.62, "aa": 0.0, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Baleares", "c": "IBA", "e": 8, "w": 503280, "s": "separados", "v": {"PP": 35.63, "PSOE": 30.16, "VOX": 15.21, "SUMAR": 16.59, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.41}, "salf": 5.35, "aa": 0.0, "e23": 8, "s23": {"PP": 3, "PSOE": 3, "VOX": 1, "SUMAR": 1}}, {"n": "Barcelona", "c": "CAT", "e": 32, "w": 2701248, "s": "Podemos en ERC", "v": {"PP": 13.78, "PSOE": 35.7, "VOX": 7.56, "SUMAR": 15.22, "ERC": 12.32, "JUNTS": 9.68, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 5.74}, "salf": 2.87, "aa": 0.0, "e23": 32, "s23": {"PP": 5, "PSOE": 13, "VOX": 2, "SUMAR": 5, "ERC": 4, "JUNTS": 3}}, {"n": "Bizkaia", "c": "PVA", "e": 8, "w": 616222, "s": "separados", "v": {"PP": 11.57, "PSOE": 25.82, "VOX": 2.64, "SUMAR": 10.92, "ERC": 0.0, "JUNTS": 0.0, "EHB": 20.64, "PNV": 26.93, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.48}, "salf": 1.77, "aa": 0.0, "e23": 8, "s23": {"PP": 1, "PSOE": 2, "SUMAR": 1, "EHB": 2, "PNV": 2}}, {"n": "Burgos", "c": "CYL", "e": 4, "w": 207172, "s": "separados", "v": {"PP": 40.64, "PSOE": 34.45, "VOX": 12.77, "SUMAR": 8.64, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.5}, "salf": 4.01, "aa": 0.0, "e23": 4, "s23": {"PP": 2, "PSOE": 2}}, {"n": "Cantabria", "c": "CAN", "e": 5, "w": 350150, "s": "separados", "v": {"PP": 42.08, "PSOE": 33.3, "VOX": 14.06, "SUMAR": 8.49, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.07}, "salf": 5.68, "aa": 0.0, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Castellón", "c": "CVA", "e": 5, "w": 307965, "s": "juntos", "v": {"PP": 35.17, "PSOE": 32.65, "VOX": 15.88, "SUMAR": 14.35, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.95}, "salf": 5.15, "aa": 0.0, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Ceuta", "c": "CEU", "e": 1, "w": 33321, "s": "sin confirmar", "v": {"PP": 38.77, "PSOE": 34.01, "VOX": 23.26, "SUMAR": 2.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.5}, "salf": 4.63, "aa": 0.0, "e23": 1, "s23": {"PP": 1}}, {"n": "Ciudad Real", "c": "CLM", "e": 5, "w": 273467, "s": "separados", "v": {"PP": 40.54, "PSOE": 35.37, "VOX": 16.27, "SUMAR": 6.15, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.67}, "salf": 4.17, "aa": 0.0, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Cuenca", "c": "CLM", "e": 3, "w": 118739, "s": "separados", "v": {"PP": 39.76, "PSOE": 37.37, "VOX": 15.55, "SUMAR": 5.56, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.76}, "salf": 3.92, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Cáceres", "c": "EXT", "e": 4, "w": 240681, "s": "separados", "v": {"PP": 38.0, "PSOE": 38.88, "VOX": 13.6, "SUMAR": 6.93, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.59}, "salf": 3.24, "aa": 0.0, "e23": 4, "s23": {"PP": 2, "PSOE": 2}}, {"n": "Cádiz", "c": "AND", "e": 8, "w": 588674, "s": "separados", "v": {"PP": 34.8, "PSOE": 33.15, "VOX": 15.18, "SUMAR": 12.89, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.98}, "salf": 6.55, "aa": 14.348, "e23": 9, "s23": {"PP": 4, "PSOE": 3, "VOX": 1, "SUMAR": 1}}, {"n": "Córdoba", "c": "AND", "e": 6, "w": 454404, "s": "separados", "v": {"PP": 37.89, "PSOE": 32.12, "VOX": 13.94, "SUMAR": 13.73, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.32}, "salf": 5.38, "aa": 8.344, "e23": 6, "s23": {"PP": 2, "PSOE": 2, "VOX": 1, "SUMAR": 1}}, {"n": "Gipuzkoa", "c": "PVA", "e": 6, "w": 371617, "s": "separados", "v": {"PP": 8.69, "PSOE": 23.29, "VOX": 2.09, "SUMAR": 10.64, "ERC": 0.0, "JUNTS": 0.0, "EHB": 31.15, "PNV": 22.58, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.56}, "salf": 1.41, "aa": 0.0, "e23": 6, "s23": {"PSOE": 2, "EHB": 2, "PNV": 2}}, {"n": "Girona", "c": "CAT", "e": 6, "w": 314222, "s": "Podemos en ERC", "v": {"PP": 9.7, "PSOE": 28.93, "VOX": 7.03, "SUMAR": 10.94, "ERC": 14.72, "JUNTS": 19.58, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 9.1}, "salf": 2.2, "aa": 0.0, "e23": 6, "s23": {"PSOE": 2, "SUMAR": 1, "ERC": 1, "JUNTS": 2}}, {"n": "Granada", "c": "AND", "e": 7, "w": 520045, "s": "separados", "v": {"PP": 36.99, "PSOE": 32.98, "VOX": 16.12, "SUMAR": 11.65, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.26}, "salf": 6.06, "aa": 6.826, "e23": 7, "s23": {"PP": 3, "PSOE": 2, "VOX": 1, "SUMAR": 1}}, {"n": "Guadalajara", "c": "CLM", "e": 3, "w": 148379, "s": "separados", "v": {"PP": 36.33, "PSOE": 32.98, "VOX": 19.25, "SUMAR": 9.16, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.28}, "salf": 6.58, "aa": 0.0, "e23": 3, "s23": {"PP": 1, "PSOE": 1, "VOX": 1}}, {"n": "Huelva", "c": "AND", "e": 5, "w": 242317, "s": "separados", "v": {"PP": 36.43, "PSOE": 35.95, "VOX": 14.63, "SUMAR": 10.42, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.57}, "salf": 4.93, "aa": 8.016, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Huesca", "c": "ARA", "e": 3, "w": 117735, "s": "separados", "v": {"PP": 38.19, "PSOE": 33.62, "VOX": 12.64, "SUMAR": 11.49, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.06}, "salf": 4.74, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Jaén", "c": "AND", "e": 5, "w": 372193, "s": "separados", "v": {"PP": 37.32, "PSOE": 36.29, "VOX": 14.75, "SUMAR": 7.99, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.65}, "salf": 4.48, "aa": 4.37, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "La Rioja", "c": "RIO", "e": 4, "w": 174663, "s": "separados", "v": {"PP": 45.64, "PSOE": 35.68, "VOX": 9.77, "SUMAR": 6.57, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.34}, "salf": 3.66, "aa": 0.0, "e23": 4, "s23": {"PP": 2, "PSOE": 2}}, {"n": "Las Palmas", "c": "ICA", "e": 8, "w": 520219, "s": "juntos", "v": {"PP": 25.85, "PSOE": 33.19, "VOX": 14.61, "SUMAR": 10.27, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 6.34, "UPN": 0.0, "OTROS": 9.74}, "salf": 6.78, "aa": 0.0, "e23": 8, "s23": {"PP": 3, "PSOE": 3, "VOX": 1, "SUMAR": 1}}, {"n": "León", "c": "CYL", "e": 4, "w": 260902, "s": "separados", "v": {"PP": 36.92, "PSOE": 33.64, "VOX": 12.88, "SUMAR": 6.75, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 9.81}, "salf": 4.06, "aa": 0.0, "e23": 4, "s23": {"PP": 2, "PSOE": 2}}, {"n": "Lleida", "c": "CAT", "e": 4, "w": 175786, "s": "Podemos en ERC", "v": {"PP": 12.84, "PSOE": 29.49, "VOX": 6.81, "SUMAR": 7.89, "ERC": 18.6, "JUNTS": 18.01, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 6.36}, "salf": 2.34, "aa": 0.0, "e23": 4, "s23": {"PSOE": 2, "ERC": 1, "JUNTS": 1}}, {"n": "Lugo", "c": "GAL", "e": 4, "w": 196819, "s": "separados", "v": {"PP": 50.24, "PSOE": 30.3, "VOX": 4.35, "SUMAR": 5.18, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 8.66, "CC": 0.0, "UPN": 0.0, "OTROS": 1.27}, "salf": 1.67, "aa": 0.0, "e23": 4, "s23": {"PP": 3, "PSOE": 1}}, {"n": "Madrid", "c": "MAD", "e": 38, "w": 3608673, "s": "separados", "v": {"PP": 40.55, "PSOE": 27.84, "VOX": 14.03, "SUMAR": 15.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.12}, "salf": 5.06, "aa": 0.0, "e23": 37, "s23": {"PP": 16, "PSOE": 10, "VOX": 5, "SUMAR": 6}}, {"n": "Melilla", "c": "MEL", "e": 1, "w": 27349, "s": "sin confirmar", "v": {"PP": 49.16, "PSOE": 25.39, "VOX": 15.94, "SUMAR": 3.02, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 6.49}, "salf": 4.63, "aa": 0.0, "e23": 1, "s23": {"PP": 1}}, {"n": "Murcia", "c": "RMU", "e": 10, "w": 747797, "s": "separados", "v": {"PP": 41.18, "PSOE": 25.3, "VOX": 21.81, "SUMAR": 9.57, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.14}, "salf": 6.57, "aa": 0.0, "e23": 10, "s23": {"PP": 4, "PSOE": 3, "VOX": 2, "SUMAR": 1}}, {"n": "Málaga", "c": "AND", "e": 11, "w": 788939, "s": "separados", "v": {"PP": 38.31, "PSOE": 30.34, "VOX": 16.46, "SUMAR": 12.26, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.63}, "salf": 7.5, "aa": 9.312, "e23": 11, "s23": {"PP": 5, "PSOE": 3, "VOX": 2, "SUMAR": 1}}, {"n": "Navarra", "c": "NAV", "e": 5, "w": 341844, "s": "separados", "v": {"PP": 16.71, "PSOE": 27.37, "VOX": 5.7, "SUMAR": 12.85, "ERC": 0.0, "JUNTS": 0.0, "EHB": 17.25, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 15.27, "OTROS": 4.85}, "salf": 3.06, "aa": 0.0, "e23": 5, "s23": {"PP": 1, "PSOE": 2, "EHB": 1, "UPN": 1}}, {"n": "Ourense", "c": "GAL", "e": 4, "w": 191240, "s": "separados", "v": {"PP": 50.02, "PSOE": 30.08, "VOX": 4.87, "SUMAR": 5.46, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 8.22, "CC": 0.0, "UPN": 0.0, "OTROS": 1.35}, "salf": 1.83, "aa": 0.0, "e23": 4, "s23": {"PP": 3, "PSOE": 1}}, {"n": "Palencia", "c": "CYL", "e": 3, "w": 99511, "s": "separados", "v": {"PP": 41.98, "PSOE": 34.67, "VOX": 12.9, "SUMAR": 6.06, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.39}, "salf": 4.09, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Pontevedra", "c": "GAL", "e": 7, "w": 574570, "s": "separados", "v": {"PP": 39.72, "PSOE": 31.36, "VOX": 4.81, "SUMAR": 13.19, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 9.39, "CC": 0.0, "UPN": 0.0, "OTROS": 1.53}, "salf": 2.28, "aa": 0.0, "e23": 7, "s23": {"PP": 3, "PSOE": 3, "SUMAR": 1}}, {"n": "Salamanca", "c": "CYL", "e": 4, "w": 195497, "s": "separados", "v": {"PP": 46.87, "PSOE": 30.49, "VOX": 14.67, "SUMAR": 5.53, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.44}, "salf": 3.71, "aa": 0.0, "e23": 4, "s23": {"PP": 3, "PSOE": 1}}, {"n": "Santa Cruz de Tenerife", "c": "ICA", "e": 7, "w": 503491, "s": "juntos", "v": {"PP": 30.952, "PSOE": 29.324, "VOX": 12.44, "SUMAR": 9.5, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 14.666, "UPN": 0.0, "OTROS": 3.118}, "salf": 5.93, "aa": 0.0, "e23": 7, "s23": {"PP": 3, "PSOE": 3, "CC": 1}}, {"n": "Segovia", "c": "CYL", "e": 3, "w": 91381, "s": "separados", "v": {"PP": 45.02, "PSOE": 30.6, "VOX": 14.12, "SUMAR": 8.05, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.21}, "salf": 4.43, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Sevilla", "c": "AND", "e": 12, "w": 1090260, "s": "separados", "v": {"PP": 33.38, "PSOE": 36.6, "VOX": 13.32, "SUMAR": 14.04, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.66}, "salf": 6.36, "aa": 12.878, "e23": 12, "s23": {"PP": 4, "PSOE": 5, "VOX": 1, "SUMAR": 2}}, {"n": "Soria", "c": "CYL", "e": 2, "w": 50294, "s": "separados", "v": {"PP": 37.22, "PSOE": 29.48, "VOX": 9.81, "SUMAR": 3.37, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 20.12}, "salf": 3.14, "aa": 0.0, "e23": 2, "s23": {"PP": 1, "PSOE": 1}}, {"n": "Tarragona", "c": "CAT", "e": 6, "w": 351773, "s": "Podemos en ERC", "v": {"PP": 13.87, "PSOE": 32.91, "VOX": 10.34, "SUMAR": 11.34, "ERC": 15.07, "JUNTS": 11.08, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 5.39}, "salf": 3.39, "aa": 0.0, "e23": 6, "s23": {"PP": 1, "PSOE": 2, "SUMAR": 1, "ERC": 1, "JUNTS": 1}}, {"n": "Teruel", "c": "ARA", "e": 3, "w": 74387, "s": "separados", "v": {"PP": 35.02, "PSOE": 29.28, "VOX": 13.08, "SUMAR": 5.44, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 17.18}, "salf": 4.69, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Toledo", "c": "CLM", "e": 6, "w": 383493, "s": "separados", "v": {"PP": 37.84, "PSOE": 32.56, "VOX": 19.64, "SUMAR": 8.23, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.73}, "salf": 4.89, "aa": 0.0, "e23": 6, "s23": {"PP": 3, "PSOE": 2, "VOX": 1}}, {"n": "Valencia", "c": "CVA", "e": 16, "w": 1470490, "s": "juntos", "v": {"PP": 33.64, "PSOE": 32.1, "VOX": 15.21, "SUMAR": 16.9, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.15}, "salf": 5.81, "aa": 0.0, "e23": 16, "s23": {"PP": 6, "PSOE": 5, "VOX": 2, "SUMAR": 3}}, {"n": "Valladolid", "c": "CYL", "e": 5, "w": 330841, "s": "separados", "v": {"PP": 40.84, "PSOE": 32.75, "VOX": 15.16, "SUMAR": 8.87, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 2.38}, "salf": 4.56, "aa": 0.0, "e23": 5, "s23": {"PP": 2, "PSOE": 2, "VOX": 1}}, {"n": "Zamora", "c": "CYL", "e": 3, "w": 98253, "s": "separados", "v": {"PP": 44.67, "PSOE": 32.49, "VOX": 13.2, "SUMAR": 5.65, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 3.99}, "salf": 3.32, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}, {"n": "Zaragoza", "c": "ARA", "e": 7, "w": 522391, "s": "separados", "v": {"PP": 36.01, "PSOE": 30.82, "VOX": 15.3, "SUMAR": 13.48, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 4.39}, "salf": 5.29, "aa": 0.0, "e23": 7, "s23": {"PP": 3, "PSOE": 2, "VOX": 1, "SUMAR": 1}}, {"n": "Álava", "c": "PVA", "e": 4, "w": 167581, "s": "separados", "v": {"PP": 17.87, "PSOE": 27.66, "VOX": 3.89, "SUMAR": 12.75, "ERC": 0.0, "JUNTS": 0.0, "EHB": 19.51, "PNV": 16.6, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 1.72}, "salf": 2.3, "aa": 0.0, "e23": 4, "s23": {"PP": 1, "PSOE": 1, "EHB": 1, "PNV": 1}}, {"n": "Ávila", "c": "CYL", "e": 3, "w": 97087, "s": "separados", "v": {"PP": 43.25, "PSOE": 27.39, "VOX": 15.38, "SUMAR": 5.13, "ERC": 0.0, "JUNTS": 0.0, "EHB": 0.0, "PNV": 0.0, "BNG": 0.0, "CC": 0.0, "UPN": 0.0, "OTROS": 8.85}, "salf": 4.23, "aa": 0.0, "e23": 3, "s23": {"PP": 2, "PSOE": 1}}], "nat23": {"PP": 32.9695, "PSOE": 31.6065, "VOX": 12.629, "SUMAR": 12.3223, "ERC": 1.8825, "JUNTS": 1.5945, "EHB": 1.3554, "PNV": 1.1247, "BNG": 0.6233, "CC": 0.4327, "UPN": 0.2114, "OTROS": 3.2482}, "eu": {"AND": [2.82, 5.1], "ARA": [3.06, 5.1], "AST": [3.8, 5.94], "IBA": [3.15, 4.36], "PVA": [3.21, 3.3], "ICA": [3.43, 4.01], "CAN": [2.72, 3.15], "CYL": [2.38, 2.93], "CLM": [2.21, 3.04], "CAT": [4.61, 4.31], "EXT": [2.24, 2.5], "GAL": [1.97, 2.09], "RIO": [2.35, 3.26], "MAD": [4.48, 5.82], "RMU": [2.37, 3.29], "NAV": [3.24, 3.85], "CVA": [3.02, 7.66]}, "qeu": 0.4133891648903066, "mic": {"AND": [81, 0.3034], "ARA": [17, 0.1702], "AST": [17, 0.301], "CAN": [10, 0.0809], "CAT": [47, 0.2917], "CLM": [10, 0.4251], "CVA": [92, 0.238], "CYL": [28, 0.0705], "EXT": [7, 0.6096], "GAL": [13, 0.4937], "IBA": [14, 0.3043], "ICA": [19, 0.542], "MAD": [100, 0.2563], "NAV": [13, 0.772], "PVA": [18, 0.6161], "RIO": [14, 0.3659], "RMU": [10, 0.2775]}, "salfEU": 4.63};
 const REF = {PP:31.35,PSOE:26.49,VOX:18.85,ESP:6.77,POD:2.72,SALF:1.80,ERC:2.24,JUNTS:1.38,EHB:1.35,PNV:0.91,BNG:0.91,CC:0.44,UPN:0.17,AA:0.91};
 const POLLKEYS = ["PP","PSOE","VOX","ESP","POD","SALF","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA"];
 const PKLABEL = {PP:"PP",PSOE:"PSOE",VOX:"Vox",ESP:"Frente Amplio",POD:"Podemos",SALF:"SALF",ERC:"ERC",JUNTS:"Junts",EHB:"EH Bildu",PNV:"PNV",BNG:"BNG",CC:"CC",UPN:"UPN",AA:"Adelante Andalucía"};
@@ -314,30 +398,59 @@ const W = D.prov.map(p=>p.w), WSUM = W.reduce((a,b)=>a+b,0);
 const lg = q=>Math.log(q/(1-q)), il = x=>1/(1+Math.exp(-x));
 const $ = id=>document.getElementById(id);
 
+let apolls = []; let REGT = {};
 let polls = []; let dbRef = null; let dbState = "conectando";
 let avg = null; let scen = null; let model = null; let manual = false; let desde = "";
 let vida = 14; try{ const sv=localStorage.getItem("escanos29n_vida"); if(sv!==null) vida = sv==="0"?0:14; }catch(e){}
 const recW = (fin, asOf) => { if(!vida||!fin) return 1; const t=new Date(); const hoy= asOf? Date.parse(asOf+"T00:00:00Z") : Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()); const f=Date.parse(fin+"T00:00:00Z"); const dias=Math.max(0,(hoy-f)/864e5); return Math.pow(0.5, dias/vida); };
 
 /* ---------- promedio ---------- */
-function computeAverage(asOf){
-  const act = polls.filter(p=>p.activa!==false && (!desde || (p.fin||"")>=desde) && (!asOf || (p.fin&&p.fin<=asOf)));
-  const latest = {};
-  for(const p of act){ const k=(p.instituto||"").trim().toLowerCase(); if(!latest[k] || (p.fin||"")>(latest[k].fin||"")) latest[k]=p; }
-  const L = Object.values(latest);
-  const out = {}; const nrep = {}; const wt = {};
-  for(const p of L) wt[p._id] = (NOTAW[p.nota]??0.75)*recW(p.fin, asOf);
-  const wsum = Object.values(wt).reduce((a,b)=>a+b,0);
+const instKey=p=>(p.instituto||"").trim().toLowerCase();
+const sizeW=n=> n>0? Math.min(1.5,Math.max(0.7,Math.sqrt(n/1000))) : 1;
+let casa = true; try{ casa = localStorage.getItem("escanos29n_casa")!=="0"; }catch(e){}
+let HOUSE = {}; // instituto -> {partido: sesgo en puntos}
+let HOUSEN = {}; // instituto -> nº de encuestas usadas para estimarlo
+/* Promedio. Cada instituto pesa nota × tamaño de muestra (raíz de n/1000, entre 0,7 y 1,5) × antigüedad de su última encuesta.
+   Con «peso por antigüedad», dentro de cada instituto se promedian todas sus encuestas ponderadas por antigüedad;
+   sin él, solo cuenta la última. Si se corrige el sesgo, a cada encuesta se le resta el sesgo estimado de su instituto. */
+function computeAverage(asOf, opt={}){
+  const act = polls.filter(p=>p.activa!==false && (!desde || (p.fin||"")>=desde) && (!asOf || (p.fin&&p.fin<=asOf)) && (!opt.excl || instKey(p)!==opt.excl));
+  const byI = {};
+  for(const p of act){ (byI[instKey(p)] ||= []).push(p); }
+  const items = [], latestL = [];
+  for(const ik in byI){
+    const L = byI[ik].sort((a,b)=>(b.fin||"").localeCompare(a.fin||"")); const last = L[0]; latestL.push(last);
+    const wi = (NOTAW[last.nota]??0.75)*sizeW(last.n)*recW(last.fin, asOf);
+    const mem = vida? L : [last]; const r = mem.map(p=>recW(p.fin, asOf)); const rs = r.reduce((a,b)=>a+b,0)||1;
+    mem.forEach((p,j)=>items.push({p, ik, w: wi*r[j]/rs}));
+  }
+  const useH = casa && !opt.noHouse;
+  const out = {}, nrep = {};
   for(const k of POLLKEYS){
-    let s=0,w=0,n=0;
-    for(const p of L){ const v=p.v&&p.v[k]; if(typeof v==="number"&&!isNaN(v)){ const ww=wt[p._id]; s+=v*ww; w+=ww; n++; } }
-    out[k] = w>0 ? s/w : REF[k]; nrep[k]=n;
+    let s=0,w=0; const ins=new Set();
+    for(const it of items){ const v=it.p.v&&it.p.v[k]; if(typeof v==="number"&&!isNaN(v)){ const adj = useH? v-(HOUSE[it.ik]?.[k]||0) : v; s+=Math.max(adj,0)*it.w; w+=it.w; ins.add(it.ik); } }
+    out[k] = w>0 ? s/w : REF[k]; nrep[k]=ins.size;
   }
   const espv=[], qv=[];
-  for(const p of L){ const e=p.v?.ESP, d=p.v?.POD; if(typeof e==="number"&&typeof d==="number"){ espv.push(e+d); qv.push(d/(e+d)); } }
+  for(const p of latestL){ const e=p.v?.ESP, d=p.v?.POD; if(typeof e==="number"&&typeof d==="number"){ espv.push(e+d); qv.push(d/(e+d)); } }
   const sd = a=>{ if(a.length<2) return null; const m=a.reduce((x,y)=>x+y,0)/a.length; return Math.sqrt(a.reduce((x,y)=>x+(y-m)**2,0)/(a.length-1)); };
-  const share = {}; for(const id in wt) share[id] = wsum>0 ? wt[id]/wsum : 0;
-  return {v:out, nrep, used:L, share, sdEsp: sd(espv), sdQ: sd(qv)};
+  const wsum = items.reduce((a,b)=>a+b.w,0); const share = {}; for(const it of items) share[it.p._id] = wsum>0? it.w/wsum : 0;
+  return {v:out, nrep, used:items.map(i=>i.p), nInst:latestL.length, share, sdEsp: sd(espv), sdQ: sd(qv)};
+}
+/* Sesgo de cada instituto: media de (su dato − promedio del resto de institutos en la fecha de su encuesta),
+   encogida hacia cero con n/(n+2) y centrada para que el sesgo medio ponderado sea cero. */
+function computeHouse(){
+  HOUSE={}; HOUSEN={};
+  const act=polls.filter(p=>p.activa!==false && p.fin && (!desde||p.fin>=desde));
+  const acc={};
+  for(const p of act){
+    const ik=instKey(p); const ref=computeAverage(p.fin,{noHouse:true, excl:ik});
+    if(!ref.nInst) continue; HOUSEN[ik]=(HOUSEN[ik]||0)+1;
+    for(const k of POLLKEYS){ const v=p.v?.[k]; if(typeof v==="number" && ref.nrep[k]>0){ ((acc[ik] ||= {})[k] ||= []).push(v-ref.v[k]); } }
+  }
+  const wI={}; for(const p of act){ const ik=instKey(p); wI[ik]=(NOTAW[p.nota]??0.75)*sizeW(p.n); }
+  for(const ik in acc){ HOUSE[ik]={}; for(const k in acc[ik]){ const a=acc[ik][k], n=a.length; HOUSE[ik][k]= a.reduce((x,y)=>x+y,0)/n * n/(n+2); } }
+  for(const k of POLLKEYS){ let s=0,w=0; for(const ik in HOUSE){ if(k in HOUSE[ik]){ s+=HOUSE[ik][k]*(wI[ik]||1); w+=(wI[ik]||1); } } const m=w? s/w : 0; for(const ik in HOUSE) if(k in HOUSE[ik]) HOUSE[ik][k]-=m; }
 }
 function natFrom(v){
   const nat = {}; for(const k of REG) nat[k]=v[k];
@@ -345,6 +458,23 @@ function natFrom(v){
   return nat;
 }
 
+/* ---------- encuestas autonómicas ---------- */
+const AKEYS=["PP","PSOE","VOX","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","SALF","AA"];
+/* Para cada comunidad con encuestas autonómicas activas: promedio ponderado (nota × muestra × antigüedad, una por instituto)
+   y peso de la mezcla alfa = 0,5 × antigüedad de la más reciente. El modelo acerca el voto de esa comunidad a ese promedio
+   en esa proporción, sin dejar de cuadrar los totales nacionales. */
+function computeRegional(){
+  REGT={}; const byC={};
+  for(const p of apolls){ if(p.activa===false||!p.ccaa||!p.fin) continue; (byC[p.ccaa] ||= []).push(p); }
+  for(const c in byC){
+    const byI={}; for(const p of byC[c]){ const ik=instKey(p); if(!byI[ik]||p.fin>byI[ik].fin) byI[ik]=p; }
+    const L=Object.values(byI); const v={}; let newest="";
+    for(const k of [...AKEYS,"ESPACIO"]){ let s=0,w=0; for(const p of L){ const x = k==="ESPACIO"? ((typeof p.v?.ESP==="number"&&typeof p.v?.POD==="number")? p.v.ESP+p.v.POD : null) : p.v?.[k];
+      if(typeof x==="number"&&!isNaN(x)){ const ww=(NOTAW[p.nota]??0.75)*sizeW(p.n)*recW(p.fin); s+=x*ww; w+=ww; } } if(w>0) v[k]=s/w; }
+    for(const p of L) if(p.fin>newest) newest=p.fin;
+    const alpha=0.5*recW(newest); if(alpha>0.02 && Object.keys(v).length) REGT[c]={alpha, v, n:L.length, newest};
+  }
+}
 /* ---------- modelo ---------- */
 function construir(nat, opt={}){
   const K = opt.K ?? 40, aaOrigen = opt.aaOrigen ?? true, aaFactor = opt.aaFactor ?? 1;
@@ -380,6 +510,19 @@ function construir(nat, opt={}){
     for(const k of cols){ let c=0; M.forEach((m,i)=>c+=m[k]*W[i]); c/=WSUM; if(c>0){ const f=target[k]/c; for(const m of M) m[k]*=f; } }
   }
   for(const m of M){ const s=cols.reduce((a,k)=>a+m[k],0); for(const k of cols) m[k]*=100/s; }
+  // ajuste autonómico
+  const regC=Object.keys(REGT);
+  if(regC.length && !opt.noReg){
+    const idx={}; D.prov.forEach((p,i)=>{ (idx[p.c] ||= []).push(i); });
+    const share=(c,k)=>{ let a=0,b=0; for(const i of idx[c]||[]){ a+=W[i]*M[i][k]; b+=W[i]; } return b? a/b : 0; };
+    const tgt={}; for(const c of regC){ if(!idx[c]) continue; tgt[c]={}; for(const k in REGT[c].v){ if(!cols.includes(k)) continue; const m0=share(c,k); if(m0<=0) continue; tgt[c][k]=(1-REGT[c].alpha)*m0+REGT[c].alpha*REGT[c].v[k]; } }
+    for(let it=0; it<30; it++){
+      for(const c in tgt) for(const k in tgt[c]){ const m=share(c,k); if(m>0){ const f=tgt[c][k]/m; for(const i of idx[c]) M[i][k]*=f; } }
+      for(const m of M){ const s=cols.reduce((a,k)=>a+m[k],0); for(const k of cols) m[k]*=100/s; }
+      for(const k of cols){ let c=0; M.forEach((m,i)=>c+=m[k]*W[i]); c/=WSUM; if(c>0){ const f=target[k]/c; for(const m of M) m[k]*=f; } }
+    }
+    for(const m of M){ const s=cols.reduce((a,k)=>a+m[k],0); for(const k of cols) m[k]*=100/s; }
+  }
   // reparto FA / Podemos
   const qnat = Math.min(Math.max(nat.q,0.02),0.98);
   const ccaas = [...new Set(D.prov.map(p=>p.c))];
@@ -424,13 +567,49 @@ function runModel(nat){
   return {rows, tot, div};
 }
 
+/* ---------- comparaciones ---------- */
+const S23 = (()=>{ const o={}; for(const p of D.prov) for(const k in p.s23) o[k]=(o[k]||0)+p.s23[k]; return o; })();
+const sgn=(x,d=0)=>{ const r=+(+x).toFixed(d); return r>0? "+"+fmt(r,d) : r<0? "−"+fmt(-r,d) : (d? fmt(0,d) : "="); };
+const dPair=(dv,de)=> sgn(dv,1)+(de? ` · ${sgn(de)} esc.` : "");
+function provDelta(r){
+  const s=r.seats, o=r.p.s23, out=[];
+  for(const k of ["PP","PSOE","VOX","ERC","JUNTS","EHB","PNV","BNG","CC","UPN"]){ const d=(s[k]||0)-(o[k]||0); if(d) out.push([LBL[k],d]); }
+  const izq=(s.FA||0)+(s.PODEMOS||0)+(s.CONJUNTA||0)-(o.SUMAR||0); if(izq) out.push(["FA+Pod.",izq]);
+  for(const k of ["AA","SALF"]) if(s[k]) out.push([LBL[k],s[k]]);
+  return out;
+}
+function renderCambios(){
+  const T=$("tcambios"), F=$("cfrase"); if(!T) return;
+  const act=polls.filter(p=>p.activa!==false && p.fin && (!desde||p.fin>=desde));
+  if(act.length<2){ T.innerHTML=""; F.textContent="Hacen falta al menos dos encuestas para comparar."; return; }
+  const lastP=[...act].sort((a,b)=>(b.fin||"").localeCompare(a.fin||""))[0];
+  const now=avg; const saved=polls; polls=polls.filter(p=>p!==lastP); const a1=computeAverage(); polls=saved;
+  const t=new Date(); const d7=isoDay(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())-7*864e5); const a2=computeAverage(d7);
+  const seatsOf=a=>{ const x=runModel(natFrom(a.v)).tot; return {PP:x.PP,PSOE:x.PSOE,VOX:x.VOX,ESP:x.FA+x.CONJUNTA,POD:x.PODEMOS,SALF:x.SALF,ERC:x.ERC,JUNTS:x.JUNTS,EHB:x.EHB,PNV:x.PNV,BNG:x.BNG,CC:x.CC,UPN:x.UPN,AA:x.AA}; };
+  const s0=seatsOf(now), s1=seatsOf(a1), s2=a2.used.length? seatsOf(a2):null;
+  const lab=`${lastP.instituto||"?"}, ${fmtDay(lastP.fin)}`;
+  T.innerHTML=`<thead><tr><th>Partido</th><th class="r">Ahora</th><th class="r">Escaños</th><th class="r">Desde antes de la última encuesta<br><span style="text-transform:none;letter-spacing:0">(${lab.replace(/</g,"&lt;")})</span></th><th class="r">En 7 días</th></tr></thead>`;
+  const tb=document.createElement("tbody");
+  for(const k of ["PP","PSOE","VOX","ESP","POD","SALF","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA"]){
+    const tr=document.createElement("tr");
+    const c1=dPair(now.v[k]-a1.v[k],s0[k]-s1[k]), c2= s2? dPair(now.v[k]-a2.v[k],s0[k]-s2[k]) : "–";
+    tr.innerHTML=`<td><span class="sw" style="background:${col(TCOL[k]||k)}"></span>${PKLABEL[k]}</td><td class="r num">${fmt(now.v[k],1)} %</td><td class="r num"><b>${s0[k]}</b></td><td class="r num">${c1}</td><td class="r num">${c2}</td>`;
+    tb.append(tr);
+  }
+  T.append(tb);
+  const mv=["PP","PSOE","VOX","ESP","POD"].map(k=>({k,d:now.v[k]-a1.v[k],e:s0[k]-s1[k]})).filter(x=>Math.abs(x.d)>=0.05||x.e).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
+  const verb=x=> (x.d>=0.05? `sube ${fmt(x.d,1)} puntos` : x.d<=-0.05? `baja ${fmt(-x.d,1)} puntos` : "se mantiene") + (x.e? ` y ${x.e>0?"gana":"pierde"} ${Math.abs(x.e)} ${Math.abs(x.e)===1?"escaño":"escaños"}` : "");
+  F.textContent = mv.length? `Con la encuesta de ${lab}, ${mv.map(x=>`${x.k==="ESP"?"Frente Amplio":x.k==="POD"?"Podemos":PKLABEL[x.k]} ${verb(x)}`).join("; ")}.` : `La encuesta de ${lab} apenas mueve el promedio.`;
+}
 /* ---------- interfaz ---------- */
 function renderStatus(){
   const n = avg?avg.used.length:0;
   const last = avg&&avg.used.length? avg.used.map(p=>p.fin).sort().slice(-1)[0] : null;
   const st=$("status"); st.textContent="";
-  const a=document.createElement("span"); a.className="pill"; a.textContent = n? `${n} encuestas en el promedio`: "Sin encuestas: valores de referencia del 22 oct"; st.append(a);
+  const a=document.createElement("span"); a.className="pill"; a.textContent = n? `${avg.nInst} institutos · ${n} encuestas en el promedio`: "Sin encuestas: valores de referencia del 22 oct"; st.append(a);
   if(last){ const b=document.createElement("span"); b.className="pill"; b.textContent=`Última: ${new Date(last+"T12:00").toLocaleDateString("es-ES",{day:"numeric",month:"short"})}`; st.append(b); }
+  const rc=Object.keys(REGT); if(rc.length){ const v=document.createElement("span"); v.className="pill"; v.textContent="Ajuste autonómico: "+rc.map(c=>CCAAN[c]||c).join(", "); st.append(v); }
+  if(casa&&n){ const v=document.createElement("span"); v.className="pill"; v.textContent="Sesgo de instituto corregido"; st.append(v); }
   if(vida){ const v=document.createElement("span"); v.className="pill"; v.textContent="Recientes pesan más"; st.append(v); }
   if(manual){ const c=document.createElement("span"); c.className="pill warn"; c.textContent="Escenario modificado a mano"; st.append(c); }
   if(dbState!=="ok"){ const d=document.createElement("span"); d.className="pill warn"; d.textContent= dbState==="conectando"?"Conectando con las encuestas guardadas…":"Solo lectura"; st.append(d); }
@@ -446,19 +625,21 @@ function renderResumen(){
   const kp=(v,l)=>{const e=document.createElement("div"); e.className="kpi"; e.innerHTML=`<div class="v num"></div><div class="l"></div>`; e.querySelector(".v").textContent=v; e.querySelector(".l").textContent=l; k.append(e);};
   kp(t.PP,"PP"); kp(t.PSOE,"PSOE"); kp(t.VOX,"Vox"); kp(t.PP+t.VOX,"PP + Vox (mayoría: 176)"); kp(t.FA+t.PODEMOS+t.CONJUNTA,"Espacio FA–Podemos"); kp(div,"Escaños que cuesta la división FA–Podemos");
   // tabla nacional
-  const T=$("tnat"); T.innerHTML=`<thead><tr><th>Partido</th><th class="r">Promedio</th><th class="r">Encuestas</th><th class="r">Escenario</th><th class="r">Escaños</th></tr></thead>`;
+  const T=$("tnat"); T.innerHTML=`<thead><tr><th>Partido</th><th class="r">Promedio</th><th class="r">Encuestas</th><th class="r">Escenario</th><th class="r">Escaños</th><th class="r" title="Diferencia con los escaños del 23J">vs 23J</th></tr></thead>`;
   const tb=document.createElement("tbody");
+  const d23={PP:t.PP-S23.PP,PSOE:t.PSOE-S23.PSOE,VOX:t.VOX-S23.VOX,ESP:t.FA+t.CONJUNTA+t.PODEMOS-S23.SUMAR,ERC:t.ERC-S23.ERC,JUNTS:t.JUNTS-S23.JUNTS,EHB:t.EHB-S23.EHB,PNV:t.PNV-S23.PNV,BNG:t.BNG-S23.BNG,CC:t.CC-S23.CC,UPN:t.UPN-S23.UPN};
   const seatOf={PP:t.PP,PSOE:t.PSOE,VOX:t.VOX,ESP:t.FA+t.CONJUNTA,POD:t.PODEMOS,SALF:t.SALF,ERC:t.ERC,JUNTS:t.JUNTS,EHB:t.EHB,PNV:t.PNV,BNG:t.BNG,CC:t.CC,UPN:t.UPN,AA:t.AA};
   const colOf={ESP:"FA",POD:"PODEMOS"};
   for(const kk of POLLKEYS){
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td><span class="sw" style="background:${col(colOf[kk]||kk)}"></span>${PKLABEL[kk]}</td><td class="r num">${fmt(avg.v[kk],2)}</td><td class="r num muted">${avg.nrep[kk]||"ref."}</td><td class="r"></td><td class="r num"><b>${seatOf[kk]}</b></td>`;
+    tr.innerHTML=`<td><span class="sw" style="background:${col(colOf[kk]||kk)}"></span>${PKLABEL[kk]}</td><td class="r num">${fmt(avg.v[kk],2)}</td><td class="r num muted">${avg.nrep[kk]||"ref."}</td><td class="r"></td><td class="r num"><b>${seatOf[kk]}</b></td><td class="r num muted">${kk==="POD"?"":kk==="SALF"||kk==="AA"?"nuevo":sgn(d23[kk])+(kk==="ESP"?"*":"")}</td>`;
     const inp=document.createElement("input"); inp.type="number"; inp.step="0.1"; inp.min="0"; inp.id="sc-"+kk; inp.value=(+scen[kk]).toFixed(2); inp.setAttribute("aria-label",`Escenario ${PKLABEL[kk]}`);
     inp.addEventListener("change",()=>{ const v=parseFloat(inp.value); if(!isNaN(v)&&v>=0){ scen[kk]=v; manual=true; recompute(false);} });
     tr.children[3].append(inp); tb.append(tr);
   }
   const sum=POLLKEYS.reduce((a,k)=>a+scen[k],0);
-  const tr=document.createElement("tr"); tr.innerHTML=`<td class="muted">Otros y blanco</td><td></td><td></td><td class="r num muted">${fmt(Math.max(100-sum,0),2)}</td><td></td>`; tb.append(tr);
+  const tr=document.createElement("tr"); tr.innerHTML=`<td class="muted">Otros y blanco</td><td></td><td></td><td class="r num muted">${fmt(Math.max(100-sum,0),2)}</td><td></td><td></td>`; tb.append(tr);
+  const tf=document.createElement("tr"); tf.innerHTML=`<td colspan="6" class="note" style="border:0">* En la columna «vs 23J», Frente Amplio + Podemos frente a los 31 escaños de Sumar en 2023.</td>`; tb.append(tf);
   T.append(tb);
   const B=$("tblock"); B.innerHTML=`<thead><tr><th>Bloque</th><th class="r">Escaños</th></tr></thead>`;
   const bb=document.createElement("tbody");
@@ -472,18 +653,18 @@ function chipsFor(seats){
 let openProv=null;
 function renderProv(){
   const f=$("fccaa").value, q=$("fq").value.trim().toLowerCase();
-  const T=$("tprov"); T.innerHTML=`<thead><tr><th>Provincia</th><th>Comunidad</th><th class="r">Escaños</th><th>Reparto</th><th>Izquierda alternativa</th></tr></thead>`;
+  const T=$("tprov"); T.innerHTML=`<thead><tr><th>Provincia</th><th>Comunidad</th><th class="r">Escaños</th><th>Reparto</th><th>vs 23J</th><th>Izquierda alternativa</th></tr></thead>`;
   const tb=document.createElement("tbody");
   const rows=model.rows.filter(r=>(!f||r.p.c===f)&&(!q||r.p.n.toLowerCase().includes(q))).sort((a,b)=>b.p.e-a.p.e||a.p.n.localeCompare(b.p.n,"es"));
   for(const r of rows){
     const tr=document.createElement("tr"); tr.className="prov"; tr.tabIndex=0;
-    tr.innerHTML=`<td><b></b></td><td class="muted"></td><td class="r num">${r.p.e}</td><td></td><td><span class="tag"></span></td>`;
-    tr.children[0].firstChild.textContent=r.p.n; tr.children[1].textContent=CCAAN[r.p.c]||r.p.c; tr.children[3].append(chipsFor(r.seats)); tr.querySelector(".tag").textContent=SITN[r.p.s]||r.p.s;
+    tr.innerHTML=`<td><b></b></td><td class="muted"></td><td class="r num">${r.p.e}</td><td></td><td class="num" style="font-size:.8rem;min-width:120px"></td><td><span class="tag"></span></td>`;
+    tr.children[0].firstChild.textContent=r.p.n; tr.children[1].textContent=CCAAN[r.p.c]||r.p.c; tr.children[3].append(chipsFor(r.seats)); { const dd=provDelta(r); tr.children[4].textContent = (dd.length? dd.map(([a,b])=>`${a} ${sgn(b)}`).join(" · ") : "Igual") + (r.p.e!==r.p.e23? ` (escaños: ${r.p.e23} → ${r.p.e})` : ""); } tr.querySelector(".tag").textContent=SITN[r.p.s]||r.p.s;
     const toggle=()=>{ openProv = openProv===r.p.n?null:r.p.n; renderProv(); };
     tr.addEventListener("click",toggle); tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});
     tb.append(tr);
     if(openProv===r.p.n){
-      const d=document.createElement("tr"); d.className="det"; const td=document.createElement("td"); td.colSpan=5;
+      const d=document.createElement("tr"); d.className="det"; const td=document.createElement("td"); td.colSpan=6;
       const ks=[...OUT,"OTROS"].filter(k=>r.sh[k]>0.05).sort((a,b)=>r.sh[b]-r.sh[a]);
       td.innerHTML=`<div class="chips" style="gap:6px 14px"></div><div class="muted" style="margin-top:6px">Cociente del último escaño: ${fmt(r.last,2)} puntos. Votos válidos de referencia (2023): ${fmtInt(r.p.w)}.</div>`;
       const box=td.firstChild;
@@ -509,13 +690,41 @@ function renderDiv(){
   const nn=T.parentElement.nextElementSibling; if(nn&&nn.classList.contains("near")) nn.remove();
   if(near.length){ const p=document.createElement("p"); p.className="note near"; p.style.marginTop="10px"; p.textContent="Cerca del escaño para Frente Amplio: "+near.map(d=>`${d.r.p.n} (le faltan ${fmt(d.faltaFA)} puntos, unos ${fmtInt(d.faltaFA/100*d.r.p.w)} votos)`).join("; ")+"."; T.parentElement.after(p); }
 }
+/* ---------- escaños en el alambre ---------- */
+let alambreAll=false;
+function alambreRows(){
+  return model.rows.map(r=>{
+    const sh=r.sh, seats=r.seats; let hold=null, hq=Infinity;
+    for(const k in seats){ if(k==="OTROS"||!seats[k]) continue; const q=sh[k]/seats[k]; if(q<hq){ hq=q; hold=k; } }
+    let ch=null, need=Infinity;
+    for(const k in sh){ if(k==="OTROS"||k===hold||!(sh[k]>0.3)) continue; const n=Math.max(hq*((seats[k]||0)+1)-sh[k], 3-sh[k]); if(n<need){ need=n; ch=k; } }
+    return {r, hold, ch, need, votes: need/100*r.p.w};
+  }).filter(x=>x.hold&&x.ch).sort((a,b)=>a.votes-b.votes);
+}
+function renderAlambre(){
+  const f=$("acaa").value; const all=alambreRows().filter(x=>!f||x.r.p.c===f); const list= alambreAll||f? all : all.slice(0,20);
+  $("amas").hidden=!!f; $("amas").textContent= alambreAll? "Ver las 20 primeras" : "Ver todas";
+  const T=$("talambre"); T.innerHTML=`<thead><tr><th class="r">#</th><th>Provincia</th><th class="r">Esc.</th><th>Lo tiene</th><th>Aspirante</th><th class="r">Le faltan</th><th class="r">Puntos</th></tr></thead>`;
+  const tb=document.createElement("tbody");
+  list.forEach((x,i)=>{ const tr=document.createElement("tr");
+    tr.innerHTML=`<td class="r num muted">${i+1}</td><td><b></b></td><td class="r num">${x.r.p.e}</td><td><span class="sw" style="background:${col(x.hold)}"></span>${LBL[x.hold]}</td><td><span class="sw" style="background:${col(x.ch)}"></span>${LBL[x.ch]}${x.r.sh[x.ch]<3?' <span class="tag">bajo el 3 %</span>':""}</td><td class="r num"><b>${x.votes<100?"<100":fmtInt(Math.round(x.votes/100)*100)}</b><span class="vw"> votos</span></td><td class="r num">${fmt(x.need,2)}</td>`;
+    tr.children[1].firstChild.textContent=x.r.p.n; tb.append(tr); });
+  T.append(tb);
+}
 /* ---------- Monte Carlo ---------- */
 function randn(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
 let mcRunning=false;
+/* Error nacional del promedio: desviación típica = NERR × raíz(cuota), calibrada con el error del promedio de la última semana
+   en abr-2019, nov-2019 y jul-2023 (14 casos, partidos con más del 6 %). Ruido provincial PERR: dispersión de log(real/predicho)
+   del reparto proporcional en los backtests abr19→nov19 (0,097) y nov19→23J (0,121). */
+const NERR=0.42, PERR=0.12;
+let mcSeats=null, mcKey="";
+const mcValid=()=> !!mcSeats && mcKey===JSON.stringify(scen);
 function runMC(){
-  if(mcRunning) return; mcRunning=true; $("runmc").disabled=true;
+  if(mcRunning) return; mcRunning=true; $("runmc").disabled=true; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=true);
+  const key=JSON.stringify(scen); const seatSims=[];
   const N=+$("nsim").value; const base=natFrom(scen);
-  const sdE=Math.max(avg.sdEsp??1.1,0.5), sdQ=Math.max(avg.sdQ??0.05,0.03);
+  const sdE=Math.max(avg.sdEsp??1.1,0.5,NERR*Math.sqrt(base.ESPACIO)), sdQ=Math.max(avg.sdQ??0.05,0.03);
   const P=D.prov.length; const lost=[], lostAA=[], lostT=[], sinv=[], sinp=[]; const pl=new Float64Array(P), pla=new Float64Array(P), plt=new Float64Array(P); const aaEsc=new Float64Array(P);
   const ben={};
   $("mcprog").hidden=false; let t=0;
@@ -523,12 +732,15 @@ function runMC(){
     const end=Math.min(t+25,N);
     for(;t<end;t++){
       const esp=Math.max(base.ESPACIO+randn()*sdE,1); const q=Math.min(Math.max(base.q+randn()*sdQ,0.1),0.5);
-      const nat={...base}; const f=(100-esp)/(100-base.ESPACIO); for(const k of [...REG,"SALF","AA"]) nat[k]=base[k]*f; nat.ESPACIO=esp; nat.q=q;
+      // error nacional común: cada partido se mueve con su propio error y luego se reescala para que la suma no cambie
+      const nat={...base}; const ks=[...REG,"SALF","AA"]; let s0=base.ESPACIO, s1=esp;
+      for(const k of ks){ s0+=base[k]; nat[k]= base[k]>0? Math.max(base[k]+randn()*NERR*Math.sqrt(base[k]),0.02) : 0; s1+=nat[k]; }
+      const fr=s0/s1; for(const k of ks) nat[k]*=fr; nat.ESPACIO=esp*fr; nat.q=q;
       const R=construir(nat,{K:[10,40,200][Math.floor(Math.random()*3)], aaOrigen:Math.random()<0.5, aaFactor:Math.max(1+randn()*0.19,0.3)});
-      let L=0,LA=0,LT=0,vs=0,vt=0;
+      let L=0,LA=0,LT=0,vs=0,vt=0; const TS={}; for(const k of OUT) TS[k]=0;
       R.forEach((sh0,i)=>{
-        const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ sh[k]=sh0[k]*Math.exp(randn()*0.10-0.005); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
-        const sep=dhondt(sh,p.e).seats; if(sep.AA>0) aaEsc[i]++;
+        const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ sh[k]=sh0[k]*Math.exp(randn()*PERR-PERR*PERR/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
+        const sep=dhondt(sh,p.e).seats; if(sep.AA>0) aaEsc[i]++; for(const k of OUT) TS[k]+=sep[k]||0;
         if(p.s==="separados"){
           const fu=fusion(sh,["FA","PODEMOS"],p.e); const d=fu?fu.jun-fu.sep:0; L+=d; if(d>0){ pl[i]++; for(const k in fu.sepS){ if(["FA","PODEMOS","OTROS"].includes(k)) continue; const x=fu.sepS[k]-(fu.junS[k]||0); if(x>0) ben[k]=(ben[k]||0)+x; } }
           vt+=(sh.FA+sh.PODEMOS)/100*p.w; vs+=((sep.FA===0?sh.FA:0)+(sep.PODEMOS===0?sh.PODEMOS:0))/100*p.w;
@@ -536,12 +748,30 @@ function runMC(){
         }
         const ft=fusion(sh,["FA","PODEMOS","AA","BNG","EHB","ERC","CONJUNTA"],p.e); if(ft){ const dt=ft.jun-ft.sep; LT+=dt; if(dt>0) plt[i]++; }
       });
+      TS.FA+=TS.CONJUNTA; TS.CONJUNTA=0; seatSims.push(TS);
       lost.push(L); lostAA.push(LA); lostT.push(LT); sinv.push(vs); sinp.push(vt>0?vs/vt*100:0);
     }
-    $("mcbar").style.width=(t/N*100)+"%"; $("mctxt").textContent=`${t} / ${N}`;
-    if(t<N) setTimeout(step,0); else { mcRunning=false; $("runmc").disabled=false; renderMC({N,lost,lostAA,lostT,sinv,sinp,pl,pla,plt,aaEsc,ben,sdE,sdQ}); }
+    $("mcbar").style.width=(t/N*100)+"%"; $("mctxt").textContent=`${t} / ${N}`; document.querySelectorAll(".mcstat").forEach(e=>e.textContent= t<N? `Simulando… ${Math.round(t/N*100)} %` : "");
+    if(t<N) setTimeout(step,0); else { mcRunning=false; $("runmc").disabled=false; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=false); mcSeats=seatSims; mcKey=key; renderProbs(); renderPacto(); renderMC({N,lost,lostAA,lostT,sinv,sinp,pl,pla,plt,aaEsc,ben,sdE,sdQ}); }
   };
   setTimeout(step,0);
+}
+const fmtP = v => v<1? "<1\u00a0%" : v>99? ">99\u00a0%" : fmt(v,0)+"\u00a0%";
+const INV23=["PSOE","FA","PODEMOS","ERC","JUNTS","EHB","PNV","BNG","CC"], DER=["PP","VOX","UPN","SALF"];
+const sumK=(s,ks)=>ks.reduce((a,k)=>a+(s[k]||0),0);
+function renderProbs(){
+  const box=$("rprob"); if(!box) return;
+  if(!mcValid()){ box.innerHTML=`<p class="note">Pulsa «Calcular» para simular ${fmtInt(+$("nsim").value)} elecciones alrededor del escenario actual: el voto nacional de cada partido varía con el error histórico de las encuestas y el de cada provincia con el error del reparto provincial. Tarda unos segundos.</p>`; return; }
+  const S=mcSeats, N=S.length, P=f=>S.filter(f).length/N*100;
+  const rows=[["PP + Vox llegan a 176",s=>s.PP+s.VOX>=176],["PP + Vox + UPN + SALF llegan a 176",s=>sumK(s,DER)>=176],
+    ["La investidura de 2023 (con Junts) llega a 176",s=>sumK(s,INV23)>=176],["La investidura sin Junts llega a 176",s=>sumK(s,INV23)-s.JUNTS>=176],
+    ["El PP saca más escaños que el PSOE",s=>s.PP>s.PSOE],["Vox saca más de 60 escaños",s=>s.VOX>60]];
+  let h=`<div class="grid2"><div><h3 style="margin-bottom:6px">Mayorías</h3><table class="prob"><tbody>`;
+  for(const [l,f] of rows) h+=`<tr><td>${l}</td><td class="r num p">${fmtP(P(f))}</td></tr>`;
+  h+=`</tbody></table></div><div><h3 style="margin-bottom:6px">Escaños por partido</h3><table><thead><tr><th>Partido</th><th class="r">Mediana</th><th class="r">80 % de las simulaciones</th></tr></thead><tbody>`;
+  for(const k of ["PP","PSOE","VOX","FA","PODEMOS","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA","SALF"]){ const a=S.map(s=>s[k]); if(Math.max(...a)===0) continue; h+=`<tr><td><span class="sw" style="background:${col(k)}"></span>${LBL[k]}</td><td class="r num"><b>${pct(a,50)}</b></td><td class="r num">${pct(a,10)}–${pct(a,90)}</td></tr>`; }
+  h+=`</tbody></table></div></div><p class="note" style="margin-top:10px">${N} simulaciones. Son probabilidades dentro del modelo, no una predicción. El error nacional de cada partido está calibrado con lo que falló el promedio de encuestas de la última semana en abril de 2019, noviembre de 2019 y julio de 2023 (unos 2,3 puntos para un partido del 30 %, 1,1 para uno del 7 %). Con varias semanas por delante el error real puede ser mayor. Frente Amplio incluye las listas conjuntas.</p>`;
+  box.innerHTML=h;
 }
 function pct(a,p){ const s=[...a].sort((x,y)=>x-y); return s[Math.min(s.length-1,Math.max(0,Math.floor(p/100*(s.length-1))))]; }
 function renderMC(m){
@@ -576,7 +806,18 @@ function renderMC(m){
   const n2=document.createElement("p"); n2.className="note"; n2.style.marginTop="8px"; n2.textContent="Las provincias que no aparecen tienen menos de un 1% de probabilidad de que la división les cueste escaño. «Toda la izq.» incluye Cataluña, Galicia, Euskadi y Navarra."; o.append(n2);
 }
 /* ---------- encuestas ---------- */
+function renderHouse(){
+  const T=$("thouse"); if(!T) return; const ks=["PP","PSOE","VOX","ESP","POD","SALF"];
+  const names={}; for(const p of polls) names[instKey(p)]=p.instituto;
+  const ids=Object.keys(HOUSE).sort((a,b)=>(names[a]||a).localeCompare(names[b]||b,"es"));
+  if(!ids.length){ T.innerHTML=`<tbody><tr><td class="muted">Aún no hay encuestas suficientes para estimarlo.</td></tr></tbody>`; return; }
+  T.innerHTML=`<thead><tr><th>Instituto</th><th class="r">Encuestas</th>${ks.map(k=>`<th class="r">${k==="ESP"?"FA":k==="POD"?"Pod.":PKLABEL[k]}</th>`).join("")}</tr></thead>`;
+  const tb=document.createElement("tbody");
+  for(const ik of ids){ const tr=document.createElement("tr"); tr.innerHTML=`<td></td><td class="r num">${HOUSEN[ik]||0}</td>${ks.map(k=>`<td class="r num">${k in HOUSE[ik]? sgn(HOUSE[ik][k],1) : "–"}</td>`).join("")}`; tr.children[0].textContent=names[ik]||ik; tb.append(tr); }
+  T.append(tb);
+}
 function renderPolls(){
+  renderHouse();
   const T=$("tpolls"); T.innerHTML="";
   const head=document.createElement("thead"); head.innerHTML=`<tr><th>En promedio</th><th>Instituto</th><th>Campo</th><th>Fin</th><th class="r">Muestra</th><th>Nota</th><th class="r">Peso</th>${POLLKEYS.map(k=>`<th class="r">${k==="ESP"?"FA":k==="POD"?"Pod.":PKLABEL[k]}</th>`).join("")}<th></th></tr>`; T.append(head);
   const tb=document.createElement("tbody");
@@ -585,7 +826,7 @@ function renderPolls(){
   for(const p of [...polls].sort((a,b)=>(b.fin||"").localeCompare(a.fin||""))){
     const tr=document.createElement("tr");
     const used=usedIds.has(p._id);
-    tr.innerHTML=`<td></td><td><b></b><div class="muted" style="font-size:.78rem"></div></td><td class="muted"></td><td class="num"></td><td class="r num">${p.n?fmtInt(p.n):"–"}</td><td>${p.nota||""}</td><td class="r num">${used&&avg.share?fmt(100*avg.share[p._id],0)+"%":"–"}</td>${POLLKEYS.map(k=>`<td class="r num">${typeof p.v?.[k]==="number"?fmt(p.v[k],1):"–"}</td>`).join("")}<td></td>`;
+    tr.innerHTML=`<td class="ck"></td><td class="ti"><b></b><div class="muted" style="font-size:.78rem"></div></td><td class="muted mt"></td><td class="num mt"></td><td class="r num mt" data-l="n =">${p.n?fmtInt(p.n):"–"}</td><td class="mt" data-l="Nota">${p.nota||""}</td><td class="r num mt" data-l="Peso">${used&&avg.share?fmt(100*avg.share[p._id],0)+"%":"–"}</td>${POLLKEYS.map(k=>{ const has=typeof p.v?.[k]==="number"; return `<td class="r num pv${has?"":" na"}" data-l="${k==="ESP"?"FA":k==="POD"?"Pod.":PKLABEL[k]}">${has?fmt(p.v[k],1):"–"}</td>`; }).join("")}<td class="ac"></td>`;
     const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=p.activa!==false; cb.id="act-"+p._id; cb.setAttribute("aria-label","Incluir en el promedio");
     cb.addEventListener("change",async()=>{ if(!dbRef) return; try{ await dbRef.collection("encuestas").doc(p._id).update({activa:cb.checked}); }catch(e){ cb.checked=!cb.checked; } });
     const lab=document.createElement("span"); lab.className="tag"; lab.style.marginLeft="6px"; lab.textContent= used?"usada":(p.activa===false?"excluida":"más antigua"); tr.children[0].append(cb,lab);
@@ -627,6 +868,55 @@ function buildForm(){
     $("pi-save").disabled=false;
   });
 }
+/* ---------- UI autonómicas ---------- */
+let aEditId=null, aEditActiva=true;
+function renderAuton(){
+  const T=$("tauton"); if(!T) return; const ks=["PP","PSOE","VOX","ESP","POD","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA","SALF"];
+  T.innerHTML=`<thead><tr><th>En ajuste</th><th>Comunidad</th><th>Instituto</th><th>Fin</th><th class="r">Muestra</th>${ks.map(k=>`<th class="r">${k==="ESP"?"FA":k==="POD"?"Pod.":PKLABEL[k]}</th>`).join("")}<th></th></tr></thead>`;
+  const tb=document.createElement("tbody");
+  if(!apolls.length){ const tr=document.createElement("tr"); tr.innerHTML=`<td colspan="${ks.length+6}" class="muted">No hay encuestas autonómicas guardadas.</td>`; tb.append(tr); }
+  for(const p of [...apolls].sort((a,b)=>(b.fin||"").localeCompare(a.fin||""))){
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td></td><td></td><td><b></b><div class="muted" style="font-size:.78rem"></div></td><td class="num"></td><td class="r num">${p.n?fmtInt(p.n):"–"}</td>${ks.map(k=>`<td class="r num">${typeof p.v?.[k]==="number"?fmt(p.v[k],1):"–"}</td>`).join("")}<td style="white-space:nowrap"></td>`;
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=p.activa!==false; cb.setAttribute("aria-label","Usar en el ajuste");
+    cb.addEventListener("change",async()=>{ if(!dbRef) return; try{ await dbRef.collection("autonomicas").doc(p._id).update({activa:cb.checked}); }catch(e){ cb.checked=!cb.checked; } });
+    tr.children[0].append(cb); tr.children[1].textContent=CCAAN[p.ccaa]||p.ccaa||""; tr.children[2].firstChild.textContent=p.instituto||""; tr.children[2].lastChild.textContent=p.medio||""; tr.children[3].textContent=p.fin||"";
+    if(dbRef){ const ed=document.createElement("button"); ed.className="btn ghost small"; ed.textContent="Editar"; ed.type="button"; ed.style.marginRight="6px"; ed.addEventListener("click",()=>aStartEdit(p));
+      const del=document.createElement("button"); del.className="btn danger small"; del.textContent="Borrar"; del.type="button";
+      del.addEventListener("click",async()=>{ if(del.dataset.confirm!=="1"){ del.dataset.confirm="1"; del.textContent="¿Seguro?"; setTimeout(()=>{del.dataset.confirm=""; del.textContent="Borrar";},4000); return; } try{ await dbRef.collection("autonomicas").doc(p._id).delete(); }catch(e){ del.textContent="No se pudo borrar"; } });
+      tr.lastElementChild.append(ed,del); } else cb.disabled=true;
+    tb.append(tr);
+  }
+  T.append(tb);
+}
+function aStartEdit(p){
+  aEditId=p._id; aEditActiva=p.activa!==false;
+  $("ai-ccaa").value=p.ccaa||""; $("ai-instituto").value=p.instituto||""; $("ai-medio").value=p.medio||""; $("ai-campo").value=p.campo||""; $("ai-fin").value=p.fin||""; $("ai-n").value=p.n||""; $("ai-nota").value=p.nota||"B";
+  for(const k of POLLKEYS){ const v=p.v?.[k]; $("av-"+k).value= typeof v==="number"? v : ""; }
+  $("afh").textContent=`Editar encuesta autonómica: ${p.instituto||""} (${CCAAN[p.ccaa]||""})`; $("ai-save").textContent="Guardar cambios"; $("ai-cancel").hidden=false; $("ai-msg").textContent="";
+  $("apanel").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function aEndEdit(){ aEditId=null; $("fauton").reset(); $("afh").textContent="Añadir encuesta autonómica"; $("ai-save").textContent="Guardar encuesta autonómica"; $("ai-cancel").hidden=true; }
+function buildAutonForm(){
+  const sel=$("ai-ccaa"); sel.innerHTML=`<option value="">Elige…</option>`; Object.entries(CCAAN).sort((a,b)=>a[1].localeCompare(b[1],"es")).forEach(([c,n])=>{ const o=document.createElement("option"); o.value=c; o.textContent=n; sel.append(o); });
+  const box=$("ai-parties");
+  for(const k of POLLKEYS){ const l=document.createElement("label"); l.textContent=PKLABEL[k]+(k==="ESP"?" (con Compromís)":""); const i=document.createElement("input"); i.type="number"; i.step="0.01"; i.min="0"; i.id="av-"+k; l.append(i); box.append(l); }
+  $("ai-cancel").addEventListener("click",()=>{ aEndEdit(); $("ai-msg").textContent=""; });
+  $("fauton").addEventListener("submit",async e=>{
+    e.preventDefault(); const msg=$("ai-msg");
+    if(!dbRef){ msg.textContent="No se puede guardar en esta vista."; return; }
+    const v={}; for(const k of POLLKEYS){ const x=parseFloat($("av-"+k).value); if(!isNaN(x)) v[k]=x; }
+    if(!$("ai-ccaa").value){ msg.textContent="Elige la comunidad."; return; }
+    if(Object.keys(v).length<2){ msg.textContent="Faltan datos de partidos."; return; }
+    const tot=Object.values(v).reduce((a,b)=>a+b,0); if(tot>101){ msg.textContent=`Los partidos suman ${fmt(tot,1)} %: revisa los datos.`; return; }
+    const doc={ccaa:$("ai-ccaa").value, instituto:$("ai-instituto").value.trim(), medio:$("ai-medio").value.trim(), campo:$("ai-campo").value.trim(), fin:$("ai-fin").value, n:parseInt($("ai-n").value)||null, nota:$("ai-nota").value, activa:true, v};
+    $("ai-save").disabled=true; msg.textContent="Guardando…";
+    try{ if(aEditId){ doc.activa=aEditActiva; await dbRef.collection("autonomicas").doc(aEditId).set(doc); msg.textContent="Cambios guardados."; aEndEdit(); }
+         else { await dbRef.collection("autonomicas").add(doc); msg.textContent=`Guardada: ${doc.instituto} (${CCAAN[doc.ccaa]}).`; $("fauton").reset(); } }
+    catch(err){ msg.textContent="No se pudo guardar. Inténtalo de nuevo."; }
+    $("ai-save").disabled=false;
+  });
+}
 /* ---------- CSV ---------- */
 async function downloadCSV(){
   const head=["provincia","comunidad","escanos","situacion",...OUT.flatMap(k=>[LBL[k]+" %",LBL[k]+" esc"]),"otros %"];
@@ -661,6 +951,9 @@ function renderPacto(){
   const box=(title,ok,big,sub)=>{ const e=document.createElement("div"); e.className="kpi"; e.innerHTML=`<div class="l"></div><div class="verd ${ok?"ok":"ko"}"></div><div class="l"></div>`; e.children[0].textContent=title; e.children[1].textContent=big; e.children[2].textContent=sub; k.append(e); };
   box("1.ª votación · mayoría absoluta", si>=176, si>=176?"Sale":"No sale", si>=176? `${si} síes, ${si-176} por encima de 176` : `Faltan ${176-si} síes para 176`);
   box("2.ª votación · más síes que noes", si>no, si>no?"Sale":"No sale", si>no? `${si} síes frente a ${no} noes` : (si===no? `Empate: ${si} a ${no}` : `${no} noes frente a ${si} síes; harían falta ${Math.floor((no-si)/2)+1} votos que pasen del no al sí`));
+  if(mcValid()){ const S=mcSeats, N=S.length; let a=0,b=0; for(const s of S){ let y=0,x=0; for(const kk in pacto){ if(pacto[kk]==="si") y+=s[kk]||0; else if(pacto[kk]==="abs") x+=s[kk]||0; } if(y>=176) a++; if(y>350-y-x) b++; }
+    $("pprob").innerHTML=`<b>Probabilidad</b> (${N} simulaciones): sale en 1.ª votación en el <b>${fmtP(a/N*100)}</b> y en 2.ª votación en el <b>${fmtP(b/N*100)}</b>.`; }
+  else $("pprob").textContent="Calcula las probabilidades para saber en cuántas simulaciones sale este pacto.";
   const pre=$("ppre"); pre.textContent="";
   for(const [lab,cfg] of PRESETS){ const b=document.createElement("button"); b.type="button"; b.className="btn ghost small"; b.textContent=lab; b.addEventListener("click",()=>{ pacto={...cfg}; savePacto(); renderPacto(); }); pre.append(b); }
   const g=$("pgrid"); g.textContent="";
@@ -753,26 +1046,36 @@ function renderTrends(){
 let rzT=null; window.addEventListener("resize",()=>{ clearTimeout(rzT); rzT=setTimeout(renderTrends,150); });
 /* ---------- orquestación ---------- */
 function recompute(fromPolls){
-  if(fromPolls || !scen){ avg=computeAverage(); if(!manual) scen={...avg.v}; }
+  if(fromPolls || !scen){ computeRegional(); computeHouse(); avg=computeAverage(); if(!manual) scen={...avg.v}; }
   model=runModel(natFrom(scen));
   if(fromPolls) trendDirty=true;
-  renderStatus(); renderResumen(); renderProv(); renderDiv(); renderPolls(); renderTrends(); renderPacto();
+  renderStatus(); renderResumen(); renderProv(); renderDiv(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
 }
+const MAS=["alambre","division","encuestas","metodo"];
+function closeMas(){ $("masmenu").hidden=true; document.querySelector("#tabs .mas").setAttribute("aria-expanded","false"); }
+function openMas(){
+  const m=$("masmenu"); m.textContent="";
+  for(const t of MAS){ const src=document.querySelector(`#tabs button[data-t="${t}"]`); const b=document.createElement("button"); b.type="button"; b.textContent=src.textContent; if(src.getAttribute("aria-selected")==="true") b.setAttribute("aria-current","true"); b.addEventListener("click",()=>{ closeMas(); setTab(t); window.scrollTo(0,0); }); m.append(b); }
+  m.hidden=false; document.querySelector("#tabs .mas").setAttribute("aria-expanded","true");
+}
+document.addEventListener("click",e=>{ if(!$("masmenu").hidden && !e.target.closest("#masmenu") && !e.target.closest("#tabs .mas")) closeMas(); });
 function setTab(t){
-  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t?"true":"false"));
-  for(const s of ["resumen","pacto","provincias","division","tendencias","encuestas","metodo"]) $("v-"+s).hidden = s!==t;
+  document.querySelectorAll("#tabs button[role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t?"true":"false"));
+  document.querySelector("#tabs .mas").classList.toggle("on", MAS.includes(t));
+  for(const s of ["resumen","pacto","provincias","alambre","division","tendencias","encuestas","metodo"]) $("v-"+s).hidden = s!==t;
   if(t==="tendencias") renderTrends();
 }
-$("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) setTab(b.dataset.t); });
+$("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; if(b.dataset.t==="__mas"){ $("masmenu").hidden? openMas() : closeMas(); return; } closeMas(); setTab(b.dataset.t); if(window.innerWidth<=700) window.scrollTo(0,0); });
 $("reset").addEventListener("click",()=>{ manual=false; scen={...avg.v}; recompute(false); });
-$("fccaa").addEventListener("change",renderProv); $("fq").addEventListener("input",renderProv);
+$("fccaa").addEventListener("change",renderProv); $("acaa").addEventListener("change",renderAlambre); $("amas").addEventListener("click",()=>{ alambreAll=!alambreAll; renderAlambre(); }); $("fq").addEventListener("input",renderProv);
 $("desde").addEventListener("change",()=>{ desde=$("desde").value; recompute(true); });
+$("casa").value=casa?"1":"0"; $("casa").addEventListener("change",()=>{ casa=$("casa").value!=="0"; try{ localStorage.setItem("escanos29n_casa",casa?"1":"0"); }catch(e){} recompute(true); });
 $("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=14; $("vida").value="14"; }
 $("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });
-$("runmc").addEventListener("click",runMC); $("csv").addEventListener("click",downloadCSV);
-[...new Set(D.prov.map(p=>p.c))].sort((a,b)=>(CCAAN[a]||a).localeCompare(CCAAN[b]||b,"es")).forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CCAAN[c]||c; $("fccaa").append(o); });
-buildForm();
-const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","division","tendencias","encuestas","metodo"].includes(h)) setTab(h);
+$("runmc").addEventListener("click",runMC); document.querySelectorAll(".mcgo").forEach(b=>b.addEventListener("click",runMC)); $("csv").addEventListener("click",downloadCSV);
+[...new Set(D.prov.map(p=>p.c))].sort((a,b)=>(CCAAN[a]||a).localeCompare(CCAAN[b]||b,"es")).forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CCAAN[c]||c; $("fccaa").append(o); $("acaa").append(o.cloneNode(true)); });
+buildForm(); buildAutonForm();
+const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","alambre","division","tendencias","encuestas","metodo"].includes(h)) setTab(h);
 recompute(true);
 (async()=>{
   try{
@@ -780,6 +1083,7 @@ recompute(true);
     if(!db){ dbState="no"; recompute(true); return; }
     dbRef=db;
     db.collection("encuestas").onSnapshot(snap=>{ polls=snap.docs.map(d=>({...d.data(),_id:d.id})); dbState="ok"; recompute(true); }, err=>{ dbState="no"; recompute(true); });
+    db.collection("autonomicas").onSnapshot(snap=>{ apolls=snap.docs.map(d=>({...d.data(),_id:d.id})); recompute(true); }, err=>{});
   }catch(e){ dbState="no"; recompute(true); }
 })();
 </script>

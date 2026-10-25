@@ -1,6 +1,6 @@
 {
-  "name": "Escaños 29N",
-  "short_name": "Escaños 29N",
+  "name": "Simulador SER 29N",
+  "short_name": "SER 29N",
   "description": "Promedio de encuestas y simulación de escaños para las generales del 29N",
   "start_url": "./",
   "scope": "./",

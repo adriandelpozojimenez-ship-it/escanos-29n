@@ -164,9 +164,9 @@ nav.tabs .mas{display:none}
     <button role="tab" data-t="resumen" aria-selected="true">Resumen</button>
     <button role="tab" data-t="pacto">Pactómetro</button>
     <button role="tab" data-t="provincias">Provincias</button>
+    <button role="tab" data-t="probs">Probabilidades</button>
     <button role="tab" data-t="alambre" class="mx">En el alambre</button>
-    <button role="tab" data-t="division" class="mx">Izquierda dividida</button>
-    <button role="tab" data-t="tendencias">Tendencias</button>
+    <button role="tab" data-t="tendencias" class="mx">Tendencias</button>
     <button role="tab" data-t="encuestas" class="mx">Encuestas</button>
     <button role="tab" data-t="metodo" class="mx">Método</button>
     <button type="button" data-t="__mas" class="mas" aria-haspopup="true" aria-expanded="false">Más</button>
@@ -202,8 +202,15 @@ nav.tabs .mas{display:none}
         <p class="note" style="margin-top:10px">Reparto con D'Hondt y barrera del 3% en cada provincia, con los escaños de 2026. «Otros y blanco» cuenta para la barrera pero no obtiene escaños. Los escaños de las listas conjuntas de Frente Amplio y Podemos (Canarias y Comunitat Valenciana) se suman a Frente Amplio.</p>
       </div>
     </div>
-    <div class="panel" style="margin-top:20px">
-      <div class="toolbar"><h2 style="margin-right:auto">Probabilidades</h2><span class="muted num mcstat"></span><button class="btn small mcgo" type="button">Calcular</button></div>
+  </section>
+
+  <section id="v-probs" hidden>
+    <div class="panel">
+      <div class="toolbar"><h2 style="margin-right:auto">Probabilidades</h2>
+        <label for="nsim" class="muted">Simulaciones</label>
+        <select id="nsim"><option>1000</option><option>3000</option><option selected>5000</option></select>
+        <button class="btn mcgo" type="button">Calcular</button></div>
+      <div class="toolbar" id="mcprog" hidden><div class="progress"><div id="mcbar"></div></div><span class="muted num" id="mctxt"></span></div>
       <div id="rprob"></div>
     </div>
   </section>
@@ -246,25 +253,6 @@ nav.tabs .mas{display:none}
         <button class="btn ghost small" id="amas" type="button">Ver todas</button></div>
       <p class="note">Provincias ordenadas por los votos que le faltan al aspirante para quitarle el último escaño a quien lo tiene («Le faltan», en votos), suponiendo que el resto de partidos no cambia. Votos aproximados, calculados sobre los votos válidos de 2023. Con el escenario de la pestaña «Resumen».</p>
       <div class="scroll"><table id="talambre"></table></div>
-    </div>
-  </section>
-
-  <section id="v-division" hidden>
-    <div class="kpis" id="dkpis"></div>
-    <div class="grid2">
-      <div class="panel">
-        <h2>Dónde cuesta escaño, con el escenario actual</h2>
-        <div class="scroll"><table id="tdiv"></table></div>
-      </div>
-      <div class="panel">
-        <div class="toolbar"><h2 style="margin-right:auto">Probabilidades</h2>
-          <label for="nsim" class="muted">Simulaciones</label>
-          <select id="nsim"><option>1000</option><option>3000</option><option selected>5000</option></select>
-          <button class="btn" id="runmc">Calcular</button>
-        </div>
-        <div class="toolbar" id="mcprog" hidden><div class="progress"><div id="mcbar"></div></div><span class="muted num" id="mctxt"></span></div>
-        <div id="mcout"><p class="note">Pulsa «Calcular» para simular miles de elecciones alrededor del escenario actual: varían el nivel del espacio y el reparto entre Frente Amplio y Podemos (con la dispersión de las encuestas activas), el apoyo a Adelante Andalucía y el resultado de cada partido en cada provincia.</p></div>
-      </div>
     </div>
   </section>
 
@@ -341,7 +329,7 @@ nav.tabs .mas{display:none}
       <p>2. <b>Voto provincial.</b> Parte del resultado del 23J en cada provincia; cada partido sube o baja en la misma proporción que en el promedio nacional. Se Acabó la Fiesta se reparte como en las europeas de 2024 y Adelante Andalucía como en las andaluzas de 2026, restando su voto sobre todo al espacio de Sumar (procedencia según el CIS). Un ajuste iterativo hace que cada provincia sume 100% y que los totales nacionales coincidan con el promedio.</p>
       <p>3. <b>Frente Amplio y Podemos.</b> El reparto del espacio en cada comunidad combina las europeas de 2024 con los microdatos del CIS y de 40dB, calibrado a la cuota nacional de Podemos del promedio. Juntos en Canarias y la Comunitat Valenciana; en Cataluña, la parte de Podemos va a ERC.</p>
       <p>3 bis. <b>Encuestas autonómicas.</b> Si hay encuestas de una comunidad, su voto se acerca al promedio de esas encuestas: a la mitad del camino si son recientes y menos cuanto más antiguas (la mitad de peso cada 14 días), mientras los totales nacionales siguen cuadrando con el promedio nacional.</p>
-      <p>4. <b>Escaños.</b> D'Hondt con barrera del 3% y escaños de 2026. La pestaña «Izquierda dividida» compara con una lista única que sumara los votos de Frente Amplio y Podemos.</p>
+      <p>4. <b>Escaños.</b> D'Hondt con barrera del 3% y escaños de 2026.</p>
       <p>5. <b>Probabilidades.</b> Simulaciones en las que varía el voto nacional de cada partido con el error histórico de los promedios de encuestas (desviación típica de 0,42 × √cuota, calibrada con la última semana de abril de 2019, noviembre de 2019 y julio de 2023), el reparto entre Frente Amplio y Podemos (con la dispersión de las encuestas activas), el apoyo a Adelante, el resultado de cada partido en cada provincia (un 12 % de media, la dispersión que dejó el reparto proporcional al comprobarlo con 2019 y 2023) y las decisiones de método discutibles. Son probabilidades dentro del modelo, no una predicción.</p>
       <p>6. <b>Comprobación con elecciones pasadas.</b> Con el resultado nacional real, el reparto proporcional colocó mal 15 de 350 escaños de abril a noviembre de 2019 y 16 de noviembre de 2019 al 23J. Se probaron también un desplazamiento uniforme en puntos (17 y 27), uno logístico (14 y 17) y una mezcla (13 y 18): ninguno mejora de forma clara, así que se mantiene el proporcional.</p>
       <p class="note">Limitaciones conocidas: Vox no se presentó en Santa Cruz de Tenerife en 2023; su base allí se estima con su resultado de Las Palmas, corregido por la diferencia entre ambas provincias en las europeas de 2024; los votos absolutos se calculan con los votos válidos de 2023; el modelo no tiene en cuenta coaliciones territoriales nuevas que no estuvieran en Sumar en 2023.</p>
@@ -360,7 +348,7 @@ nav.tabs .mas{display:none}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}], "autonomicas": []};
-  const STAMP = "25 oct, 10:11";
+  const STAMP = "25 oct, 10:15";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
   const db = { collection: name=>({
       onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
@@ -721,7 +709,7 @@ const NERR=0.42, PERR=0.12;
 let mcSeats=null, mcKey="";
 const mcValid=()=> !!mcSeats && mcKey===JSON.stringify(scen);
 function runMC(){
-  if(mcRunning) return; mcRunning=true; $("runmc").disabled=true; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=true);
+  if(mcRunning) return; mcRunning=true; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=true);
   const key=JSON.stringify(scen); const seatSims=[];
   const N=+$("nsim").value; const base=natFrom(scen);
   const sdE=Math.max(avg.sdEsp??1.1,0.5,NERR*Math.sqrt(base.ESPACIO)), sdQ=Math.max(avg.sdQ??0.05,0.03);
@@ -752,7 +740,7 @@ function runMC(){
       lost.push(L); lostAA.push(LA); lostT.push(LT); sinv.push(vs); sinp.push(vt>0?vs/vt*100:0);
     }
     $("mcbar").style.width=(t/N*100)+"%"; $("mctxt").textContent=`${t} / ${N}`; document.querySelectorAll(".mcstat").forEach(e=>e.textContent= t<N? `Simulando… ${Math.round(t/N*100)} %` : "");
-    if(t<N) setTimeout(step,0); else { mcRunning=false; $("runmc").disabled=false; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=false); mcSeats=seatSims; mcKey=key; renderProbs(); renderPacto(); renderMC({N,lost,lostAA,lostT,sinv,sinp,pl,pla,plt,aaEsc,ben,sdE,sdQ}); }
+    if(t<N) setTimeout(step,0); else { mcRunning=false; $("mcprog").hidden=true; document.querySelectorAll(".mcgo").forEach(b=>b.disabled=false); mcSeats=seatSims; mcKey=key; renderProbs(); renderPacto(); }
   };
   setTimeout(step,0);
 }
@@ -1054,9 +1042,9 @@ function recompute(fromPolls){
   if(fromPolls || !scen){ computeRegional(); computeHouse(); avg=computeAverage(); if(!manual) scen={...avg.v}; }
   model=runModel(natFrom(scen));
   if(fromPolls) trendDirty=true;
-  renderStatus(); renderResumen(); renderProv(); renderDiv(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
+  renderStatus(); renderResumen(); renderProv(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
 }
-const MAS=["alambre","division","encuestas","metodo"];
+const MAS=["alambre","tendencias","encuestas","metodo"];
 function closeMas(){ $("masmenu").hidden=true; document.querySelector("#tabs .mas").setAttribute("aria-expanded","false"); }
 function openMas(){
   const m=$("masmenu"); m.textContent="";
@@ -1067,7 +1055,7 @@ document.addEventListener("click",e=>{ if(!$("masmenu").hidden && !e.target.clos
 function setTab(t){
   document.querySelectorAll("#tabs button[role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t?"true":"false"));
   document.querySelector("#tabs .mas").classList.toggle("on", MAS.includes(t));
-  for(const s of ["resumen","pacto","provincias","alambre","division","tendencias","encuestas","metodo"]) $("v-"+s).hidden = s!==t;
+  for(const s of ["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","metodo"]) $("v-"+s).hidden = s!==t;
   if(t==="tendencias") renderTrends();
 }
 $("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; if(b.dataset.t==="__mas"){ $("masmenu").hidden? openMas() : closeMas(); return; } closeMas(); setTab(b.dataset.t); if(window.innerWidth<=700) window.scrollTo(0,0); });
@@ -1077,10 +1065,10 @@ $("desde").addEventListener("change",()=>{ desde=$("desde").value; recompute(tru
 $("casa").value=casa?"1":"0"; $("casa").addEventListener("change",()=>{ casa=$("casa").value!=="0"; try{ localStorage.setItem("escanos29n_casa",casa?"1":"0"); }catch(e){} recompute(true); });
 $("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=14; $("vida").value="14"; }
 $("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });
-$("runmc").addEventListener("click",runMC); document.querySelectorAll(".mcgo").forEach(b=>b.addEventListener("click",runMC)); $("csv").addEventListener("click",downloadCSV);
+document.querySelectorAll(".mcgo").forEach(b=>b.addEventListener("click",runMC)); $("csv").addEventListener("click",downloadCSV);
 [...new Set(D.prov.map(p=>p.c))].sort((a,b)=>(CCAAN[a]||a).localeCompare(CCAAN[b]||b,"es")).forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CCAAN[c]||c; $("fccaa").append(o); $("acaa").append(o.cloneNode(true)); });
 buildForm(); buildAutonForm();
-const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","alambre","division","tendencias","encuestas","metodo"].includes(h)) setTab(h);
+const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","metodo"].includes(h)) setTab(h);
 recompute(true);
 (async()=>{
   try{

@@ -233,13 +233,6 @@ footer.poz{padding-block:0 28px;padding-left:max(16px,env(safe-area-inset-left,0
 .hemi .big{font:800 46px var(--f-display);fill:var(--ink)}
 .hemi .sub{font:700 12px var(--f-body);fill:var(--muted)}
 nav.tabs button[data-t=senado]{--tc:#ffb26b}
-.senesc{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
-.senesc button{font:700 .88rem var(--f-body);color:var(--ink);background:var(--panel);border:2px solid var(--edge);border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}
-.senesc button[aria-pressed="true"]{background:var(--sun);color:#1b1035;transform:translate(1px,1px);box-shadow:1px 1px 0 var(--shadow)}
-.senprob{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:center;margin-top:6px;text-align:center}
-.senprob div{min-width:120px}
-.senprob b{display:block;font:800 1.9rem var(--f-display)}
-.senprob span{font-size:.8rem;color:var(--muted);font-weight:600}
 /* mapa de provincias */
 .mapgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
@@ -459,26 +452,33 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
   </section>
 
   <section id="v-senado" hidden>
+    <div class="kpis" id="senkpis"></div>
     <div class="panel" style="margin-bottom:20px">
-      <div class="eyebrow">Nuestro cálculo del 26 de octubre · 10.000 simulaciones</div>
-      <h2 style="margin:2px 0 10px">Senado estimado</h2>
-      <div class="senesc" id="senesc" role="group" aria-label="Escenario del pacto PP-Vox"></div>
+      <h2>Senado estimado</h2>
+      <p class="note" style="margin:2px 0 6px">209 senadores elegidos (media de 1.000 simulaciones con el promedio de encuestas), más los 58 autonómicos ya designados.</p>
       <div class="hemi"><svg id="senhemi" role="img"></svg></div>
-      <div class="legend" id="senleg" style="justify-content:center"></div>
-      <div class="senprob" id="senprob"></div>
+      <div class="legend" id="senleg"></div>
     </div>
     <div class="grid2">
       <div class="panel">
-        <h2 style="margin-bottom:8px">Los cuatro escenarios</h2>
+        <div class="toolbar" style="justify-content:space-between;margin-bottom:6px"><h2>Escaños por partido</h2></div>
         <div class="scroll"><table id="sentab"></table></div>
-        <p class="note" style="margin-top:8px">PP + Vox sobre los 267 escaños de la Cámara, con el intervalo del 90 % entre corchetes. Sin pacto, la mayoría absoluta (134) ya está casi asegurada: 97 %.</p>
+        <p class="note" style="margin-top:8px">«Elect.»: senadores elegidos, media de 1.000 simulaciones con el promedio de encuestas. «Aut.»: autonómicos que tienen hoy designados los parlamentos. «90 %»: horquilla central de 1.000 simulaciones.</p>
       </div>
-      <div class="panel method">
-        <h2 style="margin-bottom:8px">Cómo está hecho</h2>
-        <p class="note"><b>Pacto.</b> Vox no se presenta en seis provincias y lleva un solo candidato en catorce; el PP no se presenta en Gipuzkoa, Girona y Tarragona. «Obediencia total» supone que todos los votantes del partido que se retira votan al otro; los otros dos escenarios, que un 10 % o un 20 % no lo hace. Son supuestos ilustrativos, no estimaciones.</p>
-        <p class="note"><b>Cámara.</b> 209 senadores elegidos en 60 circunscripciones más los 58 autonómicos actuales; incluye los 28 de PP (23) y Vox (5). Tres quintos: 161, la mayoría para renovar el Constitucional y el CGPJ.</p>
-        <p class="note"><b>Límites.</b> Las cifras suponen que el promedio de encuestas acierta a escala nacional: con su error, la horquilla con pacto pasaría de 155–167 a 139–172. Este apartado no se recalcula solo; refleja el cálculo con el promedio del 26 de octubre.</p>
+      <div class="panel">
+        <h2 style="margin-bottom:8px">Voto estimado al Senado</h2>
+        <div class="scroll"><table id="senvoto"></table></div>
+        <p class="note" style="margin-top:8px">Porcentaje sobre el total de votos a candidatos, que es como se cuenta el voto al Senado (cada elector marca hasta tres nombres). Candidaturas tal como se han presentado.</p>
       </div>
+    </div>
+    <div class="panel method" style="margin-top:20px">
+      <h2 style="margin-bottom:8px">Cómo está hecho</h2>
+      <p class="note"><b>Ámbito.</b> 209 senadores en 60 circunscripciones (cuatro por provincia, tres en Mallorca, Gran Canaria y Tenerife, dos en Ceuta y Melilla y uno en cada isla menor, Formentera incluida), más los 58 autonómicos: PP 23, PSOE 19, Vox 5, Compromís y Más Madrid 2 y otros 9. Cámara de 267: mayoría absoluta en 134 y tres quintos en 161.</p>
+      <p class="note"><b>Voto.</b> El voto provincial del promedio de encuestas (o del escenario que hayas puesto en el Resumen) se traslada a cada circunscripción en proporción a lo que cada partido sacó en el Senado el 23J frente al Congreso. Frente Amplio y Podemos heredan esa relación de Sumar; SALF, la de Vox.</p>
+      <p class="note"><b>Candidaturas.</b> Senado de Progreso (PSOE, Frente Amplio y socios) en 47 circunscripciones y cada uno por su lado en Cataluña, Canarias salvo La Gomera y Euskadi. PP y Vox según su acuerdo del 26 de octubre, suponiendo que sus votantes apoyan al otro partido donde el suyo no se presenta. UPN va con el PP.</p>
+      <p class="note"><b>Escaños.</b> Listas abiertas con voto limitado: salen los candidatos más votados. El independiente de Vox en la lista del PP cuenta como Vox.</p>
+      <p class="note"><b>Simulaciones.</b> Los escaños son la media de 1.000 simulaciones, porque un solo reparto depende de empates entre candidatos de la misma lista. Cada una sortea un error provincial del voto (12 %), un margen propio del Senado por partido (4 %) y diferencias de entre el 2 % y el 3 % entre candidatos de una misma lista. No incluyen el error nacional de las encuestas.</p>
+      <p class="note"><b>Límites.</b> El Senado se decide casi por mayoría: dos puntos entre PP y PSOE cambian decenas de escaños a la vez. El mapa de Senado de Progreso en Euskadi es una deducción y las candidaturas pueden cambiar hasta su proclamación.</p>
     </div>
   </section>
 
@@ -509,7 +509,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "1hrw2kj7xo1pp8zin9c0", "data": {"activa": true, "campo": "1-23 oct", "fin": "2026-10-23", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.2, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 5.8, "JUNTS": 1.7, "PNV": 0.8, "POD": 1.8, "PP": 32, "PSOE": 27, "SALF": 2.4, "UPN": 0.4, "VOX": 18.6}}}, {"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "6sgvg65pg0ghrfm939cp", "data": {"activa": true, "campo": "8-22 oct", "fin": "2026-10-22", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3122, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.2, "ERC": 2.5, "ESP": 7.4, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 30.6, "PSOE": 26.1, "VOX": 19.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "f333ltgxc2e9p8e0qyf0", "data": {"activa": true, "campo": "17-23 oct", "fin": "2026-10-23", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 4309, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7, "JUNTS": 1.3, "PNV": 1, "POD": 1.7, "PP": 30.9, "PSOE": 26.7, "SALF": 1.7, "VOX": 19}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "hmqxukt1ayspbni5oztb", "data": {"activa": true, "campo": "22-24 oct", "fin": "2026-10-24", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.3, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.6, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.6, "PP": 32.9, "PSOE": 25.8, "UPN": 0.3, "VOX": 19}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "ljqtzp3h1r4363fq4bj9", "data": {"activa": true, "campo": "20-22 oct", "fin": "2026-10-22", "instituto": "Ateneo del Dato", "medio": "eldiario.es", "n": 2000, "nota": "C", "v": {"ESP": 6.8, "POD": 2.7, "PP": 31.1, "PSOE": 27.6, "VOX": 19.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}], "autonomicas": []};
-  const STAMP = "26 oct, 20:57";
+  const STAMP = "26 oct, 21:05";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
   const db = { collection: name=>({
       onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
@@ -802,18 +802,18 @@ function chipsFor(seats){
 let openProv=null;
 function renderProv(){
   const f=$("fccaa").value, q=$("fq").value.trim().toLowerCase();
-  const T=$("tprov"); T.innerHTML=`<thead><tr><th>Provincia</th><th>Comunidad</th><th class="r">Escaños</th><th>Reparto</th><th>vs 23J</th><th>Izquierda alternativa</th></tr></thead>`;
+  const T=$("tprov"); T.innerHTML=`<thead><tr><th>Provincia</th><th>Comunidad</th><th class="r">Escaños</th><th>Reparto</th><th>vs 23J</th></tr></thead>`;
   const tb=document.createElement("tbody");
   const rows=model.rows.filter(r=>(!f||r.p.c===f)&&(!q||r.p.n.toLowerCase().includes(q))).sort((a,b)=>b.p.e-a.p.e||a.p.n.localeCompare(b.p.n,"es"));
   for(const r of rows){
     const tr=document.createElement("tr"); tr.className="prov"; tr.tabIndex=0;
-    tr.innerHTML=`<td><b></b></td><td class="muted"></td><td class="r num">${r.p.e}</td><td></td><td class="num" style="font-size:.8rem;min-width:120px"></td><td><span class="tag"></span></td>`;
-    tr.children[0].firstChild.textContent=r.p.n; tr.children[1].textContent=CCAAN[r.p.c]||r.p.c; tr.children[3].append(chipsFor(r.seats)); { const dd=provDelta(r); tr.children[4].textContent = (dd.length? dd.map(([a,b])=>`${a} ${sgn(b)}`).join(" · ") : "Igual") + (r.p.e!==r.p.e23? ` (escaños: ${r.p.e23} → ${r.p.e})` : ""); } tr.querySelector(".tag").textContent=SITN[r.p.s]||r.p.s;
+    tr.innerHTML=`<td><b></b></td><td class="muted"></td><td class="r num">${r.p.e}</td><td></td><td class="num" style="font-size:.8rem;min-width:120px"></td>`;
+    tr.children[0].firstChild.textContent=r.p.n; tr.children[1].textContent=CCAAN[r.p.c]||r.p.c; tr.children[3].append(chipsFor(r.seats)); { const dd=provDelta(r); tr.children[4].textContent = (dd.length? dd.map(([a,b])=>`${a} ${sgn(b)}`).join(" · ") : "Igual") + (r.p.e!==r.p.e23? ` (escaños: ${r.p.e23} → ${r.p.e})` : ""); }
     const toggle=()=>{ openProv = openProv===r.p.n?null:r.p.n; renderProv(); };
     tr.addEventListener("click",toggle); tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();}});
     tb.append(tr);
     if(openProv===r.p.n){
-      const d=document.createElement("tr"); d.className="det"; const td=document.createElement("td"); td.colSpan=6;
+      const d=document.createElement("tr"); d.className="det"; const td=document.createElement("td"); td.colSpan=5;
       const ks=[...OUT,"OTROS"].filter(k=>r.sh[k]>0.05).sort((a,b)=>r.sh[b]-r.sh[a]);
       td.innerHTML=`<div class="chips" style="gap:6px 14px"></div><div class="muted" style="margin-top:6px">Cociente del último escaño: ${fmt(r.last,2)} puntos. Votos válidos de referencia (2023): ${fmtInt(r.p.w)}.</div>`;
       const box=td.firstChild;
@@ -876,10 +876,9 @@ function renderPCard(){
   const r=model.rows.find(x=>x.p.n===mapSel)||model.rows[0]; const c=$("pcard"); c.innerHTML="";
   const ks=[...OUT].filter(k=>(r.seats[k]||0)>0).sort((a,b)=>r.seats[b]-r.seats[a]||r.sh[b]-r.sh[a]);
   const rest=[...OUT].filter(k=>!(r.seats[k]>0)&&r.sh[k]>=0.5).sort((a,b)=>r.sh[b]-r.sh[a]);
-  c.innerHTML=`<div class="eyebrow"></div><h2></h2><div class="meta"><span class="pill num"></span><span class="tag"></span></div><div class="seats"></div><div class="scroll"><table class="preparto"><thead><tr><th>Partido</th><th>Voto</th><th class="r">%</th><th class="r">Esc.</th></tr></thead><tbody></tbody></table></div><p class="delta"></p><p class="note"></p>`;
+  c.innerHTML=`<div class="eyebrow"></div><h2></h2><div class="meta"><span class="pill num"></span></div><div class="seats"></div><div class="scroll"><table class="preparto"><thead><tr><th>Partido</th><th>Voto</th><th class="r">%</th><th class="r">Esc.</th></tr></thead><tbody></tbody></table></div><p class="delta"></p><p class="note"></p>`;
   c.querySelector(".eyebrow").textContent=CCAAN[r.p.c]||r.p.c; c.querySelector("h2").textContent=r.p.n;
   c.querySelector(".pill").textContent=`${r.p.e} escaños`+(r.p.e!==r.p.e23?` (${r.p.e23} en 2023)`:"");
-  c.querySelector(".tag").textContent=SITN[r.p.s]||r.p.s;
   const st=c.querySelector(".seats"); if(r.p.e>20) st.classList.add("many");
   for(const k of ks) for(let i=0;i<r.seats[k];i++){ const d=document.createElement("i"); d.style.background=col(k); d.title=LBL[k]; st.append(d); }
   st.setAttribute("aria-label", ks.map(k=>`${LBL[k]} ${r.seats[k]}`).join(", "));
@@ -1274,7 +1273,8 @@ function recompute(fromPolls){
   if(fromPolls || !scen){ computeRegional(); computeHouse(); avg=computeAverage(); if(!manual) scen={...avg.v}; }
   model=runModel(natFrom(scen));
   if(fromPolls) trendDirty=true;
-  renderStatus(); renderResumen(); renderProv(); renderMapa(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
+  senDirty=true;
+  renderStatus(); renderResumen(); renderProv(); renderMapa(); renderSenado(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
 }
 function svgEl(tag,attrs,parent){ const e=document.createElementNS(SVGNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.append(e); return e; }
 /* Hemiciclo: los escaños se ordenan por ángulo de izquierda a derecha y se reparten por grupos en ese orden.
@@ -1297,24 +1297,112 @@ function drawHemi(svg, groups, total, marks, big, sub){
   if(sub){ const s2=svgEl("text",{x:cx,y:cy-2,"text-anchor":"middle",class:"sub"},svg); s2.textContent=sub; }
   svg.setAttribute("aria-label", `${total} escaños: ${lab.join(", ")}`);
 }
-/* Senado: resultados fijos del cálculo del 26 oct (claude/senado, 10.000 simulaciones, promedio del 26 oct). No se recalcula aquí. */
-const SEN = [
-  {id:"sin", nm:"Sin pacto", d:142, lo:134, hi:150, gana:"—", p:"0 %"},
-  {id:"total", nm:"Pacto, obediencia total", d:161, lo:155, hi:167, gana:"13–26 (19 de media)", p:"57 %"},
-  {id:"p10", nm:"Pacto, un 10 % no lo sigue", d:160, lo:154, hi:166, gana:"12–24", p:"46 %"},
-  {id:"p20", nm:"Pacto, un 20 % no lo sigue", d:159, lo:152, hi:165, gana:"11–23", p:"34 %"}];
-let senSel="total";
+/* ---------- Senado (motor de claude/senado/motor_senado.py llevado a la página) ---------- */
+const SEN23 = [{"n":"Almería","v":{"PP":377799.0,"PSOE":265067.0,"VOX":187319.0,"SUMAR":58194.0,"PACMA":7456.0,"ALM":2503.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"PACMA":0,"ALM":0},"e":4,"nc":3,"p":"Almería"},{"n":"Cádiz","v":{"PP":632711.0,"PSOE":584199.0,"VOX":228579.0,"SUMAR":214515.0,"ADELANTE ANDALUCÍA":32067.0,"PACMA":22657.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"ADELANTE ANDALUCÍA":0,"PACMA":0},"e":4,"nc":3,"p":"Cádiz"},{"n":"Córdoba","v":{"PP":506306.0,"PSOE":419797.0,"SUMAR":157480.0,"VOX":145160.0,"PACMA":10748.0},"e23":{"PP":3,"PSOE":1,"SUMAR":0,"VOX":0,"PACMA":0},"e":4,"nc":3,"p":"Córdoba"},{"n":"Granada","v":{"PP":551507.0,"PSOE":486225.0,"VOX":192247.0,"SUMAR":144998.0,"PACMA":10466.0,"JxG":8272.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"PACMA":0,"JxG":0},"e":4,"nc":3,"p":"Granada"},{"n":"Huelva","v":{"PP":267548.0,"PSOE":261735.0,"VOX":88420.0,"SUMAR":68827.0,"XH":9587.0,"PACMA":6706.0},"e23":{"PP":2,"PSOE":2,"VOX":0,"SUMAR":0,"XH":0,"PACMA":0},"e":4,"nc":3,"p":"Huelva"},{"n":"Jaén","v":{"PP":409367.0,"PSOE":388474.0,"VOX":127480.0,"SUMAR":78896.0,"JM+":14067.0,"PACMA":4039.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"JM+":0,"PACMA":0},"e":4,"nc":3,"p":"Jaén"},{"n":"Málaga","v":{"PP":872847.0,"PSOE":681754.0,"VOX":306719.0,"SUMAR":249058.0,"PACMA":32955.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"PACMA":0},"e":4,"nc":3,"p":"Málaga"},{"n":"Sevilla","v":{"PSOE":1100729.0,"PP":1026232.0,"SUMAR":392428.0,"VOX":334853.0,"PACMA":37560.0},"e23":{"PSOE":3,"PP":1,"SUMAR":0,"VOX":0,"PACMA":0},"e":4,"nc":3,"p":"Sevilla"},{"n":"Huesca","v":{"PP":133864.0,"PSOE":116913.0,"VOX":35227.0,"SUMAR":34503.0,"EXISTE":6164.0,"PAR":3347.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"EXISTE":0,"PAR":0},"e":4,"nc":3,"p":"Huesca"},{"n":"Teruel","v":{"PP":78014.0,"PSOE":61179.0,"EXISTE":37508.0,"VOX":22831.0,"SUMAR":11374.0,"PAR":2429.0},"e23":{"PP":3,"PSOE":1,"EXISTE":0,"VOX":0,"SUMAR":0,"PAR":0},"e":4,"nc":3,"p":"Teruel"},{"n":"Zaragoza","v":{"PP":546247.0,"PSOE":468009.0,"VOX":189506.0,"SUMAR":173561.0,"EXISTE":30766.0,"PAR":12178.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"EXISTE":0,"PAR":0},"e":4,"nc":3,"p":"Zaragoza"},{"n":"Albacete","v":{"PP":261682.0,"PSOE":220019.0,"VOX":87014.0,"SUMAR":42313.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Albacete"},{"n":"Ciudad Real","v":{"PP":345455.0,"PSOE":292842.0,"VOX":107452.0,"SUMAR":46613.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Ciudad Real"},{"n":"Cuenca","v":{"PP":137100.0,"PSOE":122968.0,"VOX":41775.0,"SUMAR":19425.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Cuenca"},{"n":"Guadalajara","v":{"PP":153638.0,"PSOE":134913.0,"VOX":68071.0,"SUMAR":34972.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Guadalajara"},{"n":"Toledo","v":{"PP":447186.0,"PSOE":377792.0,"VOX":183809.0,"SUMAR":81492.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Toledo"},{"n":"Ávila","v":{"PP":123796.0,"PSOE":73775.0,"VOX":33072.0,"XAV":27886.0,"SUMAR":14049.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"XAV":0,"SUMAR":0},"e":4,"nc":3,"p":"Ávila"},{"n":"Burgos","v":{"PP":237716.0,"PSOE":198585.0,"VOX":62385.0,"SUMAR":47479.0,"EV-PCAS-TC":6744.0,"VB":5398.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"EV-PCAS-TC":0,"VB":0},"e":4,"nc":3,"p":"Burgos"},{"n":"León","v":{"PP":291903.0,"PSOE":257336.0,"UPL":86839.0,"VOX":77437.0,"SUMAR":46409.0},"e23":{"PP":3,"PSOE":1,"UPL":0,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"León"},{"n":"Palencia","v":{"PP":117696.0,"PSOE":96199.0,"VOX":29096.0,"SUMAR":11742.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Palencia"},{"n":"Salamanca","v":{"PP":274082.0,"PSOE":169175.0,"VOX":67063.0,"SUMAR":30572.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Salamanca"},{"n":"Segovia","v":{"PP":117482.0,"PSOE":78557.0,"VOX":30193.0,"SUMAR":19089.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Segovia"},{"n":"Soria","v":{"PP":52647.0,"PSOE":40787.0,"SY":30825.0,"VOX":12124.0,"SUMAR":5178.0},"e23":{"PP":3,"PSOE":1,"SY":0,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Soria"},{"n":"Valladolid","v":{"PP":383705.0,"PSOE":303727.0,"VOX":113654.0,"SUMAR":70462.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Valladolid"},{"n":"Zamora","v":{"PP":132202.0,"PSOE":95546.0,"VOX":31035.0,"SUMAR":14532.0,"ZSI":7441.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"ZSI":0},"e":4,"nc":3,"p":"Zamora"},{"n":"Barcelona","v":{"PSOE":2415811.0,"ERC":1311022.0,"PP":1035843.0,"SUMAR":997914.0,"JUNTS":800647.0,"VOX":453808.0,"PACMA":136788.0},"e23":{"PSOE":3,"ERC":1,"PP":0,"SUMAR":0,"JUNTS":0,"VOX":0,"PACMA":0},"e":4,"nc":3,"p":"Barcelona"},{"n":"Girona","v":{"PSOE":229608.0,"JUNTS":198675.0,"ERC":181747.0,"PP":86298.0,"SUMAR":83214.0,"VOX":49782.0},"e23":{"PSOE":3,"JUNTS":1,"ERC":0,"PP":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Girona"},{"n":"Lleida","v":{"PSOE":135813.0,"ERC":116555.0,"JUNTS":102245.0,"PP":66059.0,"SUMAR":34617.0,"VOX":29049.0},"e23":{"PSOE":3,"ERC":1,"JUNTS":0,"PP":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Lleida"},{"n":"Tarragona","v":{"PSOE":308630.0,"ERC":195130.0,"PP":143719.0,"JUNTS":127878.0,"SUMAR":93808.0,"VOX":82680.0},"e23":{"PSOE":3,"ERC":1,"PP":0,"JUNTS":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Tarragona"},{"n":"Badajoz","v":{"PSOE":446784.0,"PP":439090.0,"VOX":127727.0,"SUMAR":71645.0,"BQEX":16352.0},"e23":{"PSOE":2,"PP":2,"VOX":0,"SUMAR":0,"BQEX":0},"e":4,"nc":3,"p":"Badajoz"},{"n":"Cáceres","v":{"PP":262063.0,"PSOE":260760.0,"VOX":76561.0,"SUMAR":44383.0,"BQEX":8192.0},"e23":{"PP":2,"PSOE":2,"VOX":0,"SUMAR":0,"BQEX":0},"e":4,"nc":3,"p":"Cáceres"},{"n":"A Coruña","v":{"PP":815114.0,"PSOE":532058.0,"BNG":228083.0,"SUMAR":193337.0,"VOX":75472.0},"e23":{"PP":3,"PSOE":1,"BNG":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"A Coruña"},{"n":"Lugo","v":{"PP":276182.0,"PSOE":164682.0,"BNG":51396.0,"SUMAR":24856.0,"VOX":18899.0},"e23":{"PP":3,"PSOE":1,"BNG":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Lugo"},{"n":"Ourense","v":{"PP":249911.0,"PSOE":144631.0,"BNG":49854.0,"SUMAR":25536.0,"VOX":18904.0},"e23":{"PP":3,"PSOE":1,"BNG":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Ourense"},{"n":"Pontevedra","v":{"PP":629382.0,"PSOE":509061.0,"BNG":175978.0,"SUMAR":172990.0,"VOX":62440.0},"e23":{"PP":3,"PSOE":1,"BNG":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Pontevedra"},{"n":"Álava","v":{"PSOE":129952.0,"EHB":100640.0,"PNV":88228.0,"PP":86430.0,"SUMAR":51711.0,"VOX":16724.0},"e23":{"PSOE":3,"EHB":1,"PNV":0,"PP":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Álava"},{"n":"Gipuzkoa","v":{"EHB":342070.0,"PNV":258129.0,"PSOE":240986.0,"SUMAR":95078.0,"PP":91202.0,"VOX":18373.0},"e23":{"EHB":3,"PNV":1,"PSOE":0,"SUMAR":0,"PP":0,"VOX":0},"e":4,"nc":3,"p":"Gipuzkoa"},{"n":"Bizkaia","v":{"PNV":502281.0,"PSOE":437452.0,"EHB":375023.0,"PP":200388.0,"SUMAR":161870.0,"VOX":37773.0},"e23":{"PNV":3,"PSOE":1,"EHB":0,"PP":0,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Bizkaia"},{"n":"Alicante","v":{"PP":979889.0,"PSOE":845895.0,"VOX":347922.0,"SUMAR":291769.0,"PACMA":30399.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"PACMA":0},"e":4,"nc":3,"p":"Alicante"},{"n":"Castellón","v":{"PP":325496.0,"PSOE":301364.0,"VOX":115692.0,"SUMAR":109429.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Castellón"},{"n":"Valencia","v":{"PP":1437830.0,"PSOE":1393776.0,"SUMAR":594258.0,"VOX":516993.0,"PACMA":43456.0},"e23":{"PP":2,"PSOE":2,"SUMAR":0,"VOX":0,"PACMA":0},"e":4,"nc":3,"p":"Valencia"},{"n":"Asturias","v":{"PP":622374.0,"PSOE":608386.0,"SUMAR":217591.0,"VOX":172297.0},"e23":{"PP":3,"PSOE":1,"SUMAR":0,"VOX":0},"e":4,"nc":3,"p":"Asturias"},{"n":"Cantabria","v":{"PP":438483.0,"PSOE":338231.0,"VOX":112364.0,"SUMAR":76020.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"Cantabria"},{"n":"La Rioja","v":{"PP":230568.0,"PSOE":176535.0,"VOX":41171.0,"SUMAR":32154.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0},"e":4,"nc":3,"p":"La Rioja"},{"n":"Madrid","v":{"PP":4265630.0,"PSOE":2956274.0,"SUMAR":1386395.0,"VOX":1194326.0,"PACMA":85974.0},"e23":{"PP":3,"PSOE":1,"SUMAR":0,"VOX":0,"PACMA":0},"e":4,"nc":3,"p":"Madrid"},{"n":"Murcia","v":{"PP":881569.0,"PSOE":562447.0,"VOX":452328.0,"SUMAR":175165.0,"PACMA":19592.0},"e23":{"PP":3,"PSOE":1,"VOX":0,"SUMAR":0,"PACMA":0},"e":4,"nc":3,"p":"Murcia"},{"n":"Navarra","v":{"PSOE":260100.0,"UPN":184531.0,"EHB":176535.0,"PP":171453.0,"SUMAR":101704.0,"GBAI":36282.0},"e23":{"PSOE":3,"UPN":1,"EHB":0,"PP":0,"SUMAR":0,"GBAI":0},"e":4,"nc":3,"p":"Navarra"},{"n":"Ceuta","v":{"PP":23888.0,"PSOE":20880.0,"VOX":15450.0,"SUMAR":1778.0},"e23":{"PP":2,"PSOE":0,"VOX":0,"SUMAR":0},"e":2,"nc":2,"p":"Ceuta"},{"n":"Melilla","v":{"PP":26234.0,"PSOE":11920.0,"VOX":7899.0,"CPM":2615.0,"SUMAR":1580.0},"e23":{"PP":2,"PSOE":0,"VOX":0,"CPM":0,"SUMAR":0},"e":2,"nc":2,"p":"Melilla"},{"n":"Mallorca","v":{"PP":275820.0,"PSOE":230754.0,"SUMAR":114446.0,"VOX":105463.0,"PACMA":8941.0},"e23":{"PP":2,"PSOE":1,"SUMAR":0,"VOX":0,"PACMA":0},"e":3,"nc":2,"p":"Baleares"},{"n":"Lanzarote","v":{"PSOE":21618.0,"PP":13822.0,"CC":7449.0,"VOX":5663.0,"SUMAR":5505.0,"NC":1332.0},"e23":{"PSOE":1,"PP":0,"CC":0,"VOX":0,"SUMAR":0,"NC":0},"e":1,"nc":1,"p":"Las Palmas"},{"n":"Menorca","v":{"PP":16222.0,"PSOE":15156.0,"SUMAR":8870.0,"VOX":3577.0},"e23":{"PP":1,"PSOE":0,"SUMAR":0,"VOX":0},"e":1,"nc":1,"p":"Baleares"},{"n":"Ibiza","v":{"PSOE+SUMAR":24375.0,"PP":21947.0,"VOX":6335.0},"e23":{"PSOE+SUMAR":1,"PP":0,"VOX":0},"e":1,"nc":1,"p":"Baleares"},{"n":"Formentera","v":{"PSOE+SUMAR":2014.0,"PP":1525.0,"VOX":272.0},"e23":{"PSOE+SUMAR":1,"PP":0,"VOX":0},"e":1,"nc":1,"p":"Baleares"},{"n":"Gran Canaria","v":{"PSOE":290084.0,"PP":237270.0,"SUMAR":60519.0,"NC":55746.0,"CC":54021.0,"VOX":50560.0},"e23":{"PSOE":2,"PP":1,"SUMAR":0,"NC":0,"CC":0,"VOX":0},"e":3,"nc":2,"p":"Las Palmas"},{"n":"Tenerife","v":{"PSOE":285680.0,"PP":239987.0,"CC":123284.0,"VOX":81461.0,"SUMAR":72488.0,"NC":6031.0},"e23":{"PSOE":2,"PP":1,"CC":0,"VOX":0,"SUMAR":0,"NC":0},"e":3,"nc":2,"p":"Santa Cruz de Tenerife"},{"n":"Fuerteventura","v":{"PSOE":10878.0,"PP":8924.0,"CC":8032.0,"VOX":4390.0,"SUMAR":3397.0,"NC":2650.0},"e23":{"PSOE":1,"PP":0,"CC":0,"VOX":0,"SUMAR":0,"NC":0},"e":1,"nc":1,"p":"Las Palmas"},{"n":"La Gomera","v":{"ASG":3820.0,"PSOE":3045.0,"PP":1657.0,"CC":645.0,"VOX":552.0},"e23":{"ASG":1,"PSOE":0,"PP":0,"CC":0,"VOX":0},"e":1,"nc":1,"p":"Santa Cruz de Tenerife"},{"n":"El Hierro","v":{"AHI":2213.0,"PSOE":1778.0,"PP":1186.0,"VOX":265.0},"e23":{"AHI":1,"PSOE":0,"PP":0,"VOX":0},"e":1,"nc":1,"p":"Santa Cruz de Tenerife"},{"n":"La Palma","v":{"PSOE":12912.0,"PP":12685.0,"CC":11090.0,"SUMAR":2282.0,"VOX":2254.0},"e23":{"PSOE":1,"PP":0,"CC":0,"SUMAR":0,"VOX":0},"e":1,"nc":1,"p":"Santa Cruz de Tenerife"}];
+const SEN_PROV = Object.fromEntries(D.prov.map((p,i)=>[p.n,i]));
+const SEN_DIR=["PP","PSOE","VOX","ERC","JUNTS","EHB","PNV","BNG","CC","UPN"];
+const SEN_VOXRET=new Set(["Las Palmas","Santa Cruz de Tenerife","Cádiz","Valencia","Castellón","Baleares"]);
+const SEN_VOX1=new Set(["Sevilla","Huelva","Asturias","Badajoz","Álava","Navarra","Cáceres","Huesca","Zaragoza","Alicante","Granada","Cuenca","Pontevedra","Jaén"]);
+const SEN_PPRET=new Set(["Gipuzkoa","Girona","Tarragona"]);
+const SEN_PODFUERA=new Set(["CVA","ICA","CAT","IBA"]);
+const SEN_AUT={PP:23,PSOE:19,VOX:5,SOCIOS:2,OTROS:9};
+const SEN_TOT=267, SEN_MAJ=134, SEN_35=161;
+const SEN_LBL={...LBL, SOCIOS:"Socios de SdP", OTROS:"Otros", SDP:"Senado de Progreso"};
+const SEN_ORDER=["PODEMOS","FA","SOCIOS","EHB","BNG","ERC","AA","PSOE","PNV","CC","JUNTS","OTROS","PP","SALF","VOX"];
+const senCol=k=> k==="SOCIOS"?"color-mix(in srgb, var(--p-FA) 55%, var(--panel))" : k==="OTROS"?"var(--muted)" : k==="SDP"?"var(--p-PSOE)" : col(k);
+const senCcaa=c=>D.prov[SEN_PROV[c.p]].c;
+function senSdp(c){ const a=senCcaa(c); return !(a==="CAT"||a==="PVA"||(a==="ICA"&&c.n!=="La Gomera")); }
+function senSlots(c){ const n=c.nc, e=(c.e23.PSOE||0)+(c.e23["PSOE+SUMAR"]||0);
+  if(n===1) return ["PSOE"]; if(n===2) return e>=2?["PSOE","PSOE"]:["PSOE","FA"];
+  return e===3?["PSOE","PSOE","PSOE"]: e===2?["PSOE","PSOE","FA"]:["PSOE","FA","PSOE"]; }
+function senMode(c){ if(SEN_VOXRET.has(c.p)) return c.e===1?"solo_pp":"pp_indep"; if(SEN_VOX1.has(c.p)) return "vox_1"; if(SEN_PPRET.has(c.p)) return "solo_vox"; return "separados"; }
+const median=a=>{ const b=[...a].sort((x,y)=>x-y), n=b.length; return n? (n%2?b[(n-1)/2]:(b[n/2-1]+b[n/2])/2) : 1; };
+// Escala de cada partido en cada circunscripción: votos por candidato al Senado del 23J por punto de voto al Congreso del 23J
+const SEN_K = SEN23.map(c=>{ const s23=D.prov[SEN_PROV[c.p]].v; const cand={}; for(const k in c.v) cand[k]=c.v[k]/c.nc;
+  if(cand["PSOE+SUMAR"]){ const j=cand["PSOE+SUMAR"]; delete cand["PSOE+SUMAR"]; const q=s23.PSOE/(s23.PSOE+s23.SUMAR); cand.PSOE=j*q; cand.SUMAR=j*(1-q); }
+  const kk={}; for(const p of [...SEN_DIR,"SUMAR"]) if(cand[p]>0 && s23[p]>0) kk[p]=cand[p]/s23[p];
+  const kref=median(Object.values(kk)); const loc={};
+  for(const p in cand) if(cand[p]>0 && p!=="SUMAR" && p!=="ADELANTE ANDALUCÍA" && !SEN_DIR.includes(p)) loc[p]=cand[p];
+  return {kk,kref,loc}; });
+function senScores(ci, sh, rnd){
+  const {kk,kref,loc}=SEN_K[ci], sc={};
+  for(const p of SEN_DIR){ if(!(sh[p]>0)) continue; sc[p]=(kk[p] ?? (kk.PP ?? kref)*0.9)*sh[p]*rnd(p); }
+  const ks=kk.SUMAR ?? kref*0.9;
+  for(const p of ["FA","PODEMOS","AA"]) if(sh[p]>0) sc[p]=ks*sh[p]*rnd(p);
+  if(sh.SALF>0) sc.SALF=(kk.VOX ?? kref)*sh.SALF*rnd("SALF");
+  for(const p in loc) if(!(p in sc)) sc["L:"+p]=loc[p]*rnd("L:"+p);
+  return sc;
+}
+function senLists(c, sc){
+  const L=[], has=p=>sc[p]>0, nc=c.nc, podRuns=!SEN_PODFUERA.has(senCcaa(c));
+  const std=(key,w,own,n)=>({key,cands:Array.from({length:n??nc},()=>({w,own}))});
+  if(senSdp(c)){ const w={PSOE:1}; if(has("FA")) w.FA=1; if(has("PODEMOS")&&!podRuns) w.PODEMOS=0.6;
+    L.push({key:"SDP",cands:senSlots(c).map(x=>({w,own:x==="PSOE"?"PSOE":"SOCIOS"}))});
+    if(has("PODEMOS")&&podRuns) L.push(std("PODEMOS",{PODEMOS:1},"PODEMOS"));
+  } else { if(has("PSOE")) L.push(std("PSOE",{PSOE:1},"PSOE")); if(has("FA")) L.push(std("FA",{FA:1},"FA")); if(has("PODEMOS")&&podRuns) L.push(std("PODEMOS",{PODEMOS:1},"PODEMOS")); }
+  const m=senMode(c), ppw={PP:1}; if(has("UPN")) ppw.UPN=1;
+  if(m==="separados"){ L.push(std("PP",ppw,"PP")); if(has("VOX")) L.push(std("VOX",{VOX:1},"VOX")); }
+  else if(m==="solo_pp") L.push(std("PP",{...ppw,VOX:1},"PP"));
+  else if(m==="vox_1"){ L.push(std("PP",{...ppw,VOX:2/nc},"PP")); L.push(std("VOX",{VOX:1},"VOX",1)); }
+  else if(m==="solo_vox") L.push(std("VOX",{VOX:1,PP:1},"VOX"));
+  else if(c.e===4){ const w={PP:1,VOX:1}; L.push({key:"PP",cands:[{w,own:"PP"},{w,own:"VOX"},{w,own:"PP"}]}); }
+  else { const wp={PP:2/3,VOX:0.5}, wv={PP:2/3,VOX:1}; L.push({key:"PP",cands:[{w:wp,own:"PP"},{w:wp,own:"PP"},{w:wv,own:"VOX"}]}); }
+  for(const p in sc){ if(["PSOE","FA","PODEMOS","PP","VOX","UPN"].includes(p)||!(sc[p]>0)) continue; L.push(std(p.startsWith("L:")?"OTROS":p,{[p]:1},p.startsWith("L:")?"OTROS":p)); }
+  return L;
+}
+// Una elección: shp(i) da el voto provincial; cn() el factor de cada candidato
+function senElect(shp, rnd, cn){
+  const seats={}, votes={};
+  SEN23.forEach((c,ci)=>{ const sc=senScores(ci, shp(SEN_PROV[c.p]), rnd(ci)); const L=senLists(c,sc); const cs=[];
+    for(const l of L) l.cands.forEach((k,i)=>{ let v=0; for(const p in k.w) v+=k.w[p]*(sc[p]||0); votes[l.key]=(votes[l.key]||0)+v; cs.push([v*cn()-i*1e-9,k.own]); });
+    cs.sort((a,b)=>b[0]-a[0]); for(let i=0;i<c.e&&i<cs.length;i++) seats[cs[i][1]]=(seats[cs[i][1]]||0)+1; });
+  return {seats, votes};
+}
+let senDirty=true, senRes=null, senMC=null, senMCtimer=null;
+let senSeed=29112026; function senRand(){ senSeed|=0; senSeed=senSeed+0x6D2B79F5|0; let t=Math.imul(senSeed^senSeed>>>15,1|senSeed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
+function senRandn(){ let u=0,v=0; while(!u) u=senRand(); while(!v) v=senRand(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function senRunMC(N){
+  senSeed=29112026;
+  const P=["PP","PSOE","VOX","FA","PODEMOS","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA","SALF"];
+  const acc={}, el={}, der=[], maj=[0,0,0];
+  for(let t=0;t<N;t++){
+    const prov=model.rows.map(r=>{ const o={}; let s2=0; for(const k of P){ o[k]=(r.sh[k]||0)*Math.exp(senRandn()*0.12); s2+=o[k]; } const f=(100-(r.sh.OTROS||0))/(s2||1); for(const k of P) o[k]*=f; return o; });
+    const sd=0.02+0.01*senRand();
+    const r=senElect(i=>prov[i], ()=>{ const m={}; return p=>(m[p] ??= Math.exp(senRandn()*0.04)); }, ()=>1+senRandn()*sd);
+    const tot={}; for(const k of SEN_ORDER){ tot[k]=(r.seats[k]||0)+(SEN_AUT[k]||0); (el[k] ||= 0); el[k]+=(r.seats[k]||0); }
+    for(const k of SEN_ORDER) (acc[k] ||= []).push(tot[k]);
+    const d=tot.PP+tot.VOX; if(tot.PP>=SEN_MAJ) maj[0]++; if(d>=SEN_MAJ) maj[1]++; if(d>=SEN_35) maj[2]++; der.push(d);
+  }
+  const q=(a,x)=>{ const b=[...a].sort((u,v)=>u-v); return b[Math.min(b.length-1,Math.floor(x*b.length))]; };
+  const rng={}; for(const k in acc) rng[k]=[q(acc[k],0.05),q(acc[k],0.95)];
+  // electos medios redondeados con restos mayores para que sumen 209
+  const mean={}; let fl=0; const rem=[]; for(const k in el){ const m=el[k]/N; mean[k]=Math.floor(m); fl+=mean[k]; rem.push([m-mean[k],k]); }
+  rem.sort((a,b)=>b[0]-a[0]); for(let i=0;i<209-fl&&i<rem.length;i++) mean[rem[i][1]]++;
+  return {N, rng, mean, der:[q(der,0.05),q(der,0.95)], pPP:maj[0]/N, pDer:maj[1]/N, p35:maj[2]/N};
+}
 function renderSenado(){
-  const e=SEN.find(x=>x.id===senSel), rest=267-e.d;
-  const bx=$("senesc"); bx.textContent="";
-  for(const x of SEN){ const b=document.createElement("button"); b.type="button"; b.textContent=x.nm; b.setAttribute("aria-pressed",x.id===senSel?"true":"false"); b.addEventListener("click",()=>{ senSel=x.id; renderSenado(); }); bx.append(b); }
-  drawHemi($("senhemi"), [{n:rest,fill:"color-mix(in srgb, var(--muted) 40%, var(--panel))",label:"Resto de la Cámara"},{n:e.d,fill:"var(--p-PP)",label:"PP + Vox"}], 267,
-    [{at:133,label:"Mayoría 134"},{at:267-161,label:"3/5: 161"}], String(e.d), "PP + Vox");
-  const lg=$("senleg"); lg.innerHTML=`<span><span class="sw" style="background:var(--p-PP)"></span>PP + Vox (con UPN) <b class="num">${e.d}</b></span><span><span class="sw" style="background:color-mix(in srgb, var(--muted) 40%, var(--panel))"></span>Resto <b class="num">${rest}</b></span>`;
-  $("senprob").innerHTML=`<div><b class="num">${e.p}</b><span>probabilidad de tres quintos</span></div><div><b class="num">${e.lo}–${e.hi}</b><span>PP + Vox, intervalo del 90 %</span></div>`;
-  let h=`<thead><tr><th>Escenario</th><th class="r">PP + Vox</th><th>Gana la derecha</th><th class="r">3/5</th></tr></thead><tbody>`;
-  for(const x of SEN) h+=`<tr${x.id===senSel?' style="background:color-mix(in srgb, var(--sun) 25%, var(--panel))"':''}><td>${x.nm}</td><td class="r num"><b>${x.d}</b> <span class="muted">[${x.lo}–${x.hi}]</span></td><td class="num">${x.gana}</td><td class="r num"><b>${x.p}</b></td></tr>`;
+  if($("v-senado").hidden) return;
+  if(senDirty){ senRes=senElect(i=>model.rows[i].sh, ()=>()=>1, ()=>1); senMC=senRunMC(1000); senDirty=false; }
+  const el=senMC.mean, tot={}; for(const k of SEN_ORDER) tot[k]=(el[k]||0)+(SEN_AUT[k]||0);
+  const pct=x=>Math.round(x*100)+" %";
+  const k=$("senkpis"); k.innerHTML="";
+  const kp=(v,l)=>{ const e=document.createElement("div"); e.className="kpi"; e.innerHTML=`<div class="v num"></div><div class="l"></div>`; e.querySelector(".v").textContent=v; e.querySelector(".l").textContent=l; k.append(e); };
+  kp(tot.PP,"PP (con UPN)"); kp(tot.PSOE,"PSOE"); kp(tot.VOX,"Vox"); kp(tot.PP+tot.VOX,`PP + Vox (mayoría: ${SEN_MAJ})`);
+  kp(pct(senMC?.pPP),"Probabilidad de que el PP tenga mayoría absoluta solo"); kp(pct(senMC?.p35),`Probabilidad de tres quintos de PP + Vox (${SEN_35})`);
+  drawHemi($("senhemi"), SEN_ORDER.filter(x=>tot[x]).map(x=>({n:tot[x],fill:senCol(x),label:SEN_LBL[x]})), SEN_TOT,
+    [{at:SEN_TOT-SEN_MAJ,label:"Mayoría 134"},{at:SEN_TOT-SEN_35,label:"3/5: 161"}], String(SEN_TOT), "senadores");
+  const lg=$("senleg"); lg.textContent="";
+  for(const x of [...SEN_ORDER].sort((a,b)=>tot[b]-tot[a])){ if(!tot[x]) continue; const d=document.createElement("span"); d.innerHTML=`<span class="sw" style="background:${senCol(x)}"></span>`; d.append(`${SEN_LBL[x]} `); const b=document.createElement("b"); b.className="num"; b.textContent=tot[x]; d.append(b); lg.append(d); }
+  let h=`<thead><tr><th>Partido</th><th class="r">Elect.</th><th class="r">Aut.</th><th class="r">Total</th><th class="r">90 %</th></tr></thead><tbody>`;
+  for(const x of [...SEN_ORDER].sort((a,b)=>tot[b]-tot[a])){ if(!tot[x] && !(senMC && senMC.rng[x] && senMC.rng[x][1]>0)) continue;
+    const r=senMC&&senMC.rng[x]; h+=`<tr><td><span class="sw" style="background:${senCol(x)}"></span>${SEN_LBL[x]}</td><td class="r num">${el[x]||0}</td><td class="r num muted">${SEN_AUT[x]||0}</td><td class="r num"><b>${tot[x]}</b></td><td class="r num muted">${r? (r[0]===r[1]? r[0] : r[0]+"–"+r[1]) : "…"}</td></tr>`; }
   $("sentab").innerHTML=h+"</tbody>";
+  const V=senRes.votes, VT=Object.values(V).reduce((a,b)=>a+b,0)||1;
+  const vk=Object.keys(V).filter(x=>V[x]/VT>=0.003).sort((a,b)=>V[b]-V[a]);
+  const vmax=Math.max(...vk.map(x=>V[x]),1);
+  let hv=`<thead><tr><th>Candidatura</th><th></th><th class="r">%</th></tr></thead><tbody>`;
+  for(const x of vk) hv+=`<tr><td><span class="sw" style="background:${senCol(x)}"></span>${SEN_LBL[x]||x}</td><td style="width:42%"><div class="barbox" style="width:100%"><div class="bar" style="width:${(V[x]/vmax*100).toFixed(1)}%;background:${senCol(x)}"></div></div></td><td class="r num">${fmt(V[x]/VT*100,1)}</td></tr>`;
+  $("senvoto").innerHTML=hv+"</tbody>";
 }
 const MAS=["tendencias","pacto","encuestas","senado","metodo"];
 function closeMas(){ $("masmenu").hidden=true; document.querySelector("#tabs .mas").setAttribute("aria-expanded","false"); }

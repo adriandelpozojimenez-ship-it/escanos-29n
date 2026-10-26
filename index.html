@@ -1,34 +1,42 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="theme-color" content="#0f5c8c">
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pozanos</title>
+<meta name="theme-color" content="#e6157a">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Simulador SER 29N">
+<meta name="apple-mobile-web-app-title" content="Pozanos">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head><body>
-<title>Simulador SER 29N</title>
+
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
 <style>
 /* Mesa de datos electoral: cabecera tipo rótulo de escrutinio, pestañas, tablas densas con cifras tabulares */
+/* Verbena electoral: pegatinas con borde grueso y sombra desplazada, cada pestaña de un color, el hemiciclo como protagonista */
 :root{
-  --bg:#f3f5f7; --panel:#ffffff; --ink:#14202b; --muted:#5b6b78; --line:#dbe2e8; --soft:#e9eef2;
-  --accent:#0f5c8c; --accent-ink:#ffffff; --warn:#a15c00; --good:#1f7a4d; --bad:#b3261e;
-  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
-  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  /* colores de partido (aprox., solo para identificar) */
-  --p-PP:#1f78c8; --p-PSOE:#d9262e; --p-VOX:#5aa832; --p-FA:#c2306f; --p-PODEMOS:#6a3d8f; --p-CONJUNTA:#e07a1f;
-  --p-ERC:#e9b200; --p-JUNTS:#19b3a6; --p-EHB:#0f8a7a; --p-PNV:#2f7d3a; --p-BNG:#5fa8db; --p-CC:#d9b51a;
+  --bg:#efe8ff; --panel:#ffffff; --ink:#1b1035; --muted:#5d5278; --line:#d9cff2; --soft:#f6f1ff;
+  --accent:#e6157a; --accent-ink:#ffffff; --sun:#ffd23f; --sky:#22b8f0; --mint:#2fd39a; --grape:#7b4dff;
+  --edge:#1b1035; --shadow:#1b1035;
+  --warn:#b35c00; --good:#0f7a4c; --bad:#c3201a;
+  --f-display:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --p-PP:#1f78c8; --p-PSOE:#e0262e; --p-VOX:#5aa832; --p-FA:#d42f78; --p-PODEMOS:#6a3d8f; --p-CONJUNTA:#f08a22;
+  --p-ERC:#f2b800; --p-JUNTS:#19b3a6; --p-EHB:#0f8a7a; --p-PNV:#2f8a3f; --p-BNG:#5fa8db; --p-CC:#e2bd1c;
   --p-UPN:#264a8a; --p-AA:#0a7a45; --p-SALF:#8a6a48;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f161c; --panel:#162029; --ink:#e6edf2; --muted:#93a3b0; --line:#2a3743; --soft:#1d2933;
-  --accent:#5fb0e4; --accent-ink:#06121b; --warn:#e3a54a; --good:#5cc08b; --bad:#ef7a72; color-scheme:dark}}
+  --bg:#150d29; --panel:#21173d; --ink:#f5f0ff; --muted:#b2a6d4; --line:#3a2d63; --soft:#2a1f4b;
+  --accent:#ff4fa3; --accent-ink:#1b1035; --sun:#ffd23f; --sky:#4cc9ff; --mint:#46e3ad; --grape:#a586ff;
+  --edge:#f5f0ff; --shadow:#000000; --warn:#ffb24d; --good:#5ee0a0; --bad:#ff7a72; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0f161c; --panel:#162029; --ink:#e6edf2; --muted:#93a3b0; --line:#2a3743; --soft:#1d2933;
-  --accent:#5fb0e4; --accent-ink:#06121b; --warn:#e3a54a; --good:#5cc08b; --bad:#ef7a72; color-scheme:dark}
+  --bg:#150d29; --panel:#21173d; --ink:#f5f0ff; --muted:#b2a6d4; --line:#3a2d63; --soft:#2a1f4b;
+  --accent:#ff4fa3; --accent-ink:#1b1035; --sun:#ffd23f; --sky:#4cc9ff; --mint:#46e3ad; --grape:#a586ff;
+  --edge:#f5f0ff; --shadow:#000000; --warn:#ffb24d; --good:#5ee0a0; --bad:#ff7a72; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
 .wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -150,13 +158,79 @@ nav.tabs .mas{display:none}
 .verd{font:700 1.6rem var(--f-display);line-height:1.1}
 .verd.ok{color:var(--good)} .verd.ko{color:var(--bad)}
 @media (prefers-reduced-motion:no-preference){.bar,.progress div{transition:width .3s}}
+
+/* ===== capa Pozanos ===== */
+body{background:var(--bg);background-image:radial-gradient(circle at 12% 8%,color-mix(in srgb,var(--sun) 35%,transparent) 0 120px,transparent 121px),radial-gradient(circle at 92% 30%,color-mix(in srgb,var(--sky) 22%,transparent) 0 160px,transparent 161px),radial-gradient(color-mix(in srgb,var(--grape) 18%,transparent) 1.2px,transparent 1.6px);background-size:auto,auto,18px 18px;background-attachment:fixed}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;letter-spacing:-.01em}
+h2{font-size:1.45rem}
+.panel,.kpi{border:2.5px solid var(--edge);border-radius:18px;box-shadow:5px 5px 0 var(--shadow)}
+.kpi{position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:7px;background:var(--c,var(--accent))}
+.kpis .kpi:nth-child(5n+1){--c:var(--accent)} .kpis .kpi:nth-child(5n+2){--c:var(--sky)} .kpis .kpi:nth-child(5n+3){--c:var(--sun)} .kpis .kpi:nth-child(5n+4){--c:var(--mint)} .kpis .kpi:nth-child(5n+5){--c:var(--grape)}
+.kpi .v{font:800 2.3rem var(--f-display)}
+.kpi .l{font-weight:600}
+header.top{border-bottom:0;padding-bottom:6px;align-items:center}
+.logo{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo h1{font-size:clamp(2.6rem,9vw,4.4rem);line-height:.9;letter-spacing:-.04em;color:var(--ink);text-shadow:4px 4px 0 var(--accent)}
+.logo h1 .o{display:inline-block;color:var(--sun);-webkit-text-stroke:2px var(--edge);text-shadow:4px 4px 0 var(--accent)}
+.stamp{display:inline-block;font:800 1rem var(--f-display);letter-spacing:.04em;background:var(--sky);color:#0b1b2b;border:2.5px solid var(--edge);border-radius:10px;padding:4px 10px;transform:rotate(-6deg);box-shadow:3px 3px 0 var(--shadow)}
+.tagline{font-weight:600;color:var(--muted);margin-top:6px}
+.tagline b{color:var(--accent)}
+.eyebrow{color:var(--grape);font-weight:800}
+.pill{border:2px solid var(--edge);font-weight:700;background:var(--panel)}
+.pill:nth-child(3n+1){background:var(--sun);color:#1b1035} .pill:nth-child(3n+2){background:var(--mint);color:#06281b}
+.pill.warn{background:var(--panel);color:var(--warn);border-color:var(--warn)}
+nav.tabs{border-bottom:0;gap:8px;padding:6px 2px 10px;margin:14px 0 16px}
+nav.tabs button{font:800 1.02rem var(--f-display);color:var(--ink);background:var(--panel);border:2.5px solid var(--edge);border-radius:999px;padding:6px 16px;box-shadow:3px 3px 0 var(--shadow);transition:transform .12s,box-shadow .12s}
+nav.tabs button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--shadow)}
+nav.tabs button[aria-selected="true"]{color:#1b1035;background:var(--tc,var(--accent));border-color:var(--edge);transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+nav.tabs button[data-t=resumen]{--tc:var(--sun)} nav.tabs button[data-t=provincias]{--tc:var(--sky)} nav.tabs button[data-t=alambre]{--tc:#ff8a3d} nav.tabs button[data-t=probs]{--tc:var(--mint)} nav.tabs button[data-t=tendencias]{--tc:#ff7ac0} nav.tabs button[data-t=pacto]{--tc:#b99bff} nav.tabs button[data-t=encuestas]{--tc:#9be15d} nav.tabs button[data-t=metodo]{--tc:#ffc2dd}
+.parl{height:46px;border:2.5px solid var(--edge);border-radius:999px}
+.parl span+span{border-left:2px solid var(--panel)}
+.maj i{border-left:3px dashed var(--accent);top:-52px}
+.maj b{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 7px;transform:translateX(6px) translateY(2px)}
+.legend span,.legend>*{font-weight:600}
+.sw{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--edge)}
+.chip{border-radius:999px;padding:2px 8px;border:1.5px solid var(--edge)}
+th{color:var(--grape);font-weight:800}
+th,td{border-bottom:1.5px dashed var(--line)}
+tr.prov:hover td{background:color-mix(in srgb,var(--sun) 25%,var(--panel))}
+.bar{background:linear-gradient(90deg,var(--accent),var(--grape));height:10px;border-radius:999px}
+.barbox{border-radius:999px}
+.progress{height:10px;border:2px solid var(--edge);border-radius:999px}
+.progress div{background:repeating-linear-gradient(45deg,var(--accent) 0 8px,var(--sun) 8px 16px)}
+button.btn{font:800 .92rem var(--f-body);border:2.5px solid var(--edge);border-radius:999px;background:var(--accent);color:var(--accent-ink);box-shadow:3px 3px 0 var(--shadow);transition:transform .12s,box-shadow .12s}
+button.btn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--shadow)}
+button.btn:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+button.btn.ghost{background:var(--panel);color:var(--ink)}
+button.btn.danger{background:var(--panel);color:var(--bad);border-color:var(--bad)}
+input[type=number],input[type=text],input[type=date],select{border:2px solid var(--edge);border-radius:10px;background:var(--panel)}
+.tag{border:1.5px solid var(--edge);border-radius:999px;color:var(--ink);background:var(--soft);font-weight:600}
+.pbar{height:48px;border:2.5px solid var(--edge);border-radius:999px}
+.pbtn{border:2px solid var(--edge);border-radius:14px;box-shadow:3px 3px 0 var(--shadow)}
+.pbtn[data-st="si"]{border:2.5px solid var(--good);background:color-mix(in srgb,var(--mint) 22%,var(--panel))}
+.pbtn[data-st="abs"]{border:2.5px dashed var(--warn);background:color-mix(in srgb,var(--sun) 22%,var(--panel))}
+.verd{font:800 1.9rem var(--f-display)}
+.leg button{border:2px solid var(--edge);font-weight:600}
+.tip{border:2px solid var(--edge);border-radius:12px;box-shadow:3px 3px 0 var(--shadow)}
+.masmenu{border:2.5px solid var(--edge);border-radius:16px;box-shadow:5px 5px 0 var(--shadow)}
+.masmenu button[aria-current="true"]{background:var(--sun);color:#1b1035}
+footer.poz{padding-block:0 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));text-align:center;font-weight:600;color:var(--muted);font-size:.85rem}
+@media (max-width:700px){
+  nav.tabs{background:var(--panel);border-top:2.5px solid var(--edge);gap:0;padding:0 0 env(safe-area-inset-bottom,0px)}
+  nav.tabs button,nav.tabs button:hover,nav.tabs button[aria-selected="true"]{font:800 .8rem var(--f-display);border:0;border-top:4px solid transparent;border-radius:0;box-shadow:none;background:none;transform:none;padding:12px 2px 14px;color:var(--muted)}
+  nav.tabs button[aria-selected="true"],nav.tabs .mas.on{color:var(--ink);border-top-color:var(--accent);background:color-mix(in srgb,var(--tc,var(--sun)) 35%,var(--panel))}
+  .panel,.kpi{border-radius:14px;box-shadow:3px 3px 0 var(--shadow)}
+}
+@media (prefers-reduced-motion:reduce){nav.tabs button,button.btn{transition:none}}
 </style>
 
 <div class="wrap">
   <header class="top">
     <div>
-      <div class="eyebrow">Generales del 29 de noviembre · simulación provincial</div>
-      <h1>Simulador SER 29N</h1>
+      <div class="eyebrow">Generales del 29N · cocina provincial</div>
+      <div class="logo"><h1>P<span class="o">o</span>zanos</h1></div>
+      <div class="tagline">Promedio de encuestas, D'Hondt provincia a provincia y <b>miles de simulaciones</b></div>
     </div>
     <div class="status" id="status"></div>
   </header>
@@ -337,6 +411,7 @@ nav.tabs .mas{display:none}
   </section>
 </div>
 
+<footer class="poz">Pozanos · simulador de escaños de las generales del 29N</footer>
 <style>
 #fpanel{display:none!important}
 #tpolls td:last-child button{display:none!important}
@@ -348,7 +423,7 @@ nav.tabs .mas{display:none}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "1hrw2kj7xo1pp8zin9c0", "data": {"activa": true, "campo": "1-23 oct", "fin": "2026-10-23", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.2, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 5.8, "JUNTS": 1.7, "PNV": 0.8, "POD": 1.8, "PP": 32, "PSOE": 27, "SALF": 2.4, "UPN": 0.4, "VOX": 18.6}}}, {"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "6sgvg65pg0ghrfm939cp", "data": {"activa": true, "campo": "8-22 oct", "fin": "2026-10-22", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3122, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.2, "ERC": 2.5, "ESP": 7.4, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 30.6, "PSOE": 26.1, "VOX": 19.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "f333ltgxc2e9p8e0qyf0", "data": {"activa": true, "campo": "17-23 oct", "fin": "2026-10-23", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 4309, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7, "JUNTS": 1.3, "PNV": 1, "POD": 1.7, "PP": 30.9, "PSOE": 26.7, "SALF": 1.7, "VOX": 19}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "hmqxukt1ayspbni5oztb", "data": {"activa": true, "campo": "22-24 oct", "fin": "2026-10-24", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.3, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.6, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.6, "PP": 32.9, "PSOE": 25.8, "UPN": 0.3, "VOX": 19}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "ljqtzp3h1r4363fq4bj9", "data": {"activa": true, "campo": "20-22 oct", "fin": "2026-10-22", "instituto": "Ateneo del Dato", "medio": "eldiario.es", "n": 2000, "nota": "C", "v": {"ESP": 6.8, "POD": 2.7, "PP": 31.1, "PSOE": 27.6, "VOX": 19.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}], "autonomicas": []};
-  const STAMP = "26 oct, 09:02";
+  const STAMP = "26 oct, 20:40";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
   const db = { collection: name=>({
       onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },

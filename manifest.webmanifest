@@ -1,12 +1,12 @@
 {
-  "name": "Simulador SER 29N",
-  "short_name": "SER 29N",
+  "name": "Pozanos",
+  "short_name": "Pozanos",
   "description": "Promedio de encuestas y simulación de escaños para las generales del 29N",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f3f5f7",
-  "theme_color": "#0f5c8c",
+  "background_color": "#efe8ff",
+  "theme_color": "#e6157a",
   "lang": "es",
   "icons": [
     {

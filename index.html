@@ -225,6 +225,21 @@ footer.poz{padding-block:0 28px;padding-left:max(16px,env(safe-area-inset-left,0
   .panel,.kpi{border-radius:14px;box-shadow:3px 3px 0 var(--shadow)}
 }
 @media (prefers-reduced-motion:reduce){nav.tabs button,button.btn{transition:none}}
+.hemi{max-width:600px;margin:0 auto}
+.hemi svg{display:block;width:100%;height:auto;overflow:visible}
+.hemi .seat{stroke:var(--edge);stroke-width:.7}
+.hemi .ml{stroke:var(--accent);stroke-width:2.2;stroke-dasharray:5 3}
+.hemi .mlab{font:800 12px var(--f-body);fill:var(--accent)}
+.hemi .big{font:800 46px var(--f-display);fill:var(--ink)}
+.hemi .sub{font:700 12px var(--f-body);fill:var(--muted)}
+nav.tabs button[data-t=senado]{--tc:#ffb26b}
+.senesc{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.senesc button{font:700 .88rem var(--f-body);color:var(--ink);background:var(--panel);border:2px solid var(--edge);border-radius:999px;padding:6px 12px;cursor:pointer;box-shadow:2px 2px 0 var(--shadow)}
+.senesc button[aria-pressed="true"]{background:var(--sun);color:#1b1035;transform:translate(1px,1px);box-shadow:1px 1px 0 var(--shadow)}
+.senprob{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:center;margin-top:6px;text-align:center}
+.senprob div{min-width:120px}
+.senprob b{display:block;font:800 1.9rem var(--f-display)}
+.senprob span{font-size:.8rem;color:var(--muted);font-weight:600}
 /* mapa de provincias */
 .mapgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
@@ -276,6 +291,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
     <button role="tab" data-t="tendencias" class="mx">Tendencias</button>
     <button role="tab" data-t="pacto" class="mx">Pactómetro</button>
     <button role="tab" data-t="encuestas" class="mx">Encuestas</button>
+    <button role="tab" data-t="senado" class="mx">Senado</button>
     <button role="tab" data-t="metodo" class="mx">Método</button>
     <button type="button" data-t="__mas" class="mas" aria-haspopup="true" aria-expanded="false">Más</button>
   </nav>
@@ -285,8 +301,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
     <div class="kpis" id="kpis"></div>
     <div class="panel" style="margin-bottom:20px">
       <h2>Congreso estimado</h2>
-      <div class="parl" id="parl" aria-label="Reparto de 350 escaños"></div>
-      <div class="maj"><i></i><b>176</b></div>
+      <div class="hemi"><svg id="parl" role="img" aria-label="Reparto de 350 escaños"></svg></div>
       <div class="legend" id="legend"></div>
     </div>
     <div class="panel" style="margin-bottom:20px">
@@ -443,6 +458,30 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
     </div>
   </section>
 
+  <section id="v-senado" hidden>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="eyebrow">Nuestro cálculo del 26 de octubre · 10.000 simulaciones</div>
+      <h2 style="margin:2px 0 10px">Senado estimado</h2>
+      <div class="senesc" id="senesc" role="group" aria-label="Escenario del pacto PP-Vox"></div>
+      <div class="hemi"><svg id="senhemi" role="img"></svg></div>
+      <div class="legend" id="senleg" style="justify-content:center"></div>
+      <div class="senprob" id="senprob"></div>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <h2 style="margin-bottom:8px">Los cuatro escenarios</h2>
+        <div class="scroll"><table id="sentab"></table></div>
+        <p class="note" style="margin-top:8px">PP + Vox sobre los 267 escaños de la Cámara, con el intervalo del 90 % entre corchetes. Sin pacto, la mayoría absoluta (134) ya está casi asegurada: 97 %.</p>
+      </div>
+      <div class="panel method">
+        <h2 style="margin-bottom:8px">Cómo está hecho</h2>
+        <p class="note"><b>Pacto.</b> Vox no se presenta en seis provincias y lleva un solo candidato en catorce; el PP no se presenta en Gipuzkoa, Girona y Tarragona. «Obediencia total» supone que todos los votantes del partido que se retira votan al otro; los otros dos escenarios, que un 10 % o un 20 % no lo hace. Son supuestos ilustrativos, no estimaciones.</p>
+        <p class="note"><b>Cámara.</b> 209 senadores elegidos en 60 circunscripciones más los 58 autonómicos actuales; incluye los 28 de PP (23) y Vox (5). Tres quintos: 161, la mayoría para renovar el Constitucional y el CGPJ.</p>
+        <p class="note"><b>Límites.</b> Las cifras suponen que el promedio de encuestas acierta a escala nacional: con su error, la horquilla con pacto pasaría de 155–167 a 139–172. Este apartado no se recalcula solo; refleja el cálculo con el promedio del 26 de octubre.</p>
+      </div>
+    </div>
+  </section>
+
   <section id="v-metodo" hidden>
     <div class="panel method">
       <h2>Cómo calcula</h2>
@@ -470,7 +509,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "1hrw2kj7xo1pp8zin9c0", "data": {"activa": true, "campo": "1-23 oct", "fin": "2026-10-23", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.2, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 5.8, "JUNTS": 1.7, "PNV": 0.8, "POD": 1.8, "PP": 32, "PSOE": 27, "SALF": 2.4, "UPN": 0.4, "VOX": 18.6}}}, {"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "6sgvg65pg0ghrfm939cp", "data": {"activa": true, "campo": "8-22 oct", "fin": "2026-10-22", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3122, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.2, "ERC": 2.5, "ESP": 7.4, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 30.6, "PSOE": 26.1, "VOX": 19.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "f333ltgxc2e9p8e0qyf0", "data": {"activa": true, "campo": "17-23 oct", "fin": "2026-10-23", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 4309, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7, "JUNTS": 1.3, "PNV": 1, "POD": 1.7, "PP": 30.9, "PSOE": 26.7, "SALF": 1.7, "VOX": 19}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "hmqxukt1ayspbni5oztb", "data": {"activa": true, "campo": "22-24 oct", "fin": "2026-10-24", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.3, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.6, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.6, "PP": 32.9, "PSOE": 25.8, "UPN": 0.3, "VOX": 19}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "ljqtzp3h1r4363fq4bj9", "data": {"activa": true, "campo": "20-22 oct", "fin": "2026-10-22", "instituto": "Ateneo del Dato", "medio": "eldiario.es", "n": 2000, "nota": "C", "v": {"ESP": 6.8, "POD": 2.7, "PP": 31.1, "PSOE": 27.6, "VOX": 19.8}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}], "autonomicas": []};
-  const STAMP = "26 oct, 20:53";
+  const STAMP = "26 oct, 20:57";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
   const db = { collection: name=>({
       onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
@@ -727,7 +766,7 @@ function renderStatus(){
 function renderResumen(){
   const t=model.tot; const order=["PODEMOS","FA","CONJUNTA","EHB","BNG","ERC","AA","PSOE","PNV","CC","JUNTS","UPN","PP","SALF","VOX"];
   const parl=$("parl"); parl.textContent="";
-  for(const k of order){ if(!t[k]) continue; const s=document.createElement("span"); s.style.width=(t[k]/350*100)+"%"; s.style.background=col(k); s.title=`${LBL[k]}: ${t[k]}`; parl.append(s); }
+  drawHemi(parl, order.filter(k=>t[k]).map(k=>({n:t[k],fill:col(k),label:LBL[k]})), 350, [{at:176,label:"Mayoría 176"}], "350", "escaños");
   const lg_=$("legend"); lg_.textContent="";
   for(const k of OUT){ if(!t[k]) continue; const d=document.createElement("span"); d.innerHTML=`<span class="sw" style="background:${col(k)}"></span>`; d.append(`${LBL[k]} `); const b=document.createElement("b"); b.className="num"; b.textContent=t[k]; d.append(b); lg_.append(d); }
   const der=t.PP+t.VOX+t.UPN+t.SALF, izq=t.PSOE+t.FA+t.PODEMOS+t.CONJUNTA, div=model.div.reduce((a,d)=>a+d.perd,0);
@@ -1237,7 +1276,47 @@ function recompute(fromPolls){
   if(fromPolls) trendDirty=true;
   renderStatus(); renderResumen(); renderProv(); renderMapa(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
 }
-const MAS=["tendencias","pacto","encuestas","metodo"];
+function svgEl(tag,attrs,parent){ const e=document.createElementNS(SVGNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.append(e); return e; }
+/* Hemiciclo: los escaños se ordenan por ángulo de izquierda a derecha y se reparten por grupos en ese orden.
+   marks: {at:n} dibuja una línea entre el escaño n y el n+1 contando desde la izquierda. */
+function drawHemi(svg, groups, total, marks, big, sub){
+  svg.textContent=""; const W=420, cx=210, cy=212, R=200, r0=R*0.40;
+  const rows = total>300?12:10; const rad=[]; for(let i=0;i<rows;i++) rad.push(r0+(R-r0)*i/(rows-1));
+  const rs=rad.reduce((a,b)=>a+b,0); const nr=rad.map(r=>Math.round(total*r/rs)); nr[rows-1]+=total-nr.reduce((a,b)=>a+b,0);
+  const pts=[]; rad.forEach((r,i)=>{ const n=nr[i]; for(let j=0;j<n;j++){ const a=n>1?Math.PI*j/(n-1):Math.PI/2; pts.push({a,x:cx-r*Math.cos(a),y:cy-r*Math.sin(a)}); } });
+  pts.sort((p,q)=>p.a-q.a||q.x-p.x);
+  const sr=Math.min((R-r0)/(rows-1)*0.44, Math.PI*r0/(nr[0]-1)*0.44);
+  svg.setAttribute("viewBox",`0 -26 ${W} ${cy+30}`);
+  let idx=0; const lab=[];
+  for(const g of groups){ for(let i=0;i<g.n && idx<pts.length;i++,idx++){ const p=pts[idx]; const c=svgEl("circle",{cx:p.x.toFixed(1),cy:p.y.toFixed(1),r:sr.toFixed(2),class:"seat"},svg); c.style.fill=g.fill; } lab.push(`${g.label} ${g.n}`); }
+  for(const m of (marks||[])){ if(m.at<=0||m.at>=total) continue; const a=(pts[m.at-1].a+pts[m.at].a)/2;
+    const x1=cx-(r0-8)*Math.cos(a), y1=cy-(r0-8)*Math.sin(a), x2=cx-(R+12)*Math.cos(a), y2=cy-(R+12)*Math.sin(a);
+    svgEl("line",{x1,y1,x2,y2,class:"ml"},svg);
+    const tx=svgEl("text",{x:cx-(R+16)*Math.cos(a),y:cy-(R+16)*Math.sin(a)-2,class:"mlab","text-anchor":Math.abs(a-Math.PI/2)<0.15?"middle":(a<Math.PI/2?"end":"start")},svg); tx.textContent=m.label; }
+  if(big){ const b=svgEl("text",{x:cx,y:cy-22,"text-anchor":"middle",class:"big num"},svg); b.textContent=big; }
+  if(sub){ const s2=svgEl("text",{x:cx,y:cy-2,"text-anchor":"middle",class:"sub"},svg); s2.textContent=sub; }
+  svg.setAttribute("aria-label", `${total} escaños: ${lab.join(", ")}`);
+}
+/* Senado: resultados fijos del cálculo del 26 oct (claude/senado, 10.000 simulaciones, promedio del 26 oct). No se recalcula aquí. */
+const SEN = [
+  {id:"sin", nm:"Sin pacto", d:142, lo:134, hi:150, gana:"—", p:"0 %"},
+  {id:"total", nm:"Pacto, obediencia total", d:161, lo:155, hi:167, gana:"13–26 (19 de media)", p:"57 %"},
+  {id:"p10", nm:"Pacto, un 10 % no lo sigue", d:160, lo:154, hi:166, gana:"12–24", p:"46 %"},
+  {id:"p20", nm:"Pacto, un 20 % no lo sigue", d:159, lo:152, hi:165, gana:"11–23", p:"34 %"}];
+let senSel="total";
+function renderSenado(){
+  const e=SEN.find(x=>x.id===senSel), rest=267-e.d;
+  const bx=$("senesc"); bx.textContent="";
+  for(const x of SEN){ const b=document.createElement("button"); b.type="button"; b.textContent=x.nm; b.setAttribute("aria-pressed",x.id===senSel?"true":"false"); b.addEventListener("click",()=>{ senSel=x.id; renderSenado(); }); bx.append(b); }
+  drawHemi($("senhemi"), [{n:rest,fill:"color-mix(in srgb, var(--muted) 40%, var(--panel))",label:"Resto de la Cámara"},{n:e.d,fill:"var(--p-PP)",label:"PP + Vox"}], 267,
+    [{at:133,label:"Mayoría 134"},{at:267-161,label:"3/5: 161"}], String(e.d), "PP + Vox");
+  const lg=$("senleg"); lg.innerHTML=`<span><span class="sw" style="background:var(--p-PP)"></span>PP + Vox (con UPN) <b class="num">${e.d}</b></span><span><span class="sw" style="background:color-mix(in srgb, var(--muted) 40%, var(--panel))"></span>Resto <b class="num">${rest}</b></span>`;
+  $("senprob").innerHTML=`<div><b class="num">${e.p}</b><span>probabilidad de tres quintos</span></div><div><b class="num">${e.lo}–${e.hi}</b><span>PP + Vox, intervalo del 90 %</span></div>`;
+  let h=`<thead><tr><th>Escenario</th><th class="r">PP + Vox</th><th>Gana la derecha</th><th class="r">3/5</th></tr></thead><tbody>`;
+  for(const x of SEN) h+=`<tr${x.id===senSel?' style="background:color-mix(in srgb, var(--sun) 25%, var(--panel))"':''}><td>${x.nm}</td><td class="r num"><b>${x.d}</b> <span class="muted">[${x.lo}–${x.hi}]</span></td><td class="num">${x.gana}</td><td class="r num"><b>${x.p}</b></td></tr>`;
+  $("sentab").innerHTML=h+"</tbody>";
+}
+const MAS=["tendencias","pacto","encuestas","senado","metodo"];
 function closeMas(){ $("masmenu").hidden=true; document.querySelector("#tabs .mas").setAttribute("aria-expanded","false"); }
 function openMas(){
   const m=$("masmenu"); m.textContent="";
@@ -1248,8 +1327,9 @@ document.addEventListener("click",e=>{ if(!$("masmenu").hidden && !e.target.clos
 function setTab(t){
   document.querySelectorAll("#tabs button[role=tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t?"true":"false"));
   document.querySelector("#tabs .mas").classList.toggle("on", MAS.includes(t));
-  for(const s of ["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","metodo"]) $("v-"+s).hidden = s!==t;
+  for(const s of ["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","senado","metodo"]) $("v-"+s).hidden = s!==t;
   if(t==="tendencias") renderTrends();
+  if(t==="senado") renderSenado();
 }
 $("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; if(b.dataset.t==="__mas"){ $("masmenu").hidden? openMas() : closeMas(); return; } closeMas(); setTab(b.dataset.t); if(window.innerWidth<=700) window.scrollTo(0,0); });
 $("reset").addEventListener("click",()=>{ manual=false; scen={...avg.v}; recompute(false); });
@@ -1261,7 +1341,7 @@ $("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ 
 document.querySelectorAll(".mcgo").forEach(b=>b.addEventListener("click",runMC)); $("csv").addEventListener("click",downloadCSV);
 [...new Set(D.prov.map(p=>p.c))].sort((a,b)=>(CCAAN[a]||a).localeCompare(CCAAN[b]||b,"es")).forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CCAAN[c]||c; $("fccaa").append(o); $("acaa").append(o.cloneNode(true)); });
 buildForm(); buildAutonForm();
-const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","metodo"].includes(h)) setTab(h);
+const h=(location.hash||"").slice(1); if(["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","senado","metodo"].includes(h)) setTab(h);
 recompute(true);
 (async()=>{
   try{

@@ -428,12 +428,15 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
         <h2 style="margin-right:auto">Encuestas guardadas</h2>
         <label for="desde" class="muted">Promediar desde</label>
         <input type="date" id="desde">
+        <label for="campomodo" class="muted">Campo frente al 28-O</label>
+        <select id="campomodo"><option value="todas">Todas las encuestas</option><option value="parcial">Con campo después del 28-O</option><option value="integro">Solo campo íntegro después del 28-O</option></select>
         <label for="vida" class="muted">Peso por antigüedad</label>
         <select id="vida"><option value="14">Sí</option><option value="0">No</option></select>
         <label for="casa" class="muted">Corregir sesgo de instituto</label>
         <select id="casa"><option value="1">Sí</option><option value="0">No</option></select>
       </div>
       <p class="note">Cada instituto pesa según su nota, el tamaño de su muestra (de 0,7 a 1,5 veces) y la antigüedad de su última encuesta; con «Peso por antigüedad» se usan todas sus encuestas, no solo la última. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 14 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
+      <p class="note" style="margin-top:6px">«Campo frente al 28-O» separa las encuestas por el accidente ferroviario de Urda (28 de octubre). <b>Con campo después del 28-O</b>: encuestas cuyo campo termina después de esa fecha, aunque empezara antes (etiqueta «mixta»). <b>Solo campo íntegro</b>: campo que empieza el 29 o después (etiqueta «post 28-O»). La fecha de inicio se lee del texto de «Campo». Con pocas encuestas el promedio es más inestable.</p>
       <div class="scroll"><table id="tpolls"></table></div>
     </div>
     <div class="panel" style="margin-bottom:20px">
@@ -532,7 +535,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "1hrw2kj7xo1pp8zin9c0", "data": {"activa": true, "campo": "1-23 oct", "fin": "2026-10-23", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.2, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 5.8, "JUNTS": 1.7, "PNV": 0.8, "POD": 1.8, "PP": 32, "PSOE": 27, "SALF": 2.4, "UPN": 0.4, "VOX": 18.6}}}, {"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "436uui2nfz2j52315cd0", "data": {"activa": true, "campo": "1-30 oct", "fin": "2026-10-30", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.4, "BNG": 0.9, "CC": 0.5, "EHB": 1.4, "ERC": 2.5, "ESP": 6.1, "JUNTS": 1.4, "PNV": 0.8, "POD": 1.7, "PP": 32.3, "PSOE": 26.6, "SALF": 2.5, "UPN": 0.4, "VOX": 19.1}}}, {"id": "6sgvg65pg0ghrfm939cp", "data": {"activa": true, "campo": "8-22 oct", "fin": "2026-10-22", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3122, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.2, "ERC": 2.5, "ESP": 7.4, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 30.6, "PSOE": 26.1, "VOX": 19.9}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "f333ltgxc2e9p8e0qyf0", "data": {"activa": true, "campo": "17-23 oct", "fin": "2026-10-23", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 4309, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7, "JUNTS": 1.3, "PNV": 1, "POD": 1.7, "PP": 30.9, "PSOE": 26.7, "SALF": 1.7, "VOX": 19}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "hamalgama-metrica-2026-10-28", "data": {"activa": true, "campo": "22–28 oct", "fin": "2026-10-28", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"AA": 1.1, "BNG": 0.8, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 2.2, "PP": 32.4, "PSOE": 26.4, "SALF": 1.8, "VOX": 19.9}}}, {"id": "hmqxukt1ayspbni5oztb", "data": {"activa": true, "campo": "22-24 oct", "fin": "2026-10-24", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.3, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.6, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.6, "PP": 32.9, "PSOE": 25.8, "UPN": 0.3, "VOX": 19}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "ki2yi7sblw9lz4c2mjwo", "data": {"activa": true, "campo": "28-30oct", "fin": "2026-10-30", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 1527, "nota": "B", "v": {"AA": 1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.2, "PNV": 0.9, "POD": 1.7, "PP": 31.5, "PSOE": 25.8, "SALF": 1.6, "VOX": 19.2}}}, {"id": "ljqtzp3h1r4363fq4bj9", "data": {"activa": true, "campo": "20-22 oct", "fin": "2026-10-22", "instituto": "Ateneo del Dato", "medio": "eldiario.es", "n": 2000, "nota": "C", "v": {"ESP": 6.8, "POD": 2.7, "PP": 31.1, "PSOE": 27.6, "VOX": 19.8}}}, {"id": "nc-report-2026-10-29", "data": {"activa": true, "campo": "26-29 oct", "fin": "2026-10-29", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.2, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.9, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.4, "PP": 33, "PSOE": 25.6, "VOX": 19.3}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sigma-dos-2026-10-30", "data": {"activa": true, "campo": "29-30 oct", "fin": "2026-10-30", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 2505, "nota": "A", "v": {"AA": 1.4, "BNG": 1, "CC": 0.4, "EHB": 1.3, "ERC": 3, "ESP": 8, "JUNTS": 1.1, "PNV": 0.9, "POD": 1.9, "PP": 31.1, "PSOE": 24.6, "VOX": 19.3}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "sondaxe-2026-10-28", "data": {"activa": true, "campo": "26-28 oct", "fin": "2026-10-28", "instituto": "Sondaxe", "medio": "La Voz de Galicia", "n": 1200, "nota": "B", "v": {"AA": 2, "BNG": 0.9, "CC": 0.3, "EHB": 1.4, "ERC": 2.6, "ESP": 7.2, "JUNTS": 1.3, "PNV": 0.9, "POD": 2, "PP": 29.2, "PSOE": 26.9, "SALF": 2.4, "VOX": 19.2}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}, {"id": "target-point-2026-10-30", "data": {"activa": true, "campo": "28–30 oct", "fin": "2026-10-30", "instituto": "Target Point", "medio": "El Debate", "n": 1024, "nota": "B", "v": {"ESP": 6.6, "POD": 2.4, "PP": 31.8, "PSOE": 25.5, "SALF": 2.6, "VOX": 19.9}}}, {"id": "winston-2026-10-23", "data": {"activa": true, "campo": "21–23 oct", "fin": "2026-10-23", "instituto": "Winston", "medio": "Artículo14", "n": 1200, "nota": "B", "v": {"ESP": 5.6, "PP": 29.4, "PSOE": 27.1, "VOX": 19.2}}}], "autonomicas": []};
-  const STAMP = "2 nov, 10:10";
+  const STAMP = "2 nov, 10:12";
   const ro = ()=>Promise.reject(Object.assign(new Error("Solo lectura"),{code:"read_only"}));
   const db = { collection: name=>({
       onSnapshot: cb=>{ setTimeout(()=>cb({docs:(DOCS[name]||[]).map(d=>({id:d.id,data:()=>d.data}))}),0); return ()=>{}; },
@@ -573,6 +576,23 @@ const $ = id=>document.getElementById(id);
 let apolls = []; let REGT = {};
 let polls = []; let dbRef = null; let dbState = "conectando";
 let avg = null; let scen = null; let model = null; let manual = false; let desde = "";
+/* Selector de campo respecto al accidente de Urda (28 oct): "todas", "parcial" (campo que acaba después del 28) o "integro" (campo que empieza después del 28). */
+const ACC="2026-10-28"; let campoModo="todas";
+const MESES={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,sept:9,oct:10,nov:11,dic:12};
+function pIni(p){
+  const f=p.fin||""; const t=(p.campo||"").toLowerCase().replace(/\./g,""); const m=t.match(/^\s*(\d{1,2})\s*([a-záéíóú]+)?/);
+  if(!f||!m) return f;
+  let mes=m[2]&&MESES[m[2].slice(0,4)]||MESES[m[2]?.slice(0,3)]; if(!mes){ const last=[...t.matchAll(/([a-záéíóú]{3,})/g)].map(x=>MESES[x[1].slice(0,4)]||MESES[x[1].slice(0,3)]).filter(Boolean).pop(); mes=last||+f.slice(5,7); }
+  let y=+f.slice(0,4); if(mes>+f.slice(5,7)) y--;
+  const iso=`${y}-${String(mes).padStart(2,"0")}-${String(+m[1]).padStart(2,"0")}`; return iso<=f? iso : f;
+}
+const pFase=p=> !p.fin? "pre" : pIni(p)>ACC? "post" : p.fin>ACC? "mixta" : "pre";
+function inRange(p){
+  if(desde && (p.fin||"")<desde) return false;
+  if(campoModo==="parcial") return (p.fin||"")>ACC;
+  if(campoModo==="integro") return pFase(p)==="post";
+  return true;
+}
 let vida = 14; try{ const sv=localStorage.getItem("escanos29n_vida"); if(sv!==null) vida = sv==="0"?0:14; }catch(e){}
 const recW = (fin, asOf) => { if(!vida||!fin) return 1; const t=new Date(); const hoy= asOf? Date.parse(asOf+"T00:00:00Z") : Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()); const f=Date.parse(fin+"T00:00:00Z"); const dias=Math.max(0,(hoy-f)/864e5); return Math.pow(0.5, dias/vida); };
 
@@ -586,7 +606,7 @@ let HOUSEN = {}; // instituto -> nº de encuestas usadas para estimarlo
    Con «peso por antigüedad», dentro de cada instituto se promedian todas sus encuestas ponderadas por antigüedad;
    sin él, solo cuenta la última. Si se corrige el sesgo, a cada encuesta se le resta el sesgo estimado de su instituto. */
 function computeAverage(asOf, opt={}){
-  const act = polls.filter(p=>p.activa!==false && (!desde || (p.fin||"")>=desde) && (!asOf || (p.fin&&p.fin<=asOf)) && (!opt.excl || instKey(p)!==opt.excl));
+  const act = polls.filter(p=>p.activa!==false && inRange(p) && (!asOf || (p.fin&&p.fin<=asOf)) && (!opt.excl || instKey(p)!==opt.excl));
   const byI = {};
   for(const p of act){ (byI[instKey(p)] ||= []).push(p); }
   const items = [], latestL = [];
@@ -613,7 +633,7 @@ function computeAverage(asOf, opt={}){
    encogida hacia cero con n/(n+2) y centrada para que el sesgo medio ponderado sea cero. */
 function computeHouse(){
   HOUSE={}; HOUSEN={};
-  const act=polls.filter(p=>p.activa!==false && p.fin && (!desde||p.fin>=desde));
+  const act=polls.filter(p=>p.activa!==false && p.fin && inRange(p));
   const acc={};
   for(const p of act){
     const ik=instKey(p); const ref=computeAverage(p.fin,{noHouse:true, excl:ik});
@@ -752,7 +772,7 @@ function provDelta(r){
 }
 function renderCambios(){
   const T=$("tcambios"), F=$("cfrase"); if(!T) return;
-  const act=polls.filter(p=>p.activa!==false && p.fin && (!desde||p.fin>=desde));
+  const act=polls.filter(p=>p.activa!==false && p.fin && inRange(p));
   if(act.length<2){ T.innerHTML=""; F.textContent="Hacen falta al menos dos encuestas para comparar."; return; }
   const lastP=[...act].sort((a,b)=>(b.fin||"").localeCompare(a.fin||""))[0];
   const now=avg; const saved=polls; polls=polls.filter(p=>p!==lastP); const a1=computeAverage(); polls=saved;
@@ -780,6 +800,7 @@ function renderStatus(){
   const st=$("status"); st.textContent="";
   const a=document.createElement("span"); a.className="pill"; a.textContent = n? `${avg.nInst} institutos · ${n} encuestas en el promedio`: "Sin encuestas: valores de referencia del 22 oct"; st.append(a);
   if(last){ const b=document.createElement("span"); b.className="pill"; b.textContent=`Última: ${new Date(last+"T12:00").toLocaleDateString("es-ES",{day:"numeric",month:"short"})}`; st.append(b); }
+  if(campoModo!=="todas"){ const w=document.createElement("span"); w.className="pill warn"; w.textContent= campoModo==="integro"? "Solo campo íntegro después del 28-O" : "Solo campo después del 28-O"; st.append(w); }
   const rc=Object.keys(REGT); if(rc.length){ const v=document.createElement("span"); v.className="pill"; v.textContent="Ajuste autonómico: "+rc.map(c=>CCAAN[c]||c).join(", "); st.append(v); }
   if(casa&&n){ const v=document.createElement("span"); v.className="pill"; v.textContent="Sesgo de instituto corregido"; st.append(v); }
   if(vida){ const v=document.createElement("span"); v.className="pill"; v.textContent="Recientes pesan más"; st.append(v); }
@@ -1156,7 +1177,8 @@ function renderPolls(){
     const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=p.activa!==false; cb.id="act-"+p._id; cb.setAttribute("aria-label","Incluir en el promedio");
     cb.addEventListener("change",async()=>{ if(!dbRef) return; try{ await dbRef.collection("encuestas").doc(p._id).update({activa:cb.checked}); }catch(e){ cb.checked=!cb.checked; } });
     const lab=document.createElement("span"); lab.className="tag"; lab.style.marginLeft="6px"; lab.textContent= used?"usada":(p.activa===false?"excluida":"más antigua"); tr.children[0].append(cb,lab);
-    tr.children[1].firstChild.textContent=p.instituto||""; tr.children[1].lastChild.textContent=p.medio||""; tr.children[2].textContent=p.campo||""; tr.children[3].textContent=p.fin||"";
+    tr.children[1].firstChild.textContent=p.instituto||""; tr.children[1].lastChild.textContent=p.medio||"";
+    { const ph=pFase(p); if(ph!=="pre"){ const tg=document.createElement("span"); tg.className="tag"; tg.style.marginLeft="6px"; tg.textContent= ph==="post"?"post 28-O":"mixta"; if(ph==="post"){ tg.style.background="var(--accent)"; tg.style.color="var(--accent-ink)"; } tr.children[1].firstChild.after(tg); } } tr.children[2].textContent=p.campo||""; tr.children[3].textContent=p.fin||"";
     const ed=document.createElement("button"); ed.className="btn ghost small"; ed.textContent="Editar"; ed.type="button"; ed.style.marginRight="6px"; ed.addEventListener("click",()=>startEdit(p));
     const del=document.createElement("button"); del.className="btn danger small"; del.textContent="Borrar"; del.type="button";
     del.addEventListener("click",async()=>{ if(del.dataset.confirm!=="1"){ del.dataset.confirm="1"; del.textContent="¿Seguro?"; setTimeout(()=>{del.dataset.confirm=""; del.textContent="Borrar";},4000); return; } try{ await dbRef.collection("encuestas").doc(p._id).delete(); }catch(e){ del.textContent="No se pudo borrar"; } });
@@ -1299,7 +1321,7 @@ const isoDay = ms => new Date(ms).toISOString().slice(0,10);
 const fmtDay = iso => new Date(iso+"T12:00:00Z").toLocaleDateString("es-ES",{day:"numeric",month:"short",timeZone:"UTC"});
 let trend=null, trendDirty=true; const tHidden=new Set();
 function computeTrend(){
-  const fins=polls.filter(p=>p.activa!==false && p.fin && (!desde||p.fin>=desde)).map(p=>p.fin).sort();
+  const fins=polls.filter(p=>p.activa!==false && p.fin && inRange(p)).map(p=>p.fin).sort();
   if(!fins.length) return null;
   const t=new Date(); const end=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate());
   let d=Date.parse(fins[0]+"T00:00:00Z"); const dates=[], party={}, blk={inv:[],der:[],jun:[]};
@@ -1532,6 +1554,7 @@ $("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!
 $("reset").addEventListener("click",()=>{ manual=false; scen={...avg.v}; recompute(false); });
 $("fccaa").addEventListener("change",renderProv); $("acaa").addEventListener("change",renderAlambre); $("amas").addEventListener("click",()=>{ alambreAll=!alambreAll; renderAlambre(); }); $("fq").addEventListener("input",renderProv);
 $("desde").addEventListener("change",()=>{ desde=$("desde").value; recompute(true); });
+$("campomodo").addEventListener("change",()=>{ campoModo=$("campomodo").value; recompute(true); });
 $("casa").value=casa?"1":"0"; $("casa").addEventListener("change",()=>{ casa=$("casa").value!=="0"; try{ localStorage.setItem("escanos29n_casa",casa?"1":"0"); }catch(e){} recompute(true); });
 $("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=14; $("vida").value="14"; }
 $("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });

@@ -602,7 +602,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
       bar.append(b1,b2); t.parentElement.before(bar);
     }
   });
-  if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+  if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(r=>r.update()).catch(()=>{}));
 })();
 </script>
 <script>

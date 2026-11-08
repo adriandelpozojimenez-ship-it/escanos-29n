@@ -13,6 +13,7 @@
 </head><body>
 
 
+
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700;800&display=swap">
@@ -99,6 +100,14 @@ tr.det td{background:var(--soft);font-size:.82rem}
 .progress{height:6px;background:var(--soft);border-radius:3px;overflow:hidden;width:220px}
 .progress div{height:100%;background:var(--accent);width:0}
 .prob td.p{font-weight:600}
+.ptr{display:flex;flex-direction:column;gap:2px}
+.ptr-r{padding:6px 0;border-bottom:1px solid var(--line)}
+.ptr-l{font-size:.86rem;margin-bottom:2px}
+.ptr-b{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ptr-sp{flex:none;display:block}
+.ptr-v{font-size:.9rem;white-space:nowrap}
+.ptr-d{font-size:.78rem;font-weight:700;border-radius:999px;padding:1px 8px;border:1.5px solid var(--edge);white-space:nowrap}
+.ptr-d.up{background:var(--mint);color:#1b1035}.ptr-d.down{background:var(--sun);color:#1b1035}.ptr-d.eq{background:var(--soft);color:var(--muted);border-color:var(--line)}
 .method p{max-width:70ch}
 details summary{cursor:pointer;font-weight:600}
 nav.tabs .mas{display:none}
@@ -234,16 +243,7 @@ footer.poz{padding-block:0 28px;padding-left:max(16px,env(safe-area-inset-left,0
 .hemi .big{font:800 46px var(--f-display);fill:var(--ink)}
 .hemi .sub{font:700 12px var(--f-body);fill:var(--muted)}
 nav.tabs button[data-t=senado]{--tc:#ffb26b}
-.modo{display:inline-flex;margin:12px 0 0;border:2.5px solid var(--edge);border-radius:999px;background:var(--panel);box-shadow:4px 4px 0 var(--shadow);padding:4px;gap:4px;max-width:100%}
-.modo button{font:800 1rem var(--f-display);color:var(--ink);background:none;border:0;border-radius:999px;padding:8px 18px;cursor:pointer;line-height:1.1;text-align:center}
-.modo button small{display:block;font:600 .7rem var(--f-body);color:var(--muted);margin-top:2px}
-.modo button[aria-checked="true"]{background:var(--sun);color:#1b1035}
-.modo button[data-m="tras"][aria-checked="true"]{background:var(--ink);color:var(--panel)}
-.modo button[data-m="tras"][aria-checked="true"] small{color:var(--sun)}
-.modo button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-body.modo-urda .kpi::before{background:var(--ink)}
 .urdatag{background:var(--ink)!important;color:var(--panel)!important}
-@media (max-width:700px){.modo{display:flex;width:100%;margin:0 0 16px}.modo button{flex:1;padding:8px 6px;font-size:.92rem}}
 /* mapa de provincias */
 .mapgrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
 @media (max-width:900px){.mapgrid{grid-template-columns:minmax(0,1fr)}}
@@ -296,10 +296,6 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
     </div>
     <div class="status" id="status"></div>
   </header>
-  <div class="modo" id="modo" role="radiogroup" aria-label="Qué encuestas entran en el promedio">
-    <button type="button" role="radio" data-m="todas" aria-checked="true">Todas las encuestas</button>
-    <button type="button" role="radio" data-m="tras" aria-checked="false">Tras Urda <small>campo después del 28-O</small></button>
-  </div>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-t="resumen" aria-selected="true">Resumen</button>
     <button role="tab" data-t="provincias">Provincias</button>
@@ -448,7 +444,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
         <select id="casa"><option value="1">Sí</option><option value="0">No</option></select>
       </div>
       <p class="note">Cada instituto pesa según su nota, el tamaño de su muestra (de 0,7 a 1,5 veces) y la antigüedad de su última encuesta; con «Peso por antigüedad» se usan todas sus encuestas, no solo la última. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 14 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
-      <p class="note" style="margin-top:6px"><b>Tras Urda</b> (botón de arriba): solo cuentan las encuestas cuyo campo termina después del 28 de octubre, día del accidente ferroviario de Urda, aunque empezara antes. Llevan la etiqueta «tras Urda». Con pocas encuestas el promedio es más inestable.</p>
+      <p class="note" style="margin-top:6px">Las encuestas cuyo campo termina después del 28 de octubre, día del accidente ferroviario de Urda, llevan la etiqueta «tras Urda».</p>
       <div class="scroll"><table id="tpolls"></table></div>
     </div>
     <div class="panel" style="margin-bottom:20px">
@@ -546,7 +542,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
 <script>
 (function(){
   const DOCS = {"encuestas": [{"id": "1hrw2kj7xo1pp8zin9c0", "data": {"activa": true, "campo": "1-23 oct", "fin": "2026-10-23", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.2, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 5.8, "JUNTS": 1.7, "PNV": 0.8, "POD": 1.8, "PP": 32, "PSOE": 27, "SALF": 2.4, "UPN": 0.4, "VOX": 18.6}}}, {"id": "40db-2026-10-08", "data": {"activa": true, "campo": "7–8 oct", "fin": "2026-10-08", "instituto": "40dB", "medio": "Prisa", "n": 800, "nota": "A", "v": {"ESP": 5.3, "POD": 2.3, "PP": 31.9, "PSOE": 28.1, "SALF": 1.8, "VOX": 18.9}}}, {"id": "40db-2026-11-04", "data": {"activa": true, "campo": "2–4 nov", "fin": "2026-11-04", "instituto": "40dB", "medio": "Prisa", "n": 2000, "nota": "A", "v": {"ESP": 5.0, "POD": 1.2, "PP": 31.9, "PSOE": 29.9, "SALF": 2.0, "VOX": 18.0}}}, {"id": "436uui2nfz2j52315cd0", "data": {"activa": true, "campo": "1-30 oct", "fin": "2026-10-30", "instituto": "Sociométrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 1.4, "BNG": 0.9, "CC": 0.5, "EHB": 1.4, "ERC": 2.5, "ESP": 6.1, "JUNTS": 1.4, "PNV": 0.8, "POD": 1.7, "PP": 32.3, "PSOE": 26.6, "SALF": 2.5, "UPN": 0.4, "VOX": 19.1}}}, {"id": "6sgvg65pg0ghrfm939cp", "data": {"activa": true, "campo": "8-22 oct", "fin": "2026-10-22", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3122, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.2, "ERC": 2.5, "ESP": 7.4, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 30.6, "PSOE": 26.1, "VOX": 19.9}}}, {"id": "celeste-tel-2026-11-03", "data": {"activa": true, "campo": "29 oct–3 nov", "fin": "2026-11-03", "instituto": "Celeste-Tel", "medio": "Onda Cero", "n": 1100, "nota": "B", "v": {"AA": 1.2, "BNG": 0.8, "CC": 0.5, "EHB": 1.4, "ERC": 2.2, "ESP": 8, "JUNTS": 1.5, "PNV": 0.9, "POD": 1.9, "PP": 31.8, "PSOE": 25.7, "SALF": 1.6, "VOX": 19.2}}}, {"id": "cis-cocinado-ser-2026-10-06", "data": {"activa": true, "campo": "1–6 oct", "fin": "2026-10-06", "instituto": "CIS (cocinado SER)", "medio": "CIS 3582", "n": 5024, "nota": "propia", "v": {"AA": 0.63, "BNG": 0.79, "CC": 0.23, "EHB": 1.25, "ERC": 2.29, "ESP": 6.94, "JUNTS": 1.28, "PNV": 0.67, "POD": 3.11, "PP": 28.24, "PSOE": 26.89, "SALF": 1.51, "UPN": 0.18, "VOX": 17.22}}}, {"id": "dym-2026-10-07", "data": {"activa": false, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "DYM", "medio": "Henneo", "n": 1011, "nota": "B", "v": {"ESP": 3.6, "POD": 3.6, "PP": 34, "PSOE": 28.2, "SALF": 0.5, "VOX": 18.2}}}, {"id": "em-analytics-2026-10-17", "data": {"activa": true, "campo": "15–17 oct", "fin": "2026-10-17", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 3141, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.1, "ESP": 6.2, "JUNTS": 1.2, "PNV": 1, "POD": 2, "PP": 31.8, "PSOE": 27.1, "SALF": 1.7, "VOX": 18.9}}}, {"id": "f333ltgxc2e9p8e0qyf0", "data": {"activa": true, "campo": "17-23 oct", "fin": "2026-10-23", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 4309, "nota": "B", "v": {"AA": 1.1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7, "JUNTS": 1.3, "PNV": 1, "POD": 1.7, "PP": 30.9, "PSOE": 26.7, "SALF": 1.7, "VOX": 19}}}, {"id": "gad3-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GAD3", "medio": "Vocento", "n": 1077, "nota": "A", "v": {"AA": 1, "BNG": 0.9, "CC": 0.4, "EHB": 1.5, "ERC": 2.6, "ESP": 7.4, "JUNTS": 1.5, "PNV": 1, "POD": 2.3, "PP": 31.4, "PSOE": 26.4, "SALF": 1.8, "UPN": 0.1, "VOX": 18.2}}}, {"id": "gesop-2026-10-08", "data": {"activa": true, "campo": "6–8 oct", "fin": "2026-10-08", "instituto": "GESOP", "medio": "Prensa Ibérica", "n": 1000, "nota": "B", "v": {"ERC": 2.5, "ESP": 8, "JUNTS": 1.9, "POD": 2.6, "PP": 28.7, "PSOE": 26.1, "SALF": 2, "VOX": 18.9}}}, {"id": "hamalgama-metrica-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"BNG": 0.8, "CC": 0.5, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 3.3, "PP": 33.4, "PSOE": 25.3, "SALF": 1.8, "UPN": 0.2, "VOX": 19.6}}}, {"id": "hamalgama-metrica-2026-10-28", "data": {"activa": true, "campo": "22–28 oct", "fin": "2026-10-28", "instituto": "Hamalgama Métrica", "medio": "Vozpópuli", "n": 1000, "nota": "B", "v": {"AA": 1.1, "BNG": 0.8, "EHB": 1.3, "ERC": 1.9, "ESP": 5.4, "JUNTS": 1.7, "PNV": 0.9, "POD": 2.2, "PP": 32.4, "PSOE": 26.4, "SALF": 1.8, "VOX": 19.9}}}, {"id": "hmqxukt1ayspbni5oztb", "data": {"activa": true, "campo": "22-24 oct", "fin": "2026-10-24", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.3, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.6, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.6, "PP": 32.9, "PSOE": 25.8, "UPN": 0.3, "VOX": 19}}}, {"id": "imop-2026-10-07", "data": {"activa": true, "campo": "5–7 oct", "fin": "2026-10-07", "instituto": "IMOP", "medio": "El Confidencial", "n": 900, "nota": "A", "v": {"AA": 1, "BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.1, "PNV": 0.9, "POD": 2.3, "PP": 30.4, "PSOE": 26.5, "SALF": 1.9, "UPN": 0.2, "VOX": 19}}}, {"id": "imop-2026-10-16", "data": {"activa": true, "campo": "13–16 oct", "fin": "2026-10-16", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"BNG": 1.1, "CC": 0.6, "EHB": 1.3, "ERC": 2.2, "ESP": 8.9, "JUNTS": 1.2, "PNV": 1.1, "POD": 1.9, "PP": 28.5, "PSOE": 27.1, "SALF": 1.2, "VOX": 20}}}, {"id": "imop-2026-11-06", "data": {"activa": true, "campo": "2–6 nov", "fin": "2026-11-06", "instituto": "IMOP", "medio": "El Confidencial", "n": 1000, "nota": "A", "v": {"PP": 29.8, "PSOE": 25.9, "VOX": 19.9, "ESP": 8.1, "ERC": 2.6, "AA": 1.8, "SALF": 1.7, "EHB": 1.6, "BNG": 1.3, "POD": 1.2, "JUNTS": 1.2, "PNV": 0.7, "CC": 0.5}}}, {"id": "invymark-2026-10-08", "data": {"activa": true, "campo": "5–8 oct", "fin": "2026-10-08", "instituto": "Invymark", "medio": "laSexta", "nota": "B", "v": {"EHB": 1.5, "ERC": 1.9, "ESP": 6.3, "JUNTS": 1.2, "PNV": 1.1, "POD": 3.2, "PP": 32.8, "PSOE": 28, "SALF": 1.8, "VOX": 18.8}}}, {"id": "ki2yi7sblw9lz4c2mjwo", "data": {"activa": true, "campo": "28-30oct", "fin": "2026-10-30", "instituto": "EM-Analytics", "medio": "Electomanía", "n": 1527, "nota": "B", "v": {"AA": 1, "BNG": 1, "CC": 0.3, "EHB": 1.4, "ERC": 2.2, "ESP": 7.6, "JUNTS": 1.2, "PNV": 0.9, "POD": 1.7, "PP": 31.5, "PSOE": 25.8, "SALF": 1.6, "VOX": 19.2}}}, {"id": "ljqtzp3h1r4363fq4bj9", "data": {"activa": true, "campo": "20-22 oct", "fin": "2026-10-22", "instituto": "Ateneo del Dato", "medio": "eldiario.es", "n": 2000, "nota": "C", "v": {"ESP": 6.8, "POD": 2.7, "PP": 31.1, "PSOE": 27.6, "VOX": 19.8}}}, {"id": "nc-report-2026-10-29", "data": {"activa": true, "campo": "26-29 oct", "fin": "2026-10-29", "instituto": "NC Report", "medio": "La Razón", "n": 1000, "nota": "B", "v": {"AA": 1.2, "BNG": 0.8, "CC": 0.4, "EHB": 1.4, "ERC": 2, "ESP": 6.9, "JUNTS": 1.8, "PNV": 0.9, "POD": 2.4, "PP": 33, "PSOE": 25.6, "VOX": 19.3}}}, {"id": "sigma-dos-2026-10-14", "data": {"activa": true, "campo": "1–14 oct", "fin": "2026-10-14", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 3007, "nota": "A", "v": {"AA": 0.8, "BNG": 0.8, "CC": 0.5, "EHB": 1.2, "ERC": 2.5, "ESP": 8.1, "JUNTS": 1.2, "PNV": 0.9, "POD": 2.8, "PP": 31.5, "PSOE": 25.3, "VOX": 19.5}}}, {"id": "sigma-dos-2026-10-30", "data": {"activa": true, "campo": "29-30 oct", "fin": "2026-10-30", "instituto": "Sigma Dos", "medio": "El Mundo", "n": 2505, "nota": "A", "v": {"AA": 1.4, "BNG": 1, "CC": 0.4, "EHB": 1.3, "ERC": 3, "ESP": 8, "JUNTS": 1.1, "PNV": 0.9, "POD": 1.9, "PP": 31.1, "PSOE": 24.6, "VOX": 19.3}}}, {"id": "sociometrica-2026-10-11", "data": {"activa": true, "campo": "10–11 oct", "fin": "2026-10-11", "instituto": "SocioMétrica", "medio": "El Español", "n": 1000, "nota": "A", "v": {"AA": 0.9, "BNG": 0.9, "CC": 0.5, "EHB": 1.3, "ERC": 2, "ESP": 5.8, "JUNTS": 1.5, "PNV": 0.8, "POD": 2.8, "PP": 32.6, "PSOE": 26.2, "SALF": 2.1, "UPN": 0.2, "VOX": 18.8}}}, {"id": "sondaxe-2026-10-28", "data": {"activa": true, "campo": "26-28 oct", "fin": "2026-10-28", "instituto": "Sondaxe", "medio": "La Voz de Galicia", "n": 1200, "nota": "B", "v": {"AA": 2, "BNG": 0.9, "CC": 0.3, "EHB": 1.4, "ERC": 2.6, "ESP": 7.2, "JUNTS": 1.3, "PNV": 0.9, "POD": 2, "PP": 29.2, "PSOE": 26.9, "SALF": 2.4, "VOX": 19.2}}}, {"id": "sondaxe-2026-11-04", "data": {"activa": true, "campo": "2-4 nov", "fin": "2026-11-04", "instituto": "Sondaxe", "medio": "La Voz de Galicia", "n": 1200, "nota": "B", "v": {"AA": 2.3, "BNG": 0.9, "CC": 0.5, "EHB": 1.5, "ERC": 2.9, "ESP": 7.1, "JUNTS": 1.4, "PNV": 0.7, "POD": 2.2, "PP": 29.7, "PSOE": 27.3, "SALF": 1.6, "VOX": 18.6}}}, {"id": "sw-demoscopia-2026-11-04", "data": {"activa": false, "campo": "26 oct–4 nov (tracking)", "fin": "2026-11-04", "instituto": "SW Demoscopia", "medio": "La Séptima", "n": 3500, "nota": "C", "v": {"AA": 1.4, "BNG": 0.9, "CC": 0.4, "EHB": 1.4, "ERC": 2.6, "ESP": 7.6, "JUNTS": 1.2, "PNV": 0.8, "POD": 1.2, "PP": 28.8, "PSOE": 30.9, "SALF": 2, "VOX": 17}}}, {"id": "sw-demoscopia-2026-11-05", "data": {"activa": false, "campo": "26 oct–5 nov (tracking)", "fin": "2026-11-05", "instituto": "SW Demoscopia", "medio": "La Séptima", "n": 4000, "nota": "C", "v": {"AA": 1.5, "BNG": 0.9, "CC": 0.4, "EHB": 1.3, "ERC": 2.6, "ESP": 7.6, "JUNTS": 1.2, "PNV": 0.8, "POD": 1.2, "PP": 28.5, "PSOE": 31, "SALF": 2, "VOX": 17.2}}}, {"id": "sw-demoscopia-2026-11-06", "data": {"activa": true, "campo": "27 oct–6 nov (tracking)", "fin": "2026-11-06", "instituto": "SW Demoscopia", "medio": "La Séptima", "n": 4000, "nota": "C", "v": {"ESP": 7.7, "POD": 1.8, "PP": 28.8, "PSOE": 30.8, "VOX": 17.2}}}, {"id": "target-point-2026-10-09", "data": {"activa": true, "campo": "6–9 oct", "fin": "2026-10-09", "instituto": "Target Point", "medio": "El Debate", "n": 1002, "nota": "B", "v": {"ESP": 6.9, "POD": 3.4, "PP": 32, "PSOE": 25.9, "SALF": 1.3, "VOX": 18.7}}}, {"id": "target-point-2026-10-30", "data": {"activa": true, "campo": "28–30 oct", "fin": "2026-10-30", "instituto": "Target Point", "medio": "El Debate", "n": 1024, "nota": "B", "v": {"ESP": 6.6, "POD": 2.4, "PP": 31.8, "PSOE": 25.5, "SALF": 2.6, "VOX": 19.9}}}, {"id": "winston-2026-10-23", "data": {"activa": true, "campo": "21–23 oct", "fin": "2026-10-23", "instituto": "Winston", "medio": "Artículo14", "n": 1200, "nota": "B", "v": {"ESP": 5.6, "PP": 29.4, "PSOE": 27.1, "VOX": 19.2}}}], "autonomicas": [{"id": "ceo-cat-20261005", "data": {"activa": true, "campo": "1-5/10", "ccaa": "CAT", "fin": "2026-10-05", "instituto": "CEO", "medio": "", "n": 2000, "nota": "B", "v": {"ERC": 19, "ESP": 6, "JUNTS": 10.3, "POD": 2.5, "PP": 13.1, "PSOE": 29.6, "VOX": 12.2}}}, {"id": "ikerfel-pva-20261023", "data": {"activa": true, "campo": "20-23/10", "ccaa": "PVA", "fin": "2026-10-23", "instituto": "Ikerfel", "medio": "Gobierno Vasco", "n": 3485, "nota": "B", "v": {"EHB": 29.1, "ESP": 4, "PNV": 21.9, "POD": 1.5, "PP": 12.6, "PSOE": 24.7, "VOX": 4.8}}}, {"id": "sym-cva-20261016", "data": {"activa": true, "campo": "6-16/10", "ccaa": "CVA", "fin": "2026-10-16", "instituto": "SyM Consulting", "medio": "El Periódico de Aquí", "n": 2298, "nota": "B", "v": {"ESP": 16.8, "PP": 33.7, "PSOE": 29.4, "VOX": 18}}}]};
-  const STAMP = "8 nov, 11:38";
+  const STAMP = "8 nov, 22:18";
   /* Selección de encuestas: en la app se puede marcar o desmarcar cada encuesta. La elección se guarda solo
      en este móvil (localStorage) y recalcula todas las pestañas; los datos publicados no cambian. */
   const SELK = "pozanos-seleccion";
@@ -626,8 +622,8 @@ const $ = id=>document.getElementById(id);
 let apolls = []; let REGT = {};
 let polls = []; let dbRef = null; let dbState = "conectando";
 let avg = null; let scen = null; let model = null; let manual = false; let desde = "";
-/* Botón «Tras Urda»: con campoModo="tras" solo entran las encuestas cuyo campo termina después del 28 oct (accidente de Urda). */
-const ACC="2026-10-28"; let campoModo="todas";
+/* Fecha del accidente de Urda: solo sirve para etiquetar las encuestas posteriores (el botón «Tras Urda» se quitó el 8 nov). */
+const ACC="2026-10-28";
 const MESES={ene:1,feb:2,mar:3,abr:4,may:5,jun:6,jul:7,ago:8,sep:9,sept:9,oct:10,nov:11,dic:12};
 function pIni(p){
   const f=p.fin||""; const t=(p.campo||"").toLowerCase().replace(/\./g,""); const m=t.match(/^\s*(\d{1,2})\s*([a-záéíóú]+)?/);
@@ -639,7 +635,6 @@ function pIni(p){
 const pFase=p=> !p.fin? "pre" : pIni(p)>ACC? "post" : p.fin>ACC? "mixta" : "pre";
 function inRange(p){
   if(desde && (p.fin||"")<desde) return false;
-  if(campoModo==="tras") return (p.fin||"")>ACC;
   return true;
 }
 let vida = 14; try{ const sv=localStorage.getItem("escanos29n_vida"); if(sv!==null) vida = sv==="0"?0:14; }catch(e){}
@@ -849,7 +844,6 @@ function renderStatus(){
   const st=$("status"); st.textContent="";
   const a=document.createElement("span"); a.className="pill"; a.textContent = n? `${avg.nInst} institutos · ${n} encuestas en el promedio`: "Sin encuestas: valores de referencia del 22 oct"; st.append(a);
   if(last){ const b=document.createElement("span"); b.className="pill"; b.textContent=`Última: ${new Date(last+"T12:00").toLocaleDateString("es-ES",{day:"numeric",month:"short"})}`; st.append(b); }
-  if(campoModo==="tras"){ const w=document.createElement("span"); w.className="pill warn"; w.textContent=`Solo encuestas tras Urda (${n})`; st.append(w); }
   const rc=Object.keys(REGT); if(rc.length){ const v=document.createElement("span"); v.className="pill"; v.textContent="Ajuste autonómico: "+rc.map(c=>CCAAN[c]||c).join(", "); st.append(v); }
   if(casa&&n){ const v=document.createElement("span"); v.className="pill"; v.textContent="Sesgo de instituto corregido"; st.append(v); }
   if(vida){ const v=document.createElement("span"); v.className="pill"; v.textContent="Recientes pesan más"; st.append(v); }
@@ -1158,21 +1152,108 @@ const sumK=(s,ks)=>ks.reduce((a,k)=>a+(s[k]||0),0);
 // segunda fuerza en escaños: el segundo con más escaños, sin empate con el primero ni con el tercero
 const first=s=>{ const r=OUT.map(k=>[k,s[k]||0]).sort((a,b)=>b[1]-a[1]); return r[0][1]>r[1][1]? r[0][0] : null; };
 const second=s=>{ const r=OUT.map(k=>[k,s[k]||0]).sort((a,b)=>b[1]-a[1]); return (r[1][1]<r[0][1] && r[1][1]>r[2][1])? r[1][0] : null; };
-function renderProbs(){
-  const box=$("rprob"); if(!box) return;
-  if(!mcValid()){ box.innerHTML=`<p class="note">Pulsa «Calcular» para simular ${fmtInt(+$("nsim").value)} elecciones alrededor del escenario actual: el voto nacional de cada partido varía con el error histórico de las encuestas y el de cada provincia con el error del reparto provincial. Tarda unos segundos.</p>`; return; }
-  const S=mcSeats, N=S.length, P=f=>S.filter(f).length/N*100;
-  const rows=[["PP + Vox llegan a 176",s=>s.PP+s.VOX>=176],["PP + Vox + UPN + SALF llegan a 176",s=>sumK(s,DER)>=176],
+/* Probabilidades que se siguen en la pestaña: [texto, condición sobre una simulación] */
+const PROBROWS=[["PP + Vox llegan a 176",s=>s.PP+s.VOX>=176],["PP + Vox + UPN + SALF llegan a 176",s=>sumK(s,DER)>=176],
     ["La investidura de 2023 (con Junts) llega a 176",s=>sumK(s,INV23)>=176],["La investidura sin Junts llega a 176",s=>sumK(s,INV23)-s.JUNTS>=176],
     ["PP + Vox superan los 210 escaños",s=>s.PP+s.VOX>210],
     ["El PP saca más escaños que el PSOE",s=>s.PP>s.PSOE],["El PSOE es primera fuerza en escaños",s=>first(s)==="PSOE"],["El PSOE es primera fuerza en votos",s=>s._vPSOE>s._vPP&&s._vPSOE>s._vVOX],["Empate técnico PP–PSOE (menos de 1 punto en votos)",s=>Math.abs(s._vPP-s._vPSOE)<1],["Vox es segunda fuerza en escaños",s=>second(s)==="VOX"],
     ["Vox saca más de 60 escaños",s=>s.VOX>60],["Podemos no saca escaño en Madrid",s=>!s._podMad]];
-  let h=`<div class="grid2"><div><h3 style="margin-bottom:6px">Mayorías</h3><table class="prob"><tbody>`;
-  for(const [l,f] of rows) h+=`<tr><td>${l}</td><td class="r num p">${fmtP(P(f))}</td></tr>`;
-  h+=`</tbody></table></div><div><h3 style="margin-bottom:6px">Escaños por partido</h3><table><thead><tr><th>Partido</th><th class="r">Mediana</th><th class="r">80 % de las simulaciones</th></tr></thead><tbody>`;
-  for(const k of ["PP","PSOE","VOX","FA","PODEMOS","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA","SALF"]){ const a=S.map(s=>s[k]); if(Math.max(...a)===0) continue; h+=`<tr><td><span class="sw" style="background:${col(k)}"></span>${LBL[k]}</td><td class="r num"><b>${pct(a,50)}</b></td><td class="r num">${pct(a,10)}–${pct(a,90)}</td></tr>`; }
-  h+=`</tbody></table></div></div><p class="note" style="margin-top:10px">${N} simulaciones. Son probabilidades dentro del modelo, no una predicción. El error nacional de cada partido está calibrado con lo que falló el promedio de encuestas de la última semana en abril de 2019, noviembre de 2019 y julio de 2023 (unos 2,3 puntos para un partido del 30 %, 1,1 para uno del 7 %), y crece con los días que faltan para votar: a ${diasHastaElec()} días de la votación es ${fmt(errFactor(),2)} veces ese error (unos ${fmt(2.3*errFactor(),1)} puntos para un partido del 30 %). Frente Amplio incluye las listas conjuntas.</p>`;
-  box.innerHTML=h;
+function renderProbs(){
+  const box=$("rprob"); if(!box) return;
+  let left;
+  if(!mcValid()){ left=`<p class="note">Pulsa «Calcular» para simular ${fmtInt(+$("nsim").value)} elecciones alrededor del escenario actual: el voto nacional de cada partido varía con el error histórico de las encuestas y el de cada provincia con el error del reparto provincial. Tarda unos segundos.</p>`; }
+  else {
+    const S=mcSeats, N=S.length, P=f=>S.filter(f).length/N*100;
+    left=`<h3 style="margin-bottom:6px">Mayorías</h3><table class="prob"><tbody>`;
+    for(const [l,f] of PROBROWS) left+=`<tr><td>${l}</td><td class="r num p">${fmtP(P(f))}</td></tr>`;
+    left+=`</tbody></table><p class="note" style="margin-top:10px">${N} simulaciones. Son probabilidades dentro del modelo, no una predicción. El error nacional de cada partido está calibrado con lo que falló el promedio de encuestas de la última semana en abril de 2019, noviembre de 2019 y julio de 2023 (unos 2,3 puntos para un partido del 30 %, 1,1 para uno del 7 %), y crece con los días que faltan para votar: a ${diasHastaElec()} días de la votación es ${fmt(errFactor(),2)} veces ese error (unos ${fmt(2.3*errFactor(),1)} puntos para un partido del 30 %). Frente Amplio incluye las listas conjuntas. Los escaños por partido, con su horquilla, están en «Resumen».</p>`;
+  }
+  box.innerHTML=`<div class="grid2"><div>${left}</div><div><h3 style="margin-bottom:6px">Cómo han cambiado desde la convocatoria</h3><div id="ptrend"></div></div></div>`;
+  if(!$("v-probs").hidden && ptrDirty && !ptrRunning) startProbTrend();
+  renderProbTrend();
+}
+/* ---------- evolución de las probabilidades desde la convocatoria (BOE del 6 oct) ----------
+   Cada 3 días (y hoy) se simulan PTR_N elecciones con el promedio de encuestas que había ese día y con el error
+   que tocaba a esa distancia de la votación. Usa siempre el promedio, aunque el escenario se haya editado a mano.
+   Generador aleatorio con semilla fija para que la serie no baile al recargar. */
+const CONVOC="2026-10-06", PTR_N=400;
+let ptr=null, ptrDirty=true, ptrRunning=false, ptrRun=0, ptrProg=0;
+const diasA=iso=>Math.max(0,Math.round((Date.parse(ELEC_DIA+"T00:00:00Z")-Date.parse(iso+"T00:00:00Z"))/864e5));
+function mkRng(seed){ let s=seed|0; const u=()=>{ s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; };
+  const n=()=>{ let a=0,b=0; while(!a)a=u(); while(!b)b=u(); return Math.sqrt(-2*Math.log(a))*Math.cos(2*Math.PI*b); }; return {u,n}; }
+/* Una elección simulada: el mismo procedimiento que runMC (error nacional, cuota de Podemos, ruido provincial, D'Hondt). */
+function simSeats(base, sdE, sdQ, nerr, rg){
+  const {u,n}=rg;
+  const esp=Math.max(base.ESPACIO+n()*sdE,1); const q=Math.min(Math.max(base.q+n()*sdQ,0.1),0.5);
+  const nat={...base}; const ks=[...REG,"SALF","AA"]; let s0=base.ESPACIO, s1=esp;
+  for(const k of ks){ s0+=base[k]; nat[k]= base[k]>0? Math.max(base[k]+n()*nerr*Math.sqrt(base[k]),0.02) : 0; s1+=nat[k]; }
+  const fr=s0/s1; for(const k of ks) nat[k]*=fr; nat.ESPACIO=esp*fr; nat.q=q;
+  const R=construir(nat,{K:[10,40,200][Math.floor(u()*3)], aaOrigen:u()<0.5, aaFactor:Math.max(1+n()*0.19,0.3)});
+  const TS={}; for(const k of OUT) TS[k]=0; let vPP=0,vPSOE=0,vVOX=0;
+  R.forEach((sh0,i)=>{ const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ sh[k]=sh0[k]*Math.exp(n()*PERR-PERR*PERR/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
+    const sep=dhondt(sh,p.e).seats; for(const k of OUT) TS[k]+=sep[k]||0; if(p.n==="Madrid") TS._podMad=sep.PODEMOS||0; vPP+=sh.PP*p.w; vPSOE+=sh.PSOE*p.w; vVOX+=sh.VOX*p.w; });
+  TS.FA+=TS.CONJUNTA; TS.CONJUNTA=0; TS._vPP=vPP/WSUM; TS._vPSOE=vPSOE/WSUM; TS._vVOX=vVOX/WSUM; return TS;
+}
+function ptrDates(){
+  const t=new Date(), end=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()), stop=Math.min(end,Date.parse(ELEC_DIA+"T00:00:00Z")), out=[];
+  for(let d=Date.parse(CONVOC+"T00:00:00Z"); d<=stop; d+=3*864e5) out.push(isoDay(d));
+  const last=isoDay(stop); if(out[out.length-1]!==last) out.push(last); return out;
+}
+/* Firma de lo que entra en el cálculo: si no cambia, se reutiliza la serie guardada en este navegador. */
+function ptrSig(dates){ const act=polls.filter(p=>p.activa!==false&&p.fin).map(p=>[p._id,p.fin,p.nota,p.n,p.v]).sort((a,b)=>a[0]<b[0]?-1:1);
+  const str=JSON.stringify([act,casa,vida,PTR_N,dates,ELEC_DIA,DRIFT,NERR0,PERR]); let h=5381; for(let i=0;i<str.length;i++) h=(h*33^str.charCodeAt(i))>>>0; return "v1-"+h.toString(36)+"-"+str.length; }
+const PTR_KEY="pozanos-evol-probs";
+function startProbTrend(){
+  const run=++ptrRun; ptrRunning=true; ptr=null; ptrProg=0;
+  const dates=ptrDates(), sig=ptrSig(dates);
+  try{ const c=JSON.parse(localStorage.getItem(PTR_KEY)||"null"); if(c&&c.sig===sig&&c.ptr){ ptr=c.ptr; ptrDirty=false; ptrRunning=false; renderProbTrend(); return; } }catch(e){}
+  const res=dates.map(()=>PROBROWS.map(()=>0)); let di=0, cur=null;
+  const step=()=>{
+    if(run!==ptrRun) return; const t0=performance.now();
+    while(di<dates.length && performance.now()-t0<40){
+      if(!cur){ const a=computeAverage(dates[di]); if(!a.used.length || a.nInst<3){ res[di]=null; di++; continue; }
+        const base=natFrom(a.v), nerr=NERR0*errFactor(diasA(dates[di]));
+        cur={base,nerr,sdE:Math.max(a.sdEsp??1.1,0.5,nerr*Math.sqrt(base.ESPACIO)),sdQ:Math.max(a.sdQ??0.05,0.03),rg:mkRng(29112026+di*7919),k:0}; }
+      const S=simSeats(cur.base,cur.sdE,cur.sdQ,cur.nerr,cur.rg); PROBROWS.forEach((r,j)=>{ if(r[1](S)) res[di][j]++; });
+      if(++cur.k>=PTR_N){ res[di]=res[di].map(x=>x/PTR_N*100); di++; cur=null; }
+    }
+    ptrProg=(di+(cur?cur.k/PTR_N:0))/dates.length;
+    if(di<dates.length){ renderProbTrend(); setTimeout(step,0); return; }
+    const keep=dates.map((d,i)=>res[i]?i:-1).filter(i=>i>=0);
+    ptr={dates:keep.map(i=>dates[i]), vals:keep.map(i=>res[i])}; ptrDirty=false; ptrRunning=false;
+    try{ localStorage.setItem(PTR_KEY, JSON.stringify({sig, ptr})); }catch(e){}
+    renderProbTrend();
+  };
+  setTimeout(step,0);
+}
+function sparkSvg(vals, dates){
+  const Wd=150, H=34, pad=3, n=vals.length; let lo=Math.min(...vals), hi=Math.max(...vals);
+  const mid=(lo+hi)/2; if(hi-lo<20){ lo=mid-10; hi=mid+10; } if(lo<0){ hi-=lo; lo=0; } if(hi>100){ lo-=hi-100; hi=100; }
+  const X=i=>pad+(n<2?0:i/(n-1)*(Wd-2*pad)), Y=v=>H-pad-(v-lo)/(hi-lo||1)*(H-2*pad);
+  let g=""; const iu=dates.findIndex(d=>d>ACC); if(iu>0) g+=`<line x1="${((X(iu-1)+X(iu))/2).toFixed(1)}" x2="${((X(iu-1)+X(iu))/2).toFixed(1)}" y1="1" y2="${H-1}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 2" opacity=".7"/>`;
+  if(lo<=50&&hi>=50) g+=`<line x1="${pad}" x2="${Wd-pad}" y1="${Y(50).toFixed(1)}" y2="${Y(50).toFixed(1)}" stroke="var(--line)" stroke-width="1"/>`;
+  const d=vals.map((v,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)).join("");
+  g+=`<path d="${d}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  g+=`<circle cx="${X(0).toFixed(1)}" cy="${Y(vals[0]).toFixed(1)}" r="2.5" fill="var(--muted)"/><circle cx="${X(n-1).toFixed(1)}" cy="${Y(vals[n-1]).toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5"/>`;
+  return `<svg class="ptr-sp" viewBox="0 0 ${Wd} ${H}" width="${Wd}" height="${H}" aria-hidden="true">${g}</svg>`;
+}
+function renderProbTrend(){
+  const host=$("ptrend"); if(!host) return;
+  if(!ptr){ host.innerHTML=`<p class="note">${ptrRunning?`Calculando la evolución… ${Math.round(ptrProg*100)} % (la primera vez tarda casi un minuto; después se guarda en este navegador hasta que entre una encuesta nueva)`:"Abre esta pestaña para calcular la evolución."}</p>`; return; }
+  if(!ptr.dates.length){ host.innerHTML=`<p class="note">Aún no hay encuestas desde la convocatoria.</p>`; return; }
+  const n=ptr.dates.length, today=ptr.dates[n-1];
+  // Si ya está calculado el Monte Carlo grande sobre el promedio de hoy, el último punto es esa cifra (la misma de la izquierda).
+  const useMC = mcValid() && !manual && today===isoDay(Date.now()-new Date().getTimezoneOffset()*6e4);
+  const S=mcSeats;
+  let h=`<div class="ptr">`;
+  PROBROWS.forEach(([l,f],j)=>{
+    const vals=ptr.vals.map(v=>v[j]); if(useMC) vals[n-1]=S.filter(f).length/S.length*100;
+    const a=vals[0], b=vals[n-1], dlt=Math.round(b)-Math.round(a);
+    const cls=dlt>=1?"up":dlt<=-1?"down":"eq", tx=dlt>=1?`▲ +${dlt}`:dlt<=-1?`▼ −${-dlt}`:"=";
+    h+=`<div class="ptr-r"><div class="ptr-l">${l}</div><div class="ptr-b">${sparkSvg(vals,ptr.dates)}<span class="num ptr-v"><span class="muted">${fmtP(a)}</span> → <b>${fmtP(b)}</b></span><span class="ptr-d ${cls} num">${tx}</span></div></div>`;
+  });
+  h+=`</div><p class="note" style="margin-top:8px">Desde la convocatoria (BOE del 6 oct), cada 3 días: empieza el ${fmtDay(ptr.dates[0])}, primer día con al menos tres institutos en el promedio. Cada punto simula ${PTR_N} elecciones con el promedio de encuestas que había ese día y con la incertidumbre que tocaba a esa distancia de la votación, así que al principio todo estaba más cerca del 50 %. La línea rosa discontinua marca Urda (28 oct); la gris, el 50 %. El cambio va en puntos.${manual?" Esta evolución usa siempre el promedio, no el escenario editado a mano.":""}</p>`;
+  host.innerHTML=h;
 }
 function pct(a,p){ const s=[...a].sort((x,y)=>x-y); return s[Math.min(s.length-1,Math.max(0,Math.floor(p/100*(s.length-1))))]; }
 function renderMC(m){
@@ -1458,7 +1539,7 @@ let rzT=null; window.addEventListener("resize",()=>{ clearTimeout(rzT); rzT=setT
 function recompute(fromPolls){
   if(fromPolls || !scen){ computeRegional(); computeHouse(); avg=computeAverage(); if(!manual) scen={...avg.v}; }
   model=runModel(natFrom(scen));
-  if(fromPolls) trendDirty=true;
+  if(fromPolls){ trendDirty=true; ptrDirty=true; ptrRunning=false; ptrRun++; }
   senDirty=true;
   renderStatus(); renderResumen(); renderProv(); renderMapa(); renderSenado(); renderPolls(); renderTrends(); renderPacto(); renderProbs(); renderAlambre(); renderCambios(); renderAuton();
 }
@@ -1605,16 +1686,13 @@ function setTab(t){
   for(const s of ["resumen","pacto","provincias","probs","alambre","tendencias","encuestas","senado","metodo"]) $("v-"+s).hidden = s!==t;
   if(t==="tendencias") renderTrends();
   if(t==="senado") renderSenado();
+  if(t==="probs") renderProbs();
 }
 $("tabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; if(b.dataset.t==="__mas"){ $("masmenu").hidden? openMas() : closeMas(); return; } closeMas(); setTab(b.dataset.t); if(window.innerWidth<=700) window.scrollTo(0,0); });
 $("reset").addEventListener("click",()=>{ manual=false; scen={...avg.v}; recompute(false); });
 $("fccaa").addEventListener("change",renderProv); $("acaa").addEventListener("change",renderAlambre); $("amas").addEventListener("click",()=>{ alambreAll=!alambreAll; renderAlambre(); }); $("fq").addEventListener("input",renderProv);
 $("desde").addEventListener("change",()=>{ desde=$("desde").value; recompute(true); });
-document.querySelectorAll("#modo button").forEach(b=>b.addEventListener("click",()=>setModo(b.dataset.m)));
-function setModo(m){ campoModo=m; try{ localStorage.setItem("pozanos-modo",m); }catch(e){}
-  document.querySelectorAll("#modo button").forEach(b=>b.setAttribute("aria-checked", b.dataset.m===m?"true":"false"));
-  document.body.classList.toggle("modo-urda", m==="tras"); manual=false; recompute(true); }
-try{ const m0=localStorage.getItem("pozanos-modo"); if(m0==="tras") setModo("tras"); }catch(e){}
+try{ localStorage.removeItem("pozanos-modo"); }catch(e){}
 $("casa").value=casa?"1":"0"; $("casa").addEventListener("change",()=>{ casa=$("casa").value!=="0"; try{ localStorage.setItem("escanos29n_casa",casa?"1":"0"); }catch(e){} recompute(true); });
 $("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=14; $("vida").value="14"; }
 $("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });

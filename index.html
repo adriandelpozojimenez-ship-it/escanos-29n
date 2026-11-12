@@ -28,7 +28,7 @@
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   --p-PP:#1f78c8; --p-PSOE:#e0262e; --p-VOX:#5aa832; --p-FA:#d42f78; --p-PODEMOS:#6a3d8f; --p-CONJUNTA:#f08a22;
   --p-ERC:#f2b800; --p-JUNTS:#19b3a6; --p-EHB:#0f8a7a; --p-PNV:#2f8a3f; --p-BNG:#5fa8db; --p-CC:#e2bd1c;
-  --p-UPN:#264a8a; --p-UPNPP:#264a8a; --p-AA:#0a7a45; --p-SALF:#8a6a48;
+  --p-UPN:#264a8a; --p-UPNPP:#264a8a; --p-AA:#0a7a45; --p-SALF:#8a6a48; --p-TE:#7a8b3a; --p-SY:#b0503a;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#150d29; --panel:#21173d; --ink:#f5f0ff; --muted:#b2a6d4; --line:#3a2d63; --soft:#2a1f4b;
@@ -519,11 +519,11 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
     <div class="panel method">
       <h2>Cómo calcula</h2>
       <p>1. <b>Promedio.</b> Media ponderada de las encuestas activas. Cada instituto pesa según su acierto histórico (clasificación de EL PAÍS), el tamaño de la muestra (raíz de n/1.000, entre 0,7 y 1,5) y la antigüedad; dentro de cada instituto se promedian sus encuestas con más peso para las recientes. Opcionalmente se corrige el sesgo de cada instituto (cuánto se separa de las demás encuestas de las mismas fechas, encogido hacia cero cuando hay pocas encuestas). Opcionalmente, ese peso se multiplica por un factor de antigüedad, 0,5^(días desde el fin del campo / 14): una encuesta de hace dos semanas cuenta la mitad que una de hoy. El CIS entra reestimado con sus microdatos.</p>
-      <p>2. <b>Voto provincial.</b> Parte del resultado del 23J en cada provincia; cada partido sube o baja en la misma proporción que en el promedio nacional. Se Acabó la Fiesta se reparte como en las europeas de 2024 y Adelante Andalucía como en las andaluzas de 2026, restando su voto sobre todo al espacio de Sumar (procedencia según el CIS). Un ajuste iterativo hace que cada provincia sume 100% y que los totales nacionales coincidan con el promedio.</p>
+      <p>2. <b>Voto provincial.</b> Parte del resultado del 23J en cada provincia; cada partido sube o baja en la misma proporción que en el promedio nacional. Se Acabó la Fiesta se reparte como en las europeas de 2024, corregidas por comunidad con el CIS (diez barómetros y el preelectoral de noviembre); en las seis provincias donde no tiene lista (Bizkaia, Cantabria, Ciudad Real, Girona, Gipuzkoa y Lleida) su voto pasa a Vox (51 %) y PP (8 %) y el resto se pierde. Teruel Existe y Soria ¡Ya! compiten en su provincia con su voto del 23J corregido por su caída en las autonómicas de 2026 (9,3 % y 8,9 %). Adelante Andalucía se reparte como en las andaluzas de 2026, restando su voto sobre todo al espacio de Sumar (procedencia según el CIS). Un ajuste iterativo hace que cada provincia sume 100% y que los totales nacionales coincidan con el promedio.</p>
       <p>3. <b>Frente Amplio y Podemos.</b> El reparto del espacio en cada comunidad combina las europeas de 2024 con los microdatos del CIS y de 40dB, calibrado a la cuota nacional de Podemos del promedio. Juntos en Canarias y la Comunitat Valenciana; en Cataluña, la parte de Podemos va a ERC.</p>
       <p>3 bis. <b>Encuestas autonómicas.</b> Si hay encuestas de una comunidad, su voto se acerca al promedio de esas encuestas: a la mitad del camino si son recientes y menos cuanto más antiguas (la mitad de peso cada 14 días), mientras los totales nacionales siguen cuadrando con el promedio nacional.</p>
       <p>4. <b>Escaños.</b> D'Hondt con barrera del 3% y escaños de 2026.</p>
-      <p>5. <b>Probabilidades.</b> Simulaciones en las que varía el voto nacional de cada partido con el error histórico de los promedios de encuestas (desviación típica de 0,42 × √cuota, calibrada con la última semana de abril de 2019, noviembre de 2019 y julio de 2023; ese error crece con los días que faltan para votar, multiplicándose por √(1 + 0,104 × (días − 7)): un 60 % más a tres semanas de la votación), el reparto entre Frente Amplio y Podemos (con la dispersión de las encuestas activas), el apoyo a Adelante, el resultado de cada partido en cada provincia (un 12 % de media, la dispersión que dejó el reparto proporcional al comprobarlo con 2019 y 2023) y las decisiones de método discutibles. Son probabilidades dentro del modelo, no una predicción.</p>
+      <p>5. <b>Probabilidades.</b> Simulaciones en las que varía el voto nacional de cada partido con el error histórico de los promedios de encuestas (desviación típica de 0,42 × √cuota, calibrada con la última semana de abril de 2019, noviembre de 2019 y julio de 2023; ese error crece con los días que faltan para votar, multiplicándose por √(1 + 0,104 × (días − 7)): un 60 % más a tres semanas de la votación; para los partidos que solo se presentan en una parte de España, la cuota es la que tienen en las provincias donde se presentan), el reparto entre Frente Amplio y Podemos (con la dispersión de las encuestas activas), el apoyo a Adelante, el resultado de cada partido en cada provincia (un 12 % de media, la dispersión que dejó el reparto proporcional al comprobarlo con 2019 y 2023; un 25 % para Se Acabó la Fiesta y un 35 % para Teruel Existe y Soria ¡Ya!) y las decisiones de método discutibles. Son probabilidades dentro del modelo, no una predicción.</p>
       <p>6. <b>Comprobación con elecciones pasadas.</b> Con el resultado nacional real, el reparto proporcional colocó mal 15 de 350 escaños de abril a noviembre de 2019 y 16 de noviembre de 2019 al 23J. Se probaron también un desplazamiento uniforme en puntos (17 y 27), uno logístico (14 y 17) y una mezcla (13 y 18): ninguno mejora de forma clara, así que se mantiene el proporcional.</p>
       <p class="note">Limitaciones conocidas: Vox no se presentó en Santa Cruz de Tenerife en 2023; su base allí se estima con su resultado de Las Palmas, corregido por la diferencia entre ambas provincias en las europeas de 2024; los votos absolutos se calculan con los votos válidos de 2023; el modelo no tiene en cuenta coaliciones territoriales nuevas que no estuvieran en Sumar en 2023.</p>
     </div>
@@ -621,6 +621,22 @@ function vista(r){ if(!(r.sh.UPN>0&&r.sh.PP>0)) return r; const sh={...r.sh}, se
 const fmt = (x,d=1)=> (x==null||isNaN(x))?"–":x.toLocaleString("es-ES",{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtInt = x => Math.round(x).toLocaleString("es-ES");
 const W = D.prov.map(p=>p.w), WSUM = W.reduce((a,b)=>a+b,0);
+/* Cambios del 12 nov 2026 (comprobados con nov-2019 y el 23J; ver claude/alambre/LEEME_alambre.md).
+   1) SALF: el reparto de las europeas de 2024 se corrige por comunidad con el CIS (diez barómetros y el preelectoral 3584),
+      encogido hacia las europeas. No tiene lista en seis provincias: allí su voto pasa a Vox (51 %) y PP (8 %) y el resto se
+      pierde (segunda opción de sus votantes en el CIS). Su ruido provincial es 0,25.
+   2) Teruel Existe y Soria ¡Ya! compiten en su provincia con su voto del 23J corregido por su caída en las autonómicas de 2026;
+      sale de «Otros». Ruido 0,35.
+   3) Error nacional por ámbito: el error relativo de cada partido es NERR / raíz(cuota en las provincias donde se presenta).
+      Para los partidos de ámbito nacional es lo mismo que antes; para los territoriales, mucho menor. */
+const SALF_ADJ={AND:1.0993,ARA:0.8588,AST:0.8096,CAT:1.3495,CEU:0.9578,CLM:0.8884,CVA:0.9086,CYL:1.0034,EXT:1.1931,GAL:1.1143,IBA:0.8434,ICA:1.1239,MAD:0.7693,MEL:0.96,NAV:0.9006,PVA:0.9737,RIO:1.0896,RMU:1.0854};
+const SALF_SIN=["Cantabria","Ciudad Real","Girona","Gipuzkoa","Lleida","Bizkaia"];
+D.prov.forEach(p=>{ p.salf*=SALF_ADJ[p.c]||1; });
+const LOCALES={Teruel:{k:"TE",base:9.3},Soria:{k:"SY",base:8.9}}; LBL.TE="Teruel Existe"; LBL.SY="Soria ¡Ya!";
+const PERRK={SALF:0.25,TE:0.35,SY:0.35};
+const AMB={}; for(const k of REG){ let a=0; D.prov.forEach((p,i)=>{ if((p.v[k]||0)>0.05) a+=W[i]; }); AMB[k]=Math.max(a/WSUM,1e-6); }
+AMB.SALF=1; AMB.AA=Math.max(D.prov.reduce((a,p,i)=>a+(p.aa>0?W[i]:0),0)/WSUM,1e-6);
+const errNat=(b,k,z,nerr)=> b>0? b*Math.max(1+z*nerr/Math.sqrt(b/(AMB[k]||1)),0.05) : 0;
 const lg = q=>Math.log(q/(1-q)), il = x=>1/(1+Math.exp(-x));
 const $ = id=>document.getElementById(id);
 
@@ -778,6 +794,8 @@ function construir(nat, opt={}){
     else if(p.s==="Podemos en ERC"){ r.FA=m.ESPACIO*(1-q); r.ERC+=m.ESPACIO*q; }
     else if(p.s==="sin FA"){ /* Teruel: CHA-Frente Amplio no presenta lista al Congreso. Podemos conserva su parte; la de FA no se reparte a ningún partido (sin supuestos de trasvase). */ r.PODEMOS=m.ESPACIO*q; r.OTROS+=m.ESPACIO*(1-q); }
     else { r.FA=m.ESPACIO*(1-q); r.PODEMOS=m.ESPACIO*q; }
+    if(SALF_SIN.includes(p.n) && r.SALF>0){ const v=r.SALF; r.VOX+=0.51*v; r.PP+=0.08*v; r.OTROS+=0.41*v; r.SALF=0; }
+    const L=LOCALES[p.n]; if(L){ const v=Math.min(L.base,Math.max(r.OTROS-0.5,0)); r[L.k]=v; r.OTROS-=v; }
     return r;
   });
 }
@@ -1132,12 +1150,12 @@ function runMC(){
       const esp=Math.max(base.ESPACIO+randn()*sdE,1); const q=Math.min(Math.max(base.q+randn()*sdQ,0.1),0.5);
       // error nacional común: cada partido se mueve con su propio error y luego se reescala para que la suma no cambie
       const nat={...base}; const ks=[...REG,"SALF","AA"]; let s0=base.ESPACIO, s1=esp;
-      for(const k of ks){ s0+=base[k]; nat[k]= base[k]>0? Math.max(base[k]+randn()*NERR*Math.sqrt(base[k]),0.02) : 0; s1+=nat[k]; }
+      for(const k of ks){ s0+=base[k]; nat[k]=errNat(base[k],k,randn(),NERR); s1+=nat[k]; }
       const fr=s0/s1; for(const k of ks) nat[k]*=fr; nat.ESPACIO=esp*fr; nat.q=q;
       const R=construir(nat,{K:[10,40,200][Math.floor(Math.random()*3)], aaOrigen:Math.random()<0.5, aaFactor:Math.max(1+randn()*0.19,0.3)});
       let L=0,LA=0,LT=0,vs=0,vt=0; const TS={}; for(const k of OUT) TS[k]=0; let vPP=0,vPSOE=0,vVOX=0;
       R.forEach((sh0,i)=>{
-        const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ sh[k]=sh0[k]*Math.exp(randn()*PERR-PERR*PERR/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
+        const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ const pe=PERRK[k]||PERR; sh[k]=sh0[k]*Math.exp(randn()*pe-pe*pe/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
         const sep=dhondt(sh,p.e).seats; if(sep.AA>0) aaEsc[i]++; for(const k of OUT) TS[k]+=sep[k]||0; if(p.n==="Madrid") TS._podMad=sep.PODEMOS||0; vPP+=sh.PP*p.w; vPSOE+=sh.PSOE*p.w; vVOX+=sh.VOX*p.w;
         if(p.s==="separados"){
           const fu=fusion(sh,["FA","PODEMOS"],p.e); const d=fu?fu.jun-fu.sep:0; L+=d; if(d>0){ pl[i]++; for(const k in fu.sepS){ if(["FA","PODEMOS","OTROS"].includes(k)) continue; const x=fu.sepS[k]-(fu.junS[k]||0); if(x>0) ben[k]=(ben[k]||0)+x; } }
@@ -1196,11 +1214,11 @@ function simSeats(base, sdE, sdQ, nerr, rg){
   const {u,n}=rg;
   const esp=Math.max(base.ESPACIO+n()*sdE,1); const q=Math.min(Math.max(base.q+n()*sdQ,0.1),0.5);
   const nat={...base}; const ks=[...REG,"SALF","AA"]; let s0=base.ESPACIO, s1=esp;
-  for(const k of ks){ s0+=base[k]; nat[k]= base[k]>0? Math.max(base[k]+n()*nerr*Math.sqrt(base[k]),0.02) : 0; s1+=nat[k]; }
+  for(const k of ks){ s0+=base[k]; nat[k]=errNat(base[k],k,n(),nerr); s1+=nat[k]; }
   const fr=s0/s1; for(const k of ks) nat[k]*=fr; nat.ESPACIO=esp*fr; nat.q=q;
   const R=construir(nat,{K:[10,40,200][Math.floor(u()*3)], aaOrigen:u()<0.5, aaFactor:Math.max(1+n()*0.19,0.3)});
   const TS={}; for(const k of OUT) TS[k]=0; let vPP=0,vPSOE=0,vVOX=0;
-  R.forEach((sh0,i)=>{ const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ sh[k]=sh0[k]*Math.exp(n()*PERR-PERR*PERR/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
+  R.forEach((sh0,i)=>{ const p=D.prov[i]; const sh={}; let s=0; for(const k in sh0){ const pe=PERRK[k]||PERR; sh[k]=sh0[k]*Math.exp(n()*pe-pe*pe/2); s+=sh[k]; } for(const k in sh) sh[k]*=100/s;
     const sep=dhondt(sh,p.e).seats; for(const k of OUT) TS[k]+=sep[k]||0; if(p.n==="Madrid") TS._podMad=sep.PODEMOS||0; vPP+=sh.PP*p.w; vPSOE+=sh.PSOE*p.w; vVOX+=sh.VOX*p.w; });
   TS.FA+=TS.CONJUNTA; TS.CONJUNTA=0; TS._vPP=vPP/WSUM; TS._vPSOE=vPSOE/WSUM; TS._vVOX=vVOX/WSUM; return TS;
 }
@@ -1211,7 +1229,7 @@ function ptrDates(){
 }
 /* Firma de lo que entra en el cálculo: si no cambia, se reutiliza la serie guardada en este navegador. */
 function ptrSig(dates){ const act=polls.filter(p=>p.activa!==false&&p.fin).map(p=>[p._id,p.fin,p.nota,p.n,p.v]).sort((a,b)=>a[0]<b[0]?-1:1);
-  const str=JSON.stringify([act,casa,vida,PTR_N,dates,ELEC_DIA,DRIFT,NERR0,PERR,diasHastaElec()]); let h=5381; for(let i=0;i<str.length;i++) h=(h*33^str.charCodeAt(i))>>>0; return "v2-"+h.toString(36)+"-"+str.length; }
+  const str=JSON.stringify([act,casa,vida,PTR_N,dates,ELEC_DIA,DRIFT,NERR0,PERR,diasHastaElec()]); let h=5381; for(let i=0;i<str.length;i++) h=(h*33^str.charCodeAt(i))>>>0; return "v3-"+h.toString(36)+"-"+str.length; }
 const PTR_KEY="pozanos-evol-probs";
 function startProbTrend(){
   const run=++ptrRun; ptrRunning=true; ptr=null; ptrProg=0;

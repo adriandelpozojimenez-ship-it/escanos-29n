@@ -320,7 +320,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
       <h2 style="margin-bottom:6px">Qué ha cambiado</h2>
       <p id="cfrase" style="margin:0 0 10px;max-width:75ch"></p>
       <div class="scroll"><table id="tcambios"></table></div>
-      <p class="note" style="margin-top:8px">Promedio de encuestas (no el escenario modificado a mano). «Antes de la última encuesta» es el promedio de hoy sin la encuesta más reciente; «hace 7 días», el promedio que había entonces.</p>
+      <p class="note" style="margin-top:8px">Promedio de encuestas (no el escenario modificado a mano). «En 7 días» compara con el promedio que había hace una semana; «Desde la convocatoria», con el del primer día tras el BOE del 6 de octubre con al menos tres institutos en el promedio.</p>
     </div>
     <div class="grid2">
       <div class="panel">
@@ -844,24 +844,27 @@ function renderCambios(){
   const T=$("tcambios"), F=$("cfrase"); if(!T) return;
   const act=polls.filter(p=>p.activa!==false && p.fin && inRange(p));
   if(act.length<2){ T.innerHTML=""; F.textContent="Hacen falta al menos dos encuestas para comparar."; return; }
-  const lastP=[...act].sort((a,b)=>(b.fin||"").localeCompare(a.fin||""))[0];
-  const now=avg; const saved=polls; polls=polls.filter(p=>p!==lastP); const a1=computeAverage(); polls=saved;
-  const t=new Date(); const d7=isoDay(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())-7*864e5); const a2=computeAverage(d7);
+  const now=avg;
+  const t=new Date(); const hoy=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate());
+  const d7=isoDay(hoy-7*864e5); const a7=computeAverage(d7);
+  /* Desde la convocatoria (BOE del 6 oct): primer día con al menos tres institutos en el promedio, como en «Probabilidades». */
+  let a0=null, d0=null;
+  for(let d=Date.parse(CONVOC+"T00:00:00Z"); d<=hoy; d+=864e5){ const a=computeAverage(isoDay(d)); if(a.used.length && a.nInst>=3){ a0=a; d0=isoDay(d); break; } }
   const seatsOf=a=>{ const x=runModel(natFrom(a.v)).tot; return {PP:x.PP,PSOE:x.PSOE,VOX:x.VOX,ESP:x.FA+x.CONJUNTA,POD:x.PODEMOS,SALF:x.SALF,ERC:x.ERC,JUNTS:x.JUNTS,EHB:x.EHB,PNV:x.PNV,BNG:x.BNG,CC:x.CC,UPN:x.UPN,AA:x.AA}; };
-  const s0=seatsOf(now), s1=seatsOf(a1), s2=a2.used.length? seatsOf(a2):null;
-  const lab=`${lastP.instituto||"?"}, ${fmtDay(lastP.fin)}`;
-  T.innerHTML=`<thead><tr><th>Partido</th><th class="r">Ahora</th><th class="r">Escaños</th><th class="r">Desde antes de la última encuesta<br><span style="text-transform:none;letter-spacing:0">(${lab.replace(/</g,"&lt;")})</span></th><th class="r">En 7 días</th></tr></thead>`;
+  const s=seatsOf(now), s7=a7.used.length? seatsOf(a7):null, s0=a0? seatsOf(a0):null;
+  T.innerHTML=`<thead><tr><th>Partido</th><th class="r">Ahora</th><th class="r">Escaños</th><th class="r">En 7 días<br><span style="text-transform:none;letter-spacing:0">(desde el ${fmtDay(d7)})</span></th><th class="r">Desde la convocatoria<br><span style="text-transform:none;letter-spacing:0">(${d0?`desde el ${fmtDay(d0)}`:"sin datos"})</span></th></tr></thead>`;
   const tb=document.createElement("tbody");
   for(const k of ["PP","PSOE","VOX","ESP","POD","SALF","ERC","JUNTS","EHB","PNV","BNG","CC","UPN","AA"]){
     const tr=document.createElement("tr");
-    const c1=dPair(now.v[k]-a1.v[k],s0[k]-s1[k]), c2= s2? dPair(now.v[k]-a2.v[k],s0[k]-s2[k]) : "–";
-    tr.innerHTML=`<td><span class="sw" style="background:${col(TCOL[k]||k)}"></span>${PKLABEL[k]}</td><td class="r num">${fmt(now.v[k],1)} %</td><td class="r num"><b>${s0[k]}</b></td><td class="r num">${c1}</td><td class="r num">${c2}</td>`;
+    const c7= s7? dPair(now.v[k]-a7.v[k],s[k]-s7[k]) : "–", c0= s0? dPair(now.v[k]-a0.v[k],s[k]-s0[k]) : "–";
+    tr.innerHTML=`<td><span class="sw" style="background:${col(TCOL[k]||k)}"></span>${PKLABEL[k]}</td><td class="r num">${fmt(now.v[k],1)} %</td><td class="r num"><b>${s[k]}</b></td><td class="r num">${c7}</td><td class="r num">${c0}</td>`;
     tb.append(tr);
   }
   T.append(tb);
-  const mv=["PP","PSOE","VOX","ESP","POD"].map(k=>({k,d:now.v[k]-a1.v[k],e:s0[k]-s1[k]})).filter(x=>Math.abs(x.d)>=0.05||x.e).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
+  if(!s7){ F.textContent="No había encuestas en el promedio hace 7 días."; return; }
+  const mv=["PP","PSOE","VOX","ESP","POD"].map(k=>({k,d:now.v[k]-a7.v[k],e:s[k]-s7[k]})).filter(x=>Math.abs(x.d)>=0.05||x.e).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d)).slice(0,3);
   const verb=x=> (x.d>=0.05? `sube ${fmt(x.d,1)} puntos` : x.d<=-0.05? `baja ${fmt(-x.d,1)} puntos` : "se mantiene") + (x.e? ` y ${x.e>0?"gana":"pierde"} ${Math.abs(x.e)} ${Math.abs(x.e)===1?"escaño":"escaños"}` : "");
-  F.textContent = mv.length? `Con la encuesta de ${lab}, ${mv.map(x=>`${x.k==="ESP"?"Frente Amplio":x.k==="POD"?"Podemos":PKLABEL[x.k]} ${verb(x)}`).join("; ")}.` : `La encuesta de ${lab} apenas mueve el promedio.`;
+  F.textContent = mv.length? `En los últimos 7 días, ${mv.map(x=>`${x.k==="ESP"?"Frente Amplio":x.k==="POD"?"Podemos":PKLABEL[x.k]} ${verb(x)}`).join("; ")}.` : "En los últimos 7 días el promedio apenas se ha movido.";
 }
 /* ---------- interfaz ---------- */
 function renderStatus(){

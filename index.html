@@ -883,7 +883,7 @@ function renderStatus(){
   const st=$("status"); st.textContent="";
   const a=document.createElement("span"); a.className="pill"; a.textContent = n? `${avg.nInst} institutos · ${n} encuestas en el promedio`: "Sin encuestas: valores de referencia del 22 oct"; st.append(a);
   if(last){ const b=document.createElement("span"); b.className="pill"; b.textContent=`Última: ${new Date(last+"T12:00").toLocaleDateString("es-ES",{day:"numeric",month:"short"})}`; st.append(b); }
-  const rc=Object.keys(REGT); if(rc.length){ const v=document.createElement("span"); v.className="pill"; v.textContent="Ajuste autonómico: "+rc.map(c=>CCAAN[c]||c).join(", "); st.append(v); }
+  const rc=Object.keys(REGT); if(rc.length){ const v=document.createElement("span"); v.className="pill"; v.textContent="Ajuste autonómico"; v.title="Con encuestas autonómicas: "+rc.map(c=>CCAAN[c]||c).join(", "); st.append(v); }
   if(casa&&n){ const v=document.createElement("span"); v.className="pill"; v.textContent="Sesgo de instituto corregido"; st.append(v); }
   if(vida){ const v=document.createElement("span"); v.className="pill"; v.textContent="Recientes pesan más"; st.append(v); }
   if(manual){ const c=document.createElement("span"); c.className="pill warn"; c.textContent="Escenario modificado a mano"; st.append(c); }

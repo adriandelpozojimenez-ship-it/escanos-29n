@@ -438,11 +438,11 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
         <label for="desde" class="muted">Promediar desde</label>
         <input type="date" id="desde">
         <label for="vida" class="muted">Peso por antigüedad</label>
-        <select id="vida"><option value="14">Sí</option><option value="0">No</option></select>
+        <select id="vida"><option value="7">Sí</option><option value="0">No</option></select>
         <label for="casa" class="muted">Corregir sesgo de instituto</label>
         <select id="casa"><option value="1">Sí</option><option value="0">No</option></select>
       </div>
-      <p class="note">Cada instituto pesa según su nota, el tamaño de su muestra (de 0,7 a 1,5 veces) y la antigüedad de su última encuesta; con «Peso por antigüedad» se usan todas sus encuestas, no solo la última. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 14 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
+      <p class="note">Cada instituto pesa según su nota, el tamaño de su muestra (de 0,7 a 1,5 veces) y la antigüedad de su última encuesta; con «Peso por antigüedad» se usan todas sus encuestas, no solo la última. Pesos: nota A = 1; B = 0,75; C = 0,5; propia = 0,75. Con «Peso por antigüedad», ese peso se multiplica además por un factor que cae a la mitad cada 7 días desde el fin del campo, así que las encuestas recientes cuentan más. La columna «Peso» muestra cuánto pesa cada una en el promedio. «FA» es Frente Amplio comparable (con Compromís cuando la encuesta lo da aparte).</p>
       <p class="note" style="margin-top:6px">Las encuestas cuyo campo termina después del 28 de octubre, día del accidente ferroviario de Urda, llevan la etiqueta «tras Urda».</p>
       <div class="scroll"><table id="tpolls"></table></div>
     </div>
@@ -518,7 +518,7 @@ details.ptable summary{font:800 1.1rem var(--f-display)}
   <section id="v-metodo" hidden>
     <div class="panel method">
       <h2>Cómo calcula</h2>
-      <p>1. <b>Promedio.</b> Media ponderada de las encuestas activas. Cada instituto pesa según su acierto histórico (clasificación de EL PAÍS), el tamaño de la muestra (raíz de n/1.000, entre 0,7 y 1,5) y la antigüedad; dentro de cada instituto se promedian sus encuestas con más peso para las recientes. Opcionalmente se corrige el sesgo de cada instituto (cuánto se separa de las demás encuestas de las mismas fechas, encogido hacia cero cuando hay pocas encuestas). Opcionalmente, ese peso se multiplica por un factor de antigüedad, 0,5^(días desde el fin del campo / 14): una encuesta de hace dos semanas cuenta la mitad que una de hoy. El CIS entra reestimado con sus microdatos.</p>
+      <p>1. <b>Promedio.</b> Media ponderada de las encuestas activas. Cada instituto pesa según su acierto histórico (clasificación de EL PAÍS), el tamaño de la muestra (raíz de n/1.000, entre 0,7 y 1,5) y la antigüedad; dentro de cada instituto se promedian sus encuestas con más peso para las recientes. Opcionalmente se corrige el sesgo de cada instituto (cuánto se separa de las demás encuestas de las mismas fechas, encogido hacia cero cuando hay pocas encuestas). Opcionalmente, ese peso se multiplica por un factor de antigüedad, 0,5^(días desde el fin del campo / 7): una encuesta de hace una semana cuenta la mitad que una de hoy (hasta el 22 de noviembre la vida media era de 14 días; se acortó para la última semana de campaña). El CIS entra reestimado con sus microdatos.</p>
       <p>2. <b>Voto provincial.</b> Parte del resultado del 23J en cada provincia; cada partido sube o baja en la misma proporción que en el promedio nacional. Se Acabó la Fiesta se reparte como en las europeas de 2024, corregidas por comunidad con el CIS (diez barómetros y el preelectoral de noviembre); en las seis provincias donde no tiene lista (Bizkaia, Cantabria, Ciudad Real, Girona, Gipuzkoa y Lleida) su voto pasa a Vox (51 %) y PP (8 %) y el resto se pierde. Teruel Existe y Soria ¡Ya! compiten en su provincia con su voto del 23J corregido por su caída en las autonómicas de 2026 (9,3 % y 8,9 %). Adelante Andalucía se reparte como en las andaluzas de 2026, restando su voto sobre todo al espacio de Sumar (procedencia según el CIS). Un ajuste iterativo hace que cada provincia sume 100% y que los totales nacionales coincidan con el promedio.</p>
       <p>3. <b>Frente Amplio y Podemos.</b> El reparto del espacio en cada comunidad combina las europeas de 2024 con los microdatos del CIS y de 40dB, calibrado a la cuota nacional de Podemos del promedio. Juntos en Canarias y la Comunitat Valenciana; en Cataluña, la parte de Podemos va a ERC.</p>
       <p>3 bis. <b>Encuestas autonómicas.</b> Si hay encuestas de una comunidad, su voto se acerca al promedio de esas encuestas: a la mitad del camino si son recientes y menos cuanto más antiguas (la mitad de peso cada 14 días), mientras los totales nacionales siguen cuadrando con el promedio nacional. Si una encuesta autonómica no da Podemos aparte y en esa comunidad Podemos va en la lista del Frente Amplio, su cifra cuenta como la de todo el espacio.</p>
@@ -658,8 +658,10 @@ function inRange(p){
   if(desde && (p.fin||"")<desde) return false;
   return true;
 }
-let vida = 14; try{ const sv=localStorage.getItem("escanos29n_vida"); if(sv!==null) vida = sv==="0"?0:14; }catch(e){}
+let vida = 7; try{ const sv=localStorage.getItem("escanos29n_vida"); if(sv!==null) vida = sv==="0"?0:7; }catch(e){}
 const recW = (fin, asOf) => { if(!vida||!fin) return 1; const t=new Date(); const hoy= asOf? Date.parse(asOf+"T00:00:00Z") : Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()); const f=Date.parse(fin+"T00:00:00Z"); const dias=Math.max(0,(hoy-f)/864e5); return Math.pow(0.5, dias/vida); };
+/* Encuestas autonómicas: siguen perdiendo la mitad de peso cada 14 días (el promedio nacional pasó a 7 días el 22 nov). */
+const recWReg = (fin) => { if(!vida||!fin) return 1; const t=new Date(); const hoy=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()); const f=Date.parse(fin+"T00:00:00Z"); return Math.pow(0.5, Math.max(0,(hoy-f)/864e5)/14); };
 
 /* ---------- promedio ---------- */
 const instKey=p=>(p.instituto||"").trim().toLowerCase();
@@ -737,9 +739,9 @@ function computeRegional(){
     const byI={}; for(const p of byC[c]){ const ik=instKey(p); if(!byI[ik]||p.fin>byI[ik].fin) byI[ik]=p; }
     const L=Object.values(byI); const v={}; let newest="";
     for(const k of [...AKEYS,"ESPACIO"]){ let s=0,w=0; for(const p of L){ const x = k==="ESPACIO"? espacioDe(p,c) : p.v?.[k];
-      if(typeof x==="number"&&!isNaN(x)){ const ww=(NOTAW[p.nota]??0.75)*sizeW(p.n)*recW(p.fin); s+=x*ww; w+=ww; } } if(w>0) v[k]=s/w; }
+      if(typeof x==="number"&&!isNaN(x)){ const ww=(NOTAW[p.nota]??0.75)*sizeW(p.n)*recWReg(p.fin); s+=x*ww; w+=ww; } } if(w>0) v[k]=s/w; }
     for(const p of L) if(p.fin>newest) newest=p.fin;
-    const alpha=0.5*recW(newest); if(alpha>0.02 && Object.keys(v).length) REGT[c]={alpha, v, n:L.length, newest};
+    const alpha=0.5*recWReg(newest); if(alpha>0.02 && Object.keys(v).length) REGT[c]={alpha, v, n:L.length, newest};
   }
 }
 /* ---------- modelo ---------- */
@@ -1736,8 +1738,8 @@ $("fccaa").addEventListener("change",renderProv); $("acaa").addEventListener("ch
 $("desde").addEventListener("change",()=>{ desde=$("desde").value; recompute(true); });
 try{ localStorage.removeItem("pozanos-modo"); }catch(e){}
 $("casa").value=casa?"1":"0"; $("casa").addEventListener("change",()=>{ casa=$("casa").value!=="0"; try{ localStorage.setItem("escanos29n_casa",casa?"1":"0"); }catch(e){} recompute(true); });
-$("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=14; $("vida").value="14"; }
-$("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:14; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });
+$("vida").value=String(vida); if($("vida").value!==String(vida)){ vida=7; $("vida").value="7"; }
+$("vida").addEventListener("change",()=>{ vida=$("vida").value==="0"?0:7; try{ localStorage.setItem("escanos29n_vida",String(vida)); }catch(e){} recompute(true); });
 document.querySelectorAll(".mcgo").forEach(b=>b.addEventListener("click",runMC)); $("csv").addEventListener("click",downloadCSV);
 [...new Set(D.prov.map(p=>p.c))].sort((a,b)=>(CCAAN[a]||a).localeCompare(CCAAN[b]||b,"es")).forEach(c=>{ const o=document.createElement("option"); o.value=c; o.textContent=CCAAN[c]||c; $("fccaa").append(o); $("acaa").append(o.cloneNode(true)); });
 buildForm(); buildAutonForm();

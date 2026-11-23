@@ -1199,7 +1199,7 @@ const PROBROWS=[["PP + Vox llegan a 176",s=>s.PP+s.VOX>=176],["PP + Vox + UPN + 
     ["La investidura de 2023 (con Junts) llega a 176",s=>sumK(s,INV23)>=176],["La investidura sin Junts llega a 176",s=>sumK(s,INV23)-s.JUNTS>=176],
     ["PP + Vox superan los 210 escaños",s=>s.PP+s.VOX>210],
     ["El PP saca más escaños que el PSOE",s=>s.PP>s.PSOE],["El PSOE es primera fuerza en escaños",s=>first(s)==="PSOE"],["El PSOE es primera fuerza en votos",s=>s._vPSOE>s._vPP&&s._vPSOE>s._vVOX],["Empate técnico PP–PSOE (menos de 1 punto en votos)",s=>Math.abs(s._vPP-s._vPSOE)<1],["Vox es segunda fuerza en escaños",s=>second(s)==="VOX"],
-    ["Vox saca más de 60 escaños",s=>s.VOX>60],["Podemos no saca escaño en Madrid",s=>!s._podMad]];
+    ["Vox saca más de 60 escaños",s=>s.VOX>60],["SALF saca al menos un escaño",s=>(s.SALF||0)>=1],["Podemos no saca escaño en Madrid",s=>!s._podMad]];
 function renderProbs(){
   const box=$("rprob"); if(!box) return;
   let left;
@@ -1245,7 +1245,7 @@ function ptrDates(){
 }
 /* Firma de lo que entra en el cálculo: si no cambia, se reutiliza la serie guardada en este navegador. */
 function ptrSig(dates){ const act=polls.filter(p=>p.activa!==false&&p.fin).map(p=>[p._id,p.fin,p.nota,p.n,p.v]).sort((a,b)=>a[0]<b[0]?-1:1);
-  const str=JSON.stringify([act,casa,vida,PTR_N,dates,ELEC_DIA,DRIFT,NERR0,PERR,diasHastaElec()]); let h=5381; for(let i=0;i<str.length;i++) h=(h*33^str.charCodeAt(i))>>>0; return "v3-"+h.toString(36)+"-"+str.length; }
+  const str=JSON.stringify([act,casa,vida,PTR_N,dates,ELEC_DIA,DRIFT,NERR0,PERR,diasHastaElec()]); let h=5381; for(let i=0;i<str.length;i++) h=(h*33^str.charCodeAt(i))>>>0; return "v4-"+h.toString(36)+"-"+str.length; }
 const PTR_KEY="pozanos-evol-probs";
 function startProbTrend(){
   const run=++ptrRun; ptrRunning=true; ptr=null; ptrProg=0;
